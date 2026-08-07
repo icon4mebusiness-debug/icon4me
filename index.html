@@ -151,7 +151,53 @@
   details.cues[open] summary::before{transform:rotate(90deg);}
   details.cues ul{margin:6px 0 2px;padding-inline-start:18px;color:var(--text-dim);font-size:13px;line-height:1.6;}
 
+  /* ---------- target + set dots ---------- */
+  .ex-target{display:flex;align-items:center;gap:10px;margin-top:11px;flex-wrap:wrap;}
+  .target-box{display:flex;align-items:baseline;gap:3px;background:var(--surface-2);border:1px solid var(--line);
+    border-radius:12px;padding:9px 13px;font-family:var(--font-mono);font-weight:700;}
+  .target-box .big{font-size:22px;color:var(--dc);line-height:1;}
+  .target-box .cap{font-size:10.5px;color:var(--text-dim);font-family:var(--font-body);font-weight:600;}
+  .wbox{display:flex;align-items:center;gap:6px;margin-inline-start:auto;}
+  .wbox .step{width:36px;height:36px;border-radius:11px;border:1px solid var(--line);background:var(--surface-2);
+    color:var(--text);font-size:19px;cursor:pointer;line-height:1;}
+  .wbox input{width:66px;background:var(--surface-2);border:1px solid var(--line);border-radius:11px;color:var(--text);
+    font-family:var(--font-mono);font-weight:700;font-size:17px;padding:8px 3px;text-align:center;}
+  .wbox .unit{font-size:11px;color:var(--text-dim);}
+  .bw-tag{margin-inline-start:auto;font-size:12px;color:var(--text-dim);}
+  .dots{display:flex;gap:9px;margin-top:12px;align-items:center;flex-wrap:wrap;}
+  .dot{width:42px;height:42px;border-radius:50%;border:2px solid var(--dc);background:transparent;color:var(--dc);
+    font-family:var(--font-mono);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;
+    cursor:pointer;transition:background .15s,color .15s;}
+  .dot.on{background:var(--dc);color:#1a1826;}
+  .dots-hint{font-size:11.5px;color:var(--text-dim);margin-inline-start:4px;}
+  .pictogram{cursor:pointer;}
+  .zoom-tag{position:absolute;bottom:2px;right:2px;font-size:9px;color:var(--text-dim);background:var(--bg);
+    border-radius:4px;padding:0 3px;}
+
+  /* ---------- body modal ---------- */
+  .modal{position:fixed;inset:0;background:rgba(10,9,18,.8);z-index:60;display:flex;align-items:center;
+    justify-content:center;padding:16px;}
+  .modal-box{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;
+    max-width:460px;width:100%;max-height:92vh;overflow-y:auto;}
+  .modal-title{font-family:var(--font-display);font-weight:800;font-size:16px;margin-bottom:2px;}
+  .modal-sub{font-size:12.5px;color:var(--text-dim);margin-bottom:12px;}
+  .modal-figs{display:flex;gap:10px;}
+  .modal-fig{flex:1;background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:8px;text-align:center;}
+  .modal-fig svg{width:100%;height:auto;max-height:46vh;display:block;}
+  .modal-fig .cap{font-size:11.5px;color:var(--text-dim);margin-top:5px;}
+  .modal-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
+  .mtag{font-size:12px;border-radius:20px;padding:4px 11px;background:var(--surface-2);border:1px solid var(--line);color:var(--text-dim);}
+  .mtag.on{background:var(--red);border-color:var(--red);color:#fff;font-weight:700;}
+  .modal-close{margin-top:13px;width:100%;padding:12px;border-radius:12px;border:none;background:var(--surface-2);
+    color:var(--text);font-family:var(--font-display);font-weight:700;font-size:14px;cursor:pointer;}
+
   /* ---------- cardio ---------- */
+  .kind-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;}
+  .kind-btn{padding:12px 4px;border-radius:14px;border:2px solid var(--line);background:var(--surface);
+    color:var(--text-dim);font-family:var(--font-display);font-weight:700;font-size:12.5px;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;gap:5px;transition:background .15s,color .15s,border-color .15s;}
+  .kind-btn .ki{font-size:21px;}
+  .kind-btn.active{border-color:var(--dc);background:var(--dc);color:#1a1826;}
   .cardio-toggle{display:flex;gap:8px;margin-top:14px;}
   .cardio-toggle button{flex:1;padding:11px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--text-dim);font-weight:700;font-family:var(--font-display);cursor:pointer;font-size:14px;}
   .cardio-toggle button.active{border-color:var(--dc);background:var(--dc);color:#1a1826;}
@@ -222,6 +268,7 @@
   .kpi{background:var(--surface-2);border-radius:11px;padding:9px 6px;text-align:center;}
   .kpi .n{font-family:var(--font-mono);font-weight:700;font-size:15.5px;}
   .kpi .l{font-size:10.5px;color:var(--text-dim);margin-top:2px;}
+  .stats-row{display:flex;gap:9px;}
   .stat{flex:1;background:var(--surface);border-radius:14px;padding:11px 8px;text-align:center;border-top:3px solid var(--sc);border-inline:1px solid var(--line);border-bottom:1px solid var(--line);}
   .stat .n{font-family:var(--font-mono);font-weight:700;font-size:19px;}
   .stat .l{font-size:11px;color:var(--text-dim);margin-top:2px;}
@@ -317,8 +364,23 @@ const esc = s => String(s==null?'':s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':
 const num = n => Number(n||0).toLocaleString('he-IL');
 const WEEKDAY_HE = ['א','ב','ג','ד','ה','ו','ש'];
 const MONTH_HE = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
-const MUSCLE_HE = {chest:'חזה',lats:'גב',traps:'טרפזים',shoulders:'כתפיים',biceps:'בייספס',triceps:'טרייספס',
-  abs:'בטן',obliques:'בטן אלכסונית',lowerBack:'גב תחתון',quads:'ירך קדמית',hamstrings:'ירך אחורית',glutes:'ישבן',calves:'שוקיים'};
+const CARDIO_KINDS = [
+  {id:'running',   label:'ריצה',    icon:'🏃', km:true,  tip:'חימום 5 דקות הליכה, ואז לרוץ בקצב שאפשר לדבר בו. עדיף להאריך זמן לפני שמגבירים קצב.'},
+  {id:'cycling',   label:'אופניים', icon:'🚴', km:true,  tip:'קצב נוח וקבוע. עליות זה בונוס — לא חייבים בכל רכיבה.'},
+  {id:'football',  label:'כדורגל',  icon:'⚽', km:false, tip:'משחק נחשב אימון לכל דבר. תרשום את הזמן נטו על המגרש.'},
+  {id:'basketball',label:'כדורסל',  icon:'🏀', km:false, tip:'משחק נחשב אימון לכל דבר. תרשום את הזמן נטו על המגרש.'},
+  {id:'tennis',    label:'טניס',    icon:'🎾', km:false, tip:'משחק נחשב אימון לכל דבר. תרשום את הזמן נטו על המגרש.'}
+];
+Object.keys(CATALOG).forEach(function(pid){
+  const p = CATALOG[pid];
+  let cp = p.programs.filter(function(x){return x.type==='cardio';})[0];
+  if(!cp){ cp={id:'cardio',type:'cardio',hex:'#3DA9FC'}; p.programs.push(cp); }
+  cp.kinds = CARDIO_KINDS.map(function(k){ return Object.assign({},k); });
+  cp.label='אירובי וספורט'; cp.short='אירובי'; cp.sub='זמן בלבד'; cp.icon='🏃';
+  cp.tile='ריצה · אופניים · כדורגל · כדורסל · טניס';
+});
+const MUSCLE_HE = {chest:'חזה',lats:'גב רחב',traps:'טרפזים',shoulders:'כתפיים',biceps:'בייספס',triceps:'טרייספס',
+  forearms:'אמות',abs:'בטן',obliques:'בטן אלכסונית',lowerBack:'גב תחתון',quads:'ירך קדמית',hamstrings:'ירך אחורית',glutes:'ישבן',calves:'שוקיים'};
 const KEY_MUSCLES = ['chest','lats','shoulders','biceps','triceps','abs','quads','hamstrings','glutes'];
 const startOfWeek = d => { const x=new Date(d); x.setHours(0,0,0,0); x.setDate(x.getDate()-x.getDay()); return x; };
 const exKey = (programId, i) => programId+'-'+pad2(i+1);
@@ -336,6 +398,7 @@ const N = new Date();
 let CFG = null, PROFILE = null;
 let state = {
   screen:'pick',           // pick | home | workout | cardio | progress | log
+  modal:null,
   day:null, kind:null, rpe:null,
   chartEx:0, calY:N.getFullYear(), calM:N.getMonth(), calSel:null,
   data: emptyData(), open:{}, sync:'local', loading:true
@@ -640,31 +703,61 @@ function heatStyle(c){
   if(c<=7) return 'fill="var(--pc)" opacity=".64"';
   return 'fill="var(--pc)" opacity="1"';
 }
-function bodySVG(view, hl, heat){
-  const part=(tag,a,key)=>'<'+tag+' '+(heat?heatStyle(heat[key]||0):'class="'+((hl||[]).indexOf(key)>=0?'muscle-hl':'muscle-base')+'"')+' '+attr(a)+'/>';
-  const base=(tag,a)=>'<'+tag+' '+(heat?'fill="var(--muscle)" opacity=".18"':'class="muscle-base"')+' '+attr(a)+'/>';
-  const sil=base('circle',{cx:60,cy:16,r:12})+base('rect',{x:54,y:26,width:12,height:7,rx:3})
-    +base('rect',{x:33,y:36,width:54,height:78,rx:16,opacity:.2})+base('rect',{x:38,y:110,width:44,height:16,rx:9,opacity:.2})
-    +base('rect',{x:15,y:82,width:13,height:34,rx:6})+base('rect',{x:92,y:82,width:13,height:34,rx:6})
-    +base('ellipse',{cx:44,cy:205,rx:9,ry:5})+base('ellipse',{cx:76,cy:205,rx:9,ry:5});
-  const front=part('ellipse',{cx:34,cy:42,rx:11,ry:9},'shoulders')+part('ellipse',{cx:86,cy:42,rx:11,ry:9},'shoulders')
-    +part('ellipse',{cx:47,cy:48,rx:13,ry:14},'chest')+part('ellipse',{cx:73,cy:48,rx:13,ry:14},'chest')
-    +part('rect',{x:17,y:44,width:15,height:38,rx:7},'biceps')+part('rect',{x:88,y:44,width:15,height:38,rx:7},'biceps')
-    +part('rect',{x:49,y:64,width:22,height:9,rx:4},'abs')+part('rect',{x:49,y:74,width:22,height:9,rx:4},'abs')
-    +part('rect',{x:49,y:84,width:22,height:9,rx:4},'abs')
-    +part('rect',{x:38,y:64,width:9,height:30,rx:4},'obliques')+part('rect',{x:73,y:64,width:9,height:30,rx:4},'obliques')
-    +part('rect',{x:35,y:126,width:19,height:48,rx:9},'quads')+part('rect',{x:66,y:126,width:19,height:48,rx:9},'quads')
-    +base('rect',{x:37,y:176,width:15,height:32,rx:7,opacity:.2})+base('rect',{x:68,y:176,width:15,height:32,rx:7,opacity:.2});
-  const back=part('rect',{x:44,y:30,width:32,height:16,rx:8},'traps')
-    +part('ellipse',{cx:34,cy:42,rx:11,ry:9},'shoulders')+part('ellipse',{cx:86,cy:42,rx:11,ry:9},'shoulders')
-    +part('ellipse',{cx:42,cy:66,rx:15,ry:24},'lats')+part('ellipse',{cx:78,cy:66,rx:15,ry:24},'lats')
-    +part('rect',{x:17,y:44,width:15,height:38,rx:7},'triceps')+part('rect',{x:88,y:44,width:15,height:38,rx:7},'triceps')
-    +part('rect',{x:52,y:90,width:16,height:22,rx:6},'lowerBack')
-    +part('ellipse',{cx:45,cy:120,rx:12,ry:10},'glutes')+part('ellipse',{cx:75,cy:120,rx:12,ry:10},'glutes')
-    +part('rect',{x:35,y:126,width:19,height:48,rx:9},'hamstrings')+part('rect',{x:66,y:126,width:19,height:48,rx:9},'hamstrings')
-    +part('rect',{x:37,y:176,width:15,height:32,rx:7},'calves')+part('rect',{x:68,y:176,width:15,height:32,rx:7},'calves');
-  return '<svg viewBox="0 0 120 212" xmlns="http://www.w3.org/2000/svg">'+sil+(view==='back'?back:front)+'</svg>';
+/* ================= anatomical body map ================= */
+/* One left half on a 200x412 canvas, mirrored for the right side, so
+   both sides always light up together and the figure stays symmetric. */
+const BODY_SIL = [
+  ['path',{d:'M100 8 C86 8 78 19 78 32 C78 45 86 55 100 55 Z'}],
+  ['path',{d:'M100 53 C93 53 90 57 89 63 C88 67 86 70 83 72 L100 76 Z'}],
+  ['path',{d:'M100 60 C86 60 71 66 61 75 C54 82 51 94 53 108 C55 124 62 140 70 152 C75 160 77 166 77 172 C74 180 70 186 68 196 L100 196 Z'}],
+  ['path',{d:'M63 73 C52 80 46 94 45 112 C44 130 44 148 46 162 L60 158 C58 142 57 122 59 104 C60 90 63 80 67 75 Z'}],
+  ['path',{d:'M46 166 C43 182 41 200 41 216 C41 224 42 230 43 234 L55 231 C54 218 54 200 56 182 C57 174 58 168 59 163 Z'}],
+  ['path',{d:'M43 236 C39 244 38 254 41 260 C46 264 52 262 54 256 C56 248 56 240 55 234 Z'}],
+  ['path',{d:'M68 196 C63 214 61 240 63 264 C64 278 67 288 71 294 L96 294 C97 276 98 250 98 226 C98 210 99 202 99 196 Z'}],
+  ['path',{d:'M72 298 C68 316 67 338 70 360 C72 374 74 382 76 388 L94 388 C95 374 95 352 95 330 C95 314 94 304 95 298 Z'}],
+  ['path',{d:'M76 390 C73 396 72 404 76 406 L95 406 C96 400 95 394 93 390 Z'}]
+];
+const MUSCLES = {
+  front:[
+    ['traps',    'M98 62 C88 63 76 68 66 75 C76 74 88 73 98 73 Z'],
+    ['shoulders','M63 73 C52 80 46 95 46 114 C57 112 66 101 70 88 C72 81 69 74 63 73 Z'],
+    ['chest',    'M98 74 C86 74 74 78 67 86 C63 94 64 104 70 111 C78 118 90 118 98 112 Z'],
+    ['biceps',   'M46 118 C44 134 45 150 48 161 L59 157 C57 144 56 128 58 116 C55 113 49 113 46 118 Z'],
+    ['forearms', 'M47 170 C44 186 42 202 42 218 C46 222 52 220 54 214 C55 198 57 182 58 170 Z'],
+    ['obliques', 'M76 122 C72 136 71 152 74 166 C79 172 84 172 86 167 C84 152 84 136 85 122 Z'],
+    ['abs','M87 118 L98 118 L98 130 L87 130 Z'],
+    ['abs','M87 133 L98 133 L98 145 L87 145 Z'],
+    ['abs','M87 148 L98 148 L98 160 L87 160 Z'],
+    ['abs','M87 163 C87 172 90 178 94 181 L98 181 L98 163 Z'],
+    ['quads',    'M70 200 C64 220 62 244 64 266 C66 278 69 284 73 288 C80 283 85 266 88 244 C90 226 90 210 90 200 Z']
+  ],
+  back:[
+    ['traps',     'M98 62 C86 64 73 70 64 78 C76 83 89 92 97 104 C99 90 99 72 98 62 Z'],
+    ['shoulders', 'M63 73 C52 80 46 95 46 114 C57 112 66 101 70 88 C72 81 69 74 63 73 Z'],
+    ['lats',      'M97 106 C85 106 72 114 66 126 C64 137 68 149 76 158 C84 162 92 160 97 154 Z'],
+    ['triceps',   'M46 118 C44 134 45 150 48 161 L59 157 C57 144 56 128 58 116 C55 113 49 113 46 118 Z'],
+    ['forearms',  'M47 170 C44 186 42 202 42 218 C46 222 52 220 54 214 C55 198 57 182 58 170 Z'],
+    ['lowerBack', 'M87 158 C83 168 82 180 84 192 L98 192 L98 158 Z'],
+    ['glutes',    'M78 194 C69 198 64 208 66 219 C71 228 82 232 92 227 C98 223 100 212 99 201 C94 195 86 193 78 194 Z'],
+    ['hamstrings','M70 230 C66 248 64 266 65 280 C66 288 69 292 73 293 C79 289 84 274 87 254 C89 240 89 234 89 228 Z'],
+    ['calves',    'M73 302 C68 318 67 338 70 354 C75 362 82 361 85 354 C89 338 90 320 89 304 Z']
+  ]
+};
+function MUSCLE_LIST(hl){
+  return (hl||[]).map(function(k){return MUSCLE_HE[k]||k;}).join(' · ') || 'כל הגוף';
 }
+function bodySVG(view, hl, heat, big){
+  const dim = heat ? 'fill="var(--muscle)" opacity=".14"' : 'class="muscle-base"';
+  const half = BODY_SIL.map(s=>'<'+s[0]+' '+dim+' '+attr(s[1])+'/>').join('')
+    + (MUSCLES[view==='back'?'back':'front']).map(m=>{
+        const on = heat ? heatStyle(heat[m[0]]||0)
+                        : 'class="'+(((hl||[]).indexOf(m[0])>=0)?'muscle-hl':'muscle-base')+'"';
+        return '<path '+on+' d="'+m[1]+'"/>';
+      }).join('');
+  return '<svg viewBox="0 0 200 412" xmlns="http://www.w3.org/2000/svg"'+(big?' class="body-big"':'')+'>'
+    + '<g>'+half+'</g><g transform="translate(200,0) scale(-1,1)">'+half+'</g></svg>';
+}
+
 function equipIcon(eq,hex){
   if(eq==='barbell') return '<svg viewBox="0 0 18 14" width="14" height="12"><rect x="0" y="6" width="18" height="2.4" rx="1" fill="'+hex+'"/><circle cx="3" cy="7.2" r="3.6" fill="none" stroke="'+hex+'" stroke-width="1.8"/><circle cx="15" cy="7.2" r="3.6" fill="none" stroke="'+hex+'" stroke-width="1.8"/></svg>';
   if(eq==='dumbbell') return '<svg viewBox="0 0 18 10" width="14" height="9"><rect x="6" y="3.5" width="6" height="2.2" fill="'+hex+'"/><circle cx="3.2" cy="4.6" r="3" fill="'+hex+'"/><circle cx="14.8" cy="4.6" r="3" fill="'+hex+'"/></svg>';
@@ -809,15 +902,11 @@ function saveCardio(){
   const minEl=document.getElementById('cMin'), kmEl=document.getElementById('cKm');
   const min=Number(minEl.value);
   if(!min||min<=0){ minEl.focus(); toast('כמה דקות עשית?'); return; }
+  if(!state.data.cardio[kind]) state.data.cardio[kind]={stage:0,log:[]};
   const c=state.data.cardio[kind];
-  const entry={date:todayISO(), min, km:kmEl.value?Number(kmEl.value):null, rpe:state.rpe||'ok'};
+  const entry={date:todayISO(), min, km:(kmEl&&kmEl.value)?Number(kmEl.value):null, rpe:'ok'};
   c.log.push(entry);
-  const stages=progOf('cardio').kinds.find(k=>k.id===kind).stages;
-  const l2=c.log.slice(-2);
-  if(l2.length===2 && l2.every(l=>l.rpe!=='hard') && c.stage<stages.length-1){
-    c.stage++; toast('עלית לשלב '+(c.stage+1)+' 🎉');
-  }
-  state.rpe=null;
+  toast('נרשם ✓');
   persist(); enqueue(()=>pushCardio(kind,entry)); render();
 }
 function updateDaily(date,field,val){
@@ -825,11 +914,39 @@ function updateDaily(date,field,val){
   state.data.daily[date][field]= val===''?null:Number(val);
   persist(); enqueue(()=>pushDaily(date));
 }
-function go(screen,opts){
+function navSnap(){
+  return {screen:state.screen, day:state.day, kind:state.kind, calY:state.calY, calM:state.calM,
+          calSel:state.calSel, modal:state.modal};
+}
+function go(screen,opts,replace){
   Object.assign(state,{screen}, opts||{});
+  try{
+    if(replace) history.replaceState(navSnap(),'');
+    else history.pushState(navSnap(),'');
+  }catch(e){}
   render();
   window.scrollTo(0,0);
 }
+function goBack(){
+  if(state.modal){
+    if(history.state && history.state.modal){ history.back(); }
+    else { state.modal=null; render(); }
+    return;
+  }
+  stopRest();
+  if(history.state && history.state.screen && history.state.screen!=='home'){ history.back(); return; }
+  if(state.screen!=='home'){ go('home',null,true); }
+}
+window.addEventListener('popstate', function(e){
+  const s=e.state;
+  if(s && s.screen){
+    if(!s.modal) stopRest();
+    state.modal = s.modal || null;
+    Object.assign(state,s);
+    render();
+    if(!s.modal) window.scrollTo(0,0);
+  } else if(PROFILE){ state.modal=null; state.screen='home'; render(); }
+});
 
 /* ================= screen: profile picker ================= */
 function screenPick(){
@@ -857,8 +974,7 @@ function screenHome(){
   const tiles = CFG.programs.map(p=>{
     const s=state.data.sessions[today+'_'+p.id];
     const doneToday = p.type==='cardio'
-      ? (state.data.cardio[p.kinds[0].id]||{log:[]}).log.some(l=>l.date===today) ||
-        (state.data.cardio[(p.kinds[1]||p.kinds[0]).id]||{log:[]}).log.some(l=>l.date===today)
+      ? p.kinds.some(k=>((state.data.cardio[k.id]||{log:[]}).log||[]).some(l=>l.date===today))
       : !!(s && setsDone(s)>0);
     const pct = (p.type==='strength' && s) ? sessionPct(s) : 0;
     let flag='';
@@ -890,7 +1006,7 @@ function screenHome(){
 
 /* ================= screen: workout ================= */
 function topbar(title,sub,pill){
-  return '<div class="topbar"><button class="back" data-act="home" aria-label="חזרה">›</button>'
+  return '<div class="topbar"><button class="back" data-act="back" aria-label="חזרה">›</button>'
     +'<h1>'+esc(title)+(sub?'<span class="sub">'+esc(sub)+'</span>':'')+'</h1>'
     +(pill?'<span class="pill">'+esc(pill)+'</span>':'')+'</div>';
 }
@@ -910,41 +1026,35 @@ function screenWorkout(){
     else if(c&&c.type==='hold'&&c.from) coachHTML='<div class="coach">🔹 בפעם שעברה <b>'+c.from+' ק״ג</b> — תשלים את כל הסטים לפני שמעלים.</div>';
     else if(c&&c.type==='first') coachHTML='<div class="coach">✨ פעם ראשונה — תתחיל קל, בטכניקה נקייה. מה שתרשום היום נשמר כמשקל ההתחלה לפעם הבאה.</div>';
 
-    const wwRow = exo.w
-      ? '<div class="ww"><span class="lbl">משקל עבודה</span>'
-        +'<button class="step" data-act="ww" data-ex="'+i+'" data-d="-1" aria-label="הורד משקל">−</button>'
-        +'<input type="number" inputmode="decimal" step="0.5" min="0" data-k="ww-'+i+'" value="'+(ww==null?'':ww)+'" placeholder="—" aria-label="משקל עבודה">'
-        +'<span class="unit">ק״ג</span>'
-        +'<button class="step" data-act="ww" data-ex="'+i+'" data-d="1" aria-label="העלה משקל">+</button>'
-        +'<span class="saved">'+(ww==null?'קבע פעם אחת<br>וזה יישמר':'נשמר לפעם<br>הבאה ✓')+'</span></div>'
-      : '';
+    const wwRow = '<div class="ex-target">'
+      +'<div class="target-box"><span class="big">'+exo.sets+'×'+esc(String(exo.reps))+'</span>'
+      +'<span class="cap">'+(isTime(exo.reps)?'סטים':'סטים × חזרות')+'</span></div>'
+      +(exo.w
+        ? '<div class="wbox">'
+          +'<button class="step" data-act="ww" data-ex="'+i+'" data-d="-1" aria-label="הורד משקל">−</button>'
+          +'<input type="number" inputmode="decimal" step="0.5" min="0" data-k="ww-'+i+'" value="'+(ww==null?'':ww)+'" placeholder="—" aria-label="משקל">'
+          +'<span class="unit">ק״ג</span>'
+          +'<button class="step" data-act="ww" data-ex="'+i+'" data-d="1" aria-label="העלה משקל">+</button></div>'
+        : '<span class="bw-tag">משקל גוף</span>')
+      +'</div>';
 
-    const rows=arr.map((cell,j)=>{
-      const shownW = cell.w!=null ? cell.w : (cell.d?'':(ww==null?'':ww));
-      const wField = exo.w
-        ? '<div class="field"><input type="number" inputmode="decimal" step="0.5" min="0" data-k="w-'+i+'-'+j+'" value="'+shownW+'" placeholder="—" aria-label="משקל סט '+(j+1)+'"></div>'
-        : '<div class="field"><input type="text" value="משקל גוף" disabled></div>';
-      const lastR=lastRepsFor(state.day,i,j);
-      const ph = typeof exo.reps==='number'?exo.reps:(lastR!=null?lastR:'—');
-      const rField = isTime(exo.reps)
-        ? '<div class="field"><input type="text" value="'+esc(String(exo.reps))+'" disabled></div>'
-        : '<div class="field"><input type="number" inputmode="numeric" step="1" min="0" data-k="r-'+i+'-'+j+'" value="'+(cell.r==null?'':cell.r)+'" placeholder="'+ph+'" aria-label="חזרות סט '+(j+1)+'"></div>';
-      return '<div class="set-row'+(cell.d?' done':'')+'"><span class="set-n">'+(j+1)+'</span>'+wField+rField
-        +'<button class="check'+(cell.d?' on':'')+'" data-act="ck" data-ex="'+i+'" data-set="'+j+'" aria-pressed="'+cell.d+'" aria-label="סיימתי סט '+(j+1)+'">✓</button></div>';
-    }).join('');
+    const dots = '<div class="dots">'+arr.map((cell,j)=>
+        '<button class="dot'+(cell.d?' on':'')+'" data-act="ck" data-ex="'+i+'" data-set="'+j+'" '
+        +'aria-pressed="'+cell.d+'" aria-label="סט '+(j+1)+'">'+(cell.d?'✓':(j+1))+'</button>').join('')
+      +'<span class="dots-hint">'+(allDone?'הושלם ✓':'לחיצה = סט שסיימת')+'</span></div>';
 
-    const hold=isTime(exo.reps)?'<button class="btn" style="margin-top:8px;width:100%" data-act="hold" data-sec="'+timeSecs(exo.reps)+'">▶︎ טיימר '+esc(String(exo.reps))+'</button>':'';
+    const hold=isTime(exo.reps)?'<button class="btn" style="margin-top:9px;width:100%" data-act="hold" data-sec="'+timeSecs(exo.reps)+'">▶︎ טיימר '+esc(String(exo.reps))+'</button>':'';
     const ok='c'+state.day+'-'+i;
     return '<div class="ex-card'+(allDone?' complete':'')+'" style="--dc:'+prog.hex+'">'
-      +'<div class="ex-top"><div class="pictogram">'+bodySVG(exo.view,exo.hl)
+      +'<div class="ex-top"><div class="pictogram" data-act="body" data-ex="'+i+'" role="button" tabindex="0" aria-label="הגדל הדמיית שרירים">'
+      +bodySVG(exo.view,exo.hl)
       +'<span class="view-tag">'+(exo.view==='back'?'מאחור':'מלפנים')+'</span>'
+      +'<span class="zoom-tag">⤢</span>'
       +(exo.equip&&exo.equip!=='bodyweight'?'<div class="equip-badge">'+equipIcon(exo.equip,prog.hex)+'</div>':'')+'</div>'
       +'<div class="ex-head"><div class="ex-name">'+esc(exo.n)+'</div>'
-      +'<div class="ex-meta">יעד: '+exo.sets+'×'+esc(String(exo.reps))+'</div>'
+      +'<div class="ex-meta">'+esc(MUSCLE_LIST(exo.hl))+'</div>'
       +(exo.w?'<div class="ex-spark">'+sparkline(e1rmSeries(state.day,i),prog.hex)+'</div>':'')
-      +'</div></div>'+wwRow+coachHTML
-      +'<div class="sets"><div class="set-head"><span></span><span>'+(exo.w?'ק״ג':'')+'</span><span>'+(isTime(exo.reps)?'זמן':'חזרות')+'</span><span></span></div>'+rows+'</div>'
-      +hold
+      +'</div></div>'+wwRow+coachHTML+dots+hold
       +'<details class="cues" data-okey="'+ok+'"'+(state.open[ok]?' open':'')+'><summary>דגשי טכניקה</summary><ul>'
       +(exo.cues||[]).map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></details></div>';
   }).join('');
@@ -972,30 +1082,42 @@ function screenWorkout(){
 /* ================= screen: cardio ================= */
 function screenCardio(){
   const prog=progOf(state.day);
-  const kind=prog.kinds.find(k=>k.id===state.kind)||prog.kinds[0];
-  const c=state.data.cardio[kind.id], stages=kind.stages;
-  const st=stages[Math.min(c.stage,stages.length-1)];
-  const last=(c.log||[]).slice(-1)[0];
+  const kind=prog.kinds.filter(k=>k.id===state.kind)[0]||prog.kinds[0];
+  const c=state.data.cardio[kind.id]||{log:[]};
+  const log=c.log||[];
+  const last=log.slice(-1)[0];
+  const week=log.filter(l=>l.date>=dISO(addDays(new Date(),-6)));
+  const weekMin=week.reduce((a,l)=>a+(+l.min||0),0);
   const sp=last&&last.km?(last.km/(last.min/60)).toFixed(1):null;
-  const rb=(id,l)=>'<button data-act="rpe" data-v="'+id+'" class="'+(state.rpe===id?'on':'')+'">'+l+'</button>';
-  return '<div class="wrap">'+topbar(prog.label,'ריצה או אופניים',todayISO())
-    +'<div class="cardio-toggle" style="--dc:'+prog.hex+'">'
-    +prog.kinds.map(k=>'<button class="'+(k.id===state.kind?'active':'')+'" data-act="kind" data-v="'+k.id+'">'+esc(k.label)+'</button>').join('')
-    +'</div><div class="stage-card" style="--dc:'+prog.hex+'">'
-    +'<div class="stage-badge">שלב '+(c.stage+1)+' מתוך '+stages.length+(c.stage>=stages.length-1?' · שיא':'')+'</div>'
-    +'<div class="stage-desc">'+esc(st.desc)+'</div>'
-    +'<div class="stage-pace">קצב מומלץ: <b>'+esc(st.pace)+'</b></div>'
-    +'<div class="stage-track">'+stages.map((_,i)=>'<i class="'+(i<=c.stage?'on':'')+'"></i>').join('')+'</div>'
+
+  const picker='<div class="kind-grid">'+prog.kinds.map(k=>
+    '<button class="kind-btn'+(k.id===kind.id?' active':'')+'" data-act="kind" data-v="'+k.id+'" style="--dc:'+prog.hex+'">'
+    +'<span class="ki">'+k.icon+'</span><span>'+esc(k.label)+'</span></button>').join('')+'</div>';
+
+  const rows=log.slice(-6).reverse().map(l=>
+    '<div class="hist-row"><span class="hist-date">'+l.date.slice(5).replace('-','/')+'</span>'
+    +'<div class="hist-mid"><div class="hist-name">'+l.min+' דקות'+(l.km?' · '+l.km+' ק"מ':'')+'</div></div>'
+    +'<span class="hist-pct" style="color:'+prog.hex+'">'+(l.km?(l.km/(l.min/60)).toFixed(1)+' קמ"ש':'')+'</span></div>').join('');
+
+  return '<div class="wrap">'+topbar('אירובי וספורט','בוחרים פעילות ורושמים זמן',todayISO())
+    +picker
+    +'<div class="stage-card" style="--dc:'+prog.hex+'">'
+    +'<div class="stage-desc">'+kind.icon+' '+esc(kind.label)+'</div>'
+    +'<div class="stage-pace">'+esc(kind.tip||'')+'</div>'
     +(last?'<div class="cardio-last">בפעם שעברה: '+last.min+' דק׳'+(last.km?' · '+last.km+' ק"מ':'')+(sp?' · <span class="cardio-speed">'+sp+' קמ"ש</span>':'')+'</div>':'')
     +'<div class="cardio-form">'
     +'<div class="cardio-field"><label>כמה זמן (דקות)</label><input type="number" id="cMin" inputmode="decimal" placeholder="0"></div>'
-    +'<div class="cardio-field"><label>מרחק (ק"מ, לא חובה)</label><input type="number" id="cKm" inputmode="decimal" step="0.1" placeholder="0"></div>'
-    +'<div class="rpe-label">איך זה הרגיש?</div><div class="rpe">'+rb('easy','😀 קל')+rb('ok','🙂 בסדר')+rb('hard','😮‍💨 קשה')+'</div>'
-    +'<button class="cardio-save" data-act="savecardio">שמור אימון אירובי ✓</button></div>'
-    +'<div class="log-note">השלב עולה רק אחרי שני אימונים ברצף שלא סומנו "קשה".</div></div>'
-    +(c.log&&c.log.filter(l=>l.km).length>1?'<div class="sec"><div class="sec-title">קצב לאורך זמן<span class="hint">קמ״ש</span></div><div class="card">'
-      +lineChart(c.log.filter(l=>l.km).map(l=>({x:l.date,y:Math.round(l.km/(l.min/60)*10)/10,label:l.date.slice(5).replace('-','/')})),{color:prog.hex,fmt:v=>v.toFixed(1)})
+    +(kind.km?'<div class="cardio-field"><label>מרחק (ק"מ, לא חובה)</label><input type="number" id="cKm" inputmode="decimal" step="0.1" placeholder="0"></div>':'')
+    +'<button class="cardio-save" data-act="savecardio">שמור ✓</button></div></div>'
+    +'<div class="stats-row" style="margin-top:14px">'
+    +'<div class="stat" style="--sc:'+prog.hex+'"><div class="n">'+week.length+'</div><div class="l">פעמים השבוע</div></div>'
+    +'<div class="stat" style="--sc:var(--green)"><div class="n">'+weekMin+'</div><div class="l">דקות השבוע</div></div>'
+    +'<div class="stat" style="--sc:var(--yellow)"><div class="n">'+log.length+'</div><div class="l">סה״כ ב'+esc(kind.label)+'</div></div>'
+    +'</div>'
+    +(log.filter(l=>l.km).length>1?'<div class="sec"><div class="sec-title">קצב לאורך זמן<span class="hint">קמ״ש</span></div><div class="card">'
+      +lineChart(log.filter(l=>l.km).map(l=>({x:l.date,y:Math.round(l.km/(l.min/60)*10)/10,label:l.date.slice(5).replace('-','/')})),{color:prog.hex,fmt:v=>v.toFixed(1)})
       +'</div></div>':'')
+    +(rows?'<div class="sec"><div class="sec-title">אימונים אחרונים</div><div class="card"><div class="hist-list">'+rows+'</div></div></div>':'')
     +'</div>';
 }
 
@@ -1048,13 +1170,6 @@ function monthCalendar(){
 function screenProgress(){
   const heat=heatMap();
   const missing=KEY_MUSCLES.filter(k=>!heat[k]).map(k=>MUSCLE_HE[k]);
-  const st=CFG.programs.filter(p=>p.type==='strength');
-  const prog=st.some(p=>p.id===state.chartDay)?progOf(state.chartDay):st[0];
-  const list=prog.ex, idx=Math.min(state.chartEx,list.length-1);
-  const series=e1rmSeries(prog.id,idx), best=bestE1RM(prog.id,idx);
-  const bestW=Math.max(0,...Object.values(state.data.sessions).filter(s=>s.day===prog.id)
-    .flatMap(s=>((s.sets||[])[idx]||[]).filter(x=>x&&x.d).map(x=>x.w||0)));
-  const cnt=historyFor(prog.id,null).filter(s=>((s.sets||[])[idx]||[]).some(x=>x&&x.d)).length;
   const bodyRows=Object.entries(state.data.daily).filter(([,v])=>v&&v.weight!=null)
     .sort((a,b)=>a[0]<b[0]?-1:1).slice(-20).map(([d,v])=>({x:d,y:v.weight,label:d.slice(5).replace('-','/')}));
 
@@ -1066,14 +1181,6 @@ function screenProgress(){
     +'<div class="heat-legend"><span>מעט</span><i style="background:var(--pc);opacity:.34"></i><i style="background:var(--pc);opacity:.64"></i><i style="background:var(--pc);opacity:1"></i><span>הרבה</span></div>'
     +(missing.length?'<div class="heat-miss">השבוע עוד לא נגעת ב־<b>'+missing.join(' · ')+'</b></div>':'<div class="heat-miss">כיסית את כל קבוצות השרירים העיקריות השבוע 👌</div>')
     +'</div></div>'
-    +'<div class="sec"><div class="sec-title">כוח לפי תרגיל<span class="hint">משקל מרבי משוער</span></div><div class="card">'
-    +(st.length>1?'<select class="ex-picker" data-act="chartday">'+st.map(p=>'<option value="'+p.id+'"'+(p.id===prog.id?' selected':'')+'>'+esc(p.label)+'</option>').join('')+'</select>':'')
-    +'<select class="ex-picker" data-act="chartex">'+list.map((e,i)=>'<option value="'+i+'"'+(i===idx?' selected':'')+'>'+esc(e.n)+'</option>').join('')+'</select>'
-    +lineChart(series,{color:prog.hex,empty:'עוד אין מספיק נתונים על התרגיל הזה. אחרי שני אימונים תופיע כאן עקומה.'})
-    +'<div class="kpis"><div class="kpi"><div class="n">'+(bestW||'—')+'</div><div class="l">משקל שיא (ק״ג)</div></div>'
-    +'<div class="kpi"><div class="n">'+(best.e?Math.round(best.e):'—')+'</div><div class="l">1RM משוער</div></div>'
-    +'<div class="kpi"><div class="n">'+cnt+'</div><div class="l">אימונים בתרגיל</div></div></div></div></div>'
-    +'<div class="sec"><div class="sec-title">נפח אימונים<span class="hint">ק״ג בשבוע</span></div><div class="card">'+barChart(weeklyVolume(8),{color:CFG.accent})+'</div></div>'
     +(bodyRows.length>1?'<div class="sec"><div class="sec-title">משקל גוף<span class="hint">מהיומן</span></div><div class="card">'
       +lineChart(bodyRows,{color:'var(--blue)',fmt:v=>v.toFixed(1)})
       +'<div class="log-note">המשקל קופץ מיום ליום בגלל מים ואוכל — מסתכלים על הקו לאורך שבועות, לא על מדידה בודדת.</div></div></div>':'')
@@ -1128,6 +1235,20 @@ function screenLog(){
 }
 
 /* ================= render ================= */
+function bodyModal(){
+  const exo=exOf(state.day)[state.modal.ex]; if(!exo) return '';
+  const hl=exo.hl||[];
+  const tags=['chest','lats','traps','shoulders','biceps','triceps','forearms','abs','obliques','lowerBack','glutes','quads','hamstrings','calves']
+    .map(k=>'<span class="mtag'+(hl.indexOf(k)>=0?' on':'')+'">'+esc(MUSCLE_HE[k]||k)+'</span>').join('');
+  return '<div class="modal" data-act="closebody"><div class="modal-box" onclick="event.stopPropagation()">'
+    +'<div class="modal-title">'+esc(exo.n)+'</div>'
+    +'<div class="modal-sub">בצבע — השרירים שעובדים בתרגיל הזה</div>'
+    +'<div class="modal-figs">'
+    +'<div class="modal-fig">'+bodySVG('front',hl,null,true)+'<div class="cap">מלפנים</div></div>'
+    +'<div class="modal-fig">'+bodySVG('back',hl,null,true)+'<div class="cap">מאחור</div></div>'
+    +'</div><div class="modal-tags">'+tags+'</div>'
+    +'<button class="modal-close" data-act="closebody">סגור</button></div></div>';
+}
 function render(){
   if(state.loading){ app.innerHTML='<div class="wrap"><div class="loading">טוען...</div></div>'; return; }
   const sy=window.scrollY;
@@ -1139,6 +1260,7 @@ function render(){
   else if(state.screen==='cardio') html=screenCardio();
   else if(state.screen==='progress') html=screenProgress();
   else html=screenLog();
+  if(state.modal && state.screen==='workout') html += bodyModal();
   app.innerHTML=html;
   if(fk){ const el=app.querySelector('[data-k="'+fk+'"]'); if(el){ el.focus(); try{ el.setSelectionRange(el.value.length,el.value.length); }catch(e){} } }
   if(state.screen!=='home') window.scrollTo(0,sy);
@@ -1149,7 +1271,13 @@ app.addEventListener('click', e=>{
   const t=e.target.closest('[data-act]'); if(!t) return;
   const a=t.dataset.act, v=t.dataset.v;
   if(a==='pick'){ enter(v); }
-  else if(a==='home'){ stopRest(); go('home'); }
+  else if(a==='back'||a==='home'){ goBack(); }
+  else if(a==='body'){
+    state.modal={ex:+t.dataset.ex};
+    try{ history.pushState(navSnap(),''); }catch(err){}
+    render();
+  }
+  else if(a==='closebody'){ goBack(); }
   else if(a==='open'){
     if(v==='__progress'){ const n=new Date(); go('progress',{calY:n.getFullYear(),calM:n.getMonth(),calSel:null,chartDay:null,chartEx:0}); }
     else if(v==='__log'){ const n=new Date(); go('log',{calY:n.getFullYear(),calM:n.getMonth()}); }
@@ -1186,7 +1314,7 @@ app.addEventListener('click', e=>{
   }
   else if(a==='switch'){
     LS('icon4u_profile', null);
-    PROFILE=null; state.calSel=null; state.screen='pick'; render();
+    PROFILE=null; state.calSel=null; state.modal=null; go('pick',null,true);
   }
 });
 app.addEventListener('change', e=>{
@@ -1251,8 +1379,8 @@ async function enter(id){
   state.data=normalize(loadLocal(id));
   const cardioProg=CFG.programs.find(p=>p.type==='cardio');
   state.kind=cardioProg?cardioProg.kinds[0].id:null;
-  state.day=suggestDay(); state.chartDay=null; state.loading=false;
-  go('home');
+  state.day=suggestDay(); state.chartDay=null; state.loading=false; state.modal=null;
+  go('home',null,true);
   if(SB){
     try{ const r=await pullRemote(); mergeRemote(r); setSync('ok'); render(); }
     catch(e){ setSync('off'); }
@@ -1262,7 +1390,7 @@ function boot(){
   const saved=LS('icon4u_profile');
   state.loading=false;
   if(saved && CATALOG[saved]) enter(saved);
-  else { state.screen='pick'; render(); }
+  else { state.screen='pick'; try{history.replaceState(navSnap(),'');}catch(e){} render(); }
 }
 boot();
 })();
