@@ -1883,10 +1883,11 @@ function bodyModal(){
   const k=state.modal.ex;
   const exo=exByKey(state.day,k) || anyExByKey(k); if(!exo) return '';
   const hl=exo.hl||[], hl2=exo.hl2||[];
-  const tags=ALL_MUSCLES.map(m=>{
-    const cls = hl.indexOf(m)>=0 ? ' on' : (hl2.indexOf(m)>=0 ? ' sec' : '');
-    return '<span class="mtag'+cls+'">'+esc(MUSCLE_HE[m]||m)+'</span>';
-  }).join('');
+  /* Only the muscles this exercise actually involves — primary first, then
+     secondary — not the full 14-muscle list with a neutral tag for the rest. */
+  const tags = hl.map(m=>'<span class="mtag on">'+esc(MUSCLE_HE[m]||m)+'</span>')
+    .concat(hl2.map(m=>'<span class="mtag sec">'+esc(MUSCLE_HE[m]||m)+'</span>'))
+    .join('');
   return '<div class="modal"><div class="modal-box">'
     +'<div class="modal-title">'+esc(exo.n)+'</div>'
     +'<div class="modal-sub">באדום — השרירים המובילים בתרגיל. בצהוב — שרירי עזר שמשתתפים בתנועה.</div>'
