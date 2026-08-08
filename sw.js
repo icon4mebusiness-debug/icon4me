@@ -1,7 +1,7 @@
 /* icon4me — offline support.
    Bump CACHE when you change files, or just push: index.html is network-first
    so a new deploy is picked up on the next launch that has signal. */
-const CACHE = 'icon4me-v2';
+const CACHE = 'icon4me-v3';
 const ASSETS = [
   './', './index.html', './config.js', './manifest.webmanifest',
   './icon-192.png', './icon-512.png',
