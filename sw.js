@@ -1,7 +1,10 @@
 /* icon4me — offline support.
    Bump CACHE when you change files, or just push: index.html is network-first
    so a new deploy is picked up on the next launch that has signal. */
-const CACHE = 'icon4me-v4';
+const CACHE = 'icon4me-v4_2';
+/* The exercise animations get their own cache: ~5MB that never changes, and
+   that must survive a code deploy — the gym is where the signal dies. */
+const DEMOS = 'icon4me-demos';
 const ASSETS = [
   './', './index.html', './config.js', './manifest.webmanifest',
   './icon-192.png', './icon-512.png',
@@ -21,7 +24,7 @@ self.addEventListener('install', e => {
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then(keys => Promise.all(keys.filter(k => k !== CACHE && k !== DEMOS).map(k => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
@@ -32,6 +35,20 @@ self.addEventListener('fetch', e => {
 
   let url;
   try { url = new URL(req.url); } catch (err) { return; }
+
+  // Exercise animations: cache first, in their own bucket, forever.
+  if (url.pathname.indexOf('/demos/') >= 0 && url.pathname.endsWith('.gif')) {
+    e.respondWith(
+      caches.match(req).then(hit => hit || fetch(req).then(resp => {
+        if (resp && resp.status === 200) {
+          const c = resp.clone();
+          caches.open(DEMOS).then(x => x.put(req, c));
+        }
+        return resp;
+      }).catch(() => new Response('', {status: 504, statusText: 'offline'})))
+    );
+    return;
+  }
 
   // Never touch Supabase traffic — it must always hit the network.
   if (url.hostname.indexOf('supabase.co') >= 0) return;

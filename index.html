@@ -335,6 +335,21 @@
   .exfig .ex-far{opacity:.35;}
   .exfig .ex-load{fill:var(--red);}
   .exfig .ex-gear{fill:var(--line);}
+  /* ---------- animated demonstrations ----------
+     The source art is drawn on white and licensed at 180x180, so it is never
+     scaled up: it sits at its native size on a light plate that reads as a
+     deliberate window into the exercise rather than a stray white box. */
+  .demo{background:linear-gradient(180deg,#FFFFFF,#EEECF6);border:1px solid var(--line);
+    border-radius:14px;margin-bottom:10px;overflow:hidden;}
+  .demo-stage{display:flex;align-items:center;justify-content:center;padding:10px 8px 4px;}
+  .demo-stage img{width:180px;height:180px;display:block;image-rendering:auto;
+    animation:demoIn .4s cubic-bezier(.3,1.2,.4,1) both;}
+  @keyframes demoIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+  .demo-foot{display:flex;align-items:center;gap:8px;padding:4px 11px 9px;
+    font-size:10.5px;color:#6B6890;line-height:1.4;}
+  .demo-foot .nm{flex:1;font-weight:700;color:#3B3960;}
+  .demo-foot a{color:#6B6890;text-decoration:underline;}
+  @media (prefers-reduced-motion: reduce){.demo-stage img{animation:none;}}
   .modal-figs{display:flex;gap:10px;}
   .modal-fig{flex:1;background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:8px;text-align:center;}
   .modal-fig svg{width:100%;height:auto;max-height:44vh;display:block;}
@@ -1812,6 +1827,44 @@ function planModal(){
     +'<button class="modal-close" data-act="closemodal">סיימתי</button></div></div>';
 }
 
+/* ---- animated demonstration -------------------------------------------
+   One looping animation per exercise, taken from the exercises-dataset build
+   of the Gym visual library. The media is licensed for redistribution at
+   180x180 and only on the condition that the copyright line travels with it,
+   so the credit below is part of the component, not decoration — do not strip
+   it and do not upscale the frames.
+   Five movements have no match in that library (hollow hold, bird dog,
+   superman, wall sit); those still fall back to the drawn figure. */
+const DEMO_KEYS = ["core-01","core-02","core-03","core-04","core-05","core-p1","core-p2","core-p3","core-p6","home-01","home-02","home-03","home-04","home-06","home-07","home-p1","home-p2","home-p4","home-p5","home-p6","home-p7","home-p8","lower-01","lower-02","lower-03","lower-04","lower-05","lower-06","lower-p1","lower-p2","lower-p3","lower-p4","lower-p5","lower-p6","lower-p7","lower-p8","upper-01","upper-02","upper-03","upper-04","upper-05","upper-06","upper-07","upper-08","upper-p1","upper-p10","upper-p11","upper-p2","upper-p3","upper-p4","upper-p5","upper-p6","upper-p7","upper-p8","upper-p9"];
+const DEMO_SET = DEMO_KEYS.reduce(function(o,k){ o[k]=1; return o; }, {});
+const DEMO_CREDIT = '\u00A9 Gym visual';
+
+function exDemo(k){
+  if(DEMO_SET[k]){
+    return '<div class="demo">'
+      + '<div class="demo-stage"><img src="demos/'+k+'.gif" width="180" height="180" '
+      + 'loading="lazy" decoding="async" alt="הדגמת התרגיל"></div>'
+      + '<div class="demo-foot"><span class="nm">הדגמה</span>'
+      + '<span>'+DEMO_CREDIT+' — <a href="https://gymvisual.com/" target="_blank" rel="noopener">gymvisual.com</a></span>'
+      + '</div></div>';
+  }
+  const fig = exFigSVG(k);
+  return fig ? '<div class="exfig-wrap">'+fig+'</div>' : '';
+}
+
+/* Pull every animation through the service-worker cache while there is signal.
+   5MB once, and then the sheets open instantly in the corner of the gym where
+   the phone drops to one bar. */
+function prefetchDemos(){
+  if(navigator.onLine === false) return;
+  let i = 0;
+  (function next(){
+    if(i >= DEMO_KEYS.length) return;
+    const u = 'demos/'+DEMO_KEYS[i++]+'.gif';
+    try{ fetch(u).then(next).catch(next); }catch(e){ next(); }
+  })();
+}
+
 function bodyModal(){
   const k=state.modal.ex;
   const exo=exByKey(state.day,k) || anyExByKey(k); if(!exo) return '';
@@ -1823,7 +1876,7 @@ function bodyModal(){
   return '<div class="modal"><div class="modal-box">'
     +'<div class="modal-title">'+esc(exo.n)+'</div>'
     +'<div class="modal-sub">באדום — השרירים המובילים בתרגיל. בצהוב — שרירי עזר שמשתתפים בתנועה.</div>'
-    +(exFigSVG(exo.k) ? '<div class="exfig-wrap">'+exFigSVG(exo.k)+'</div>' : '')
+    +exDemo(exo.k)
     +'<div class="modal-figs">'
     +'<div class="modal-fig">'+bodySVG('front',hl,hl2,null,true)+'<div class="cap">מלפנים</div></div>'
     +'<div class="modal-fig">'+bodySVG('back',hl,hl2,null,true)+'<div class="cap">מאחור</div></div>'
@@ -2185,6 +2238,7 @@ async function enter(id){
     try{ const r=await pullRemote(); mergeRemote(r); setSync('ok'); render(); }
     catch(e){ setSync('off'); }
   } else setSync('local');
+  setTimeout(prefetchDemos, 1500);
 }
 if('serviceWorker' in navigator && location.protocol.indexOf('http')===0){
   window.addEventListener('load', function(){
