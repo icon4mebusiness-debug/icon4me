@@ -118,17 +118,18 @@
     background-size:200% 100%;animation:rainbowSlide 7s linear infinite;}
 
   .quote{
-    margin-top:14px;background:var(--surface);border:1px solid var(--line);border-radius:16px;
-    padding:14px 15px;display:flex;gap:11px;align-items:flex-start;cursor:pointer;position:relative;
-    overflow:hidden;box-shadow:var(--shadow-s);transition:transform .12s;
+    margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:18px;
+    padding:20px 20px 22px;display:flex;gap:14px;align-items:flex-start;position:relative;
+    overflow:hidden;box-shadow:var(--shadow-s);
   }
-  .quote:active{transform:scale(.99);}
-  .quote::before{content:'';position:absolute;inset-inline-start:0;top:0;bottom:0;width:3px;
+  .quote::before{content:'';position:absolute;inset-inline-start:0;top:0;bottom:0;width:3.5px;
     background:linear-gradient(180deg,var(--pc),var(--green));}
-  .quote .qi{font-size:20px;line-height:1.2;animation:floaty 4s ease-in-out infinite;}
-  .quote .qt{flex:1;font-size:14.5px;line-height:1.55;font-weight:600;}
-  .quote .qn{font-size:10.5px;color:var(--text-dim);margin-top:5px;font-family:var(--font-mono);}
-  .quote.swap .qt,.quote.swap .qn{animation:riseIn .3s ease both;}
+  .quote .qi{font-size:26px;line-height:1.1;animation:floaty 4s ease-in-out infinite;flex-shrink:0;}
+  .quote .qt{
+    flex:1;font-family:var(--font-display);font-weight:800;font-size:21px;line-height:1.4;
+    letter-spacing:-.2px;text-wrap:balance;
+  }
+  @media (max-width:360px){ .quote{padding:17px 16px 18px;} .quote .qt{font-size:19px;} }
 
   .hero-stats{display:flex;gap:9px;margin-top:14px;}
   .hstat{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 8px;text-align:center;box-shadow:var(--shadow-s);}
@@ -510,6 +511,8 @@
   @keyframes lfCurlL{0%,100%{transform:rotate(0);}40%{transform:rotate(-155deg);}55%{transform:rotate(-148deg);}}
   @keyframes lfCurlR{0%,100%{transform:rotate(0);}40%{transform:rotate(155deg);}55%{transform:rotate(148deg);}}
   @media (prefers-reduced-motion: reduce){.lifter *{animation:none !important;}}
+  .boot.out{animation:bootOut .24s ease forwards;}
+  @keyframes bootOut{to{opacity:0;transform:scale(1.04);}}
   .boot-txt{font-family:var(--font-display);font-weight:800;font-size:15px;color:var(--text-dim);
     letter-spacing:.5px;display:flex;align-items:baseline;gap:2px;}
   .boot-txt i{width:3.5px;height:3.5px;border-radius:50%;background:var(--pc);display:block;
@@ -610,7 +613,7 @@ function dayIndex(){
   return Math.floor((n-s)/86400000);
 }
 function quoteIdx(){
-  return (dayIndex() + (+LS('icon4me_qoff')||0)) % QUOTES.length;
+  return dayIndex() % QUOTES.length;   /* one per day, changes at midnight */
 }
 
 /* ================= cardio ================= */
@@ -1132,6 +1135,24 @@ function beep(){
     });
   }catch(e){}
 }
+/* ---------- haptics ----------
+   Short, quiet patterns. Anything longer than ~30ms starts to feel like a buzz
+   rather than a tap. Off switch lives in התקדמות → גיבוי, שחזור ומשתמש. */
+const HAPTIC = {
+  tap:  10,              /* any ordinary button                     */
+  nav:   7,              /* moving between screens                  */
+  tick: 18,              /* a set marked as done                    */
+  undo:  8,              /* a set unmarked                          */
+  done: [24,38,24],      /* every set in an exercise is complete    */
+  warn: [30,55,30]       /* destructive: removing, resetting        */
+};
+function hapticsOn(){ return LS('icon4me_haptics') !== '0'; }
+function haptic(kind){
+  if(!hapticsOn()) return;
+  const pat = HAPTIC[kind];
+  if(!pat) return;
+  try{ if(navigator.vibrate) navigator.vibrate(pat); }catch(e){}
+}
 function paintRest(){
   const bar=document.getElementById('restBar');
   document.getElementById('restTime').textContent = Math.floor(restLeft/60)+':'+pad2(restLeft%60);
@@ -1165,7 +1186,7 @@ function startRest(sec, cap, exName){
   }
   restInt=setInterval(()=>{
     restLeft--;
-    if(restLeft<=0){ paintRest(); stopRest(); if(navigator.vibrate) navigator.vibrate([120,60,120]); beep(); return; }
+    if(restLeft<=0){ paintRest(); stopRest(); if(hapticsOn() && navigator.vibrate) navigator.vibrate([120,60,120]); beep(); return; }
     paintRest();
   },1000);
 }
@@ -1209,7 +1230,7 @@ function celebrate(){
   }
   document.body.appendChild(box);
   setTimeout(()=>box.remove(),3600);
-  if(navigator.vibrate) navigator.vibrate([40,60,40,60,120]);
+  if(hapticsOn() && navigator.vibrate) navigator.vibrate([40,60,40,60,120]);
 }
 function countUp(){
   if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -1295,6 +1316,7 @@ function toggleSet(k, setIdx){
     if(exo.w && best.e>0 && e1rm(cell.w,cell.r)>best.e*1.005) toast('🏆 שיא אישי ב'+exo.n.split('(')[0].trim());
     const rs=restSecs(exo); if(rs) startRest(rs, 'מנוחה בין סטים', exo.n);
   }
+  haptic(!cell.d ? 'undo' : ((s.sets[k]||[]).every(x=>x.d) ? 'done' : 'tick'));
   persist(); enqueue(()=>pushSession(s));
   const after=sessionPct(s), ck=s.date+'_'+s.day;
   if(before<100 && after>=100 && !state.celebrated[ck]){ state.celebrated[ck]=1; celebrate(); toast('🎉 סיימת את כל הסטים!'); }
@@ -1502,9 +1524,9 @@ function screenHome(){
   return '<div class="wrap screen-in"><div class="hero">'
     +'<div class="hero-row"><div class="hello">'+greet+',<br><span>'+esc(CFG.name)+'</span> 👋</div>'+themeBtn()+'</div>'
     +'<div class="hero-sub">'+gapTxt+'</div><div class="rainbow-bar"></div>'
-    +'<div class="quote anim" style="--i:1" data-act="quote">'
+    +'<div class="quote anim" style="--i:1">'
       +'<span class="qi">'+QUOTE_ICONS[qi%QUOTE_ICONS.length]+'</span>'
-      +'<span class="qt">'+esc(QUOTES[qi])+'<span class="qn">משפט היום · '+(qi+1)+'/'+QUOTES.length+' · לחיצה למשפט הבא</span></span>'
+      +'<span class="qt">'+esc(QUOTES[qi])+'</span>'
     +'</div>'
     +'<div class="hero-stats anim" style="--i:2">'
     +'<div class="hstat" style="--sc:var(--pc)"><div class="n" data-count="'+weekCount()+'" data-suf="/'+CFG.weekGoal+'">0/'+CFG.weekGoal+'</div><div class="l">אימונים השבוע</div></div>'
@@ -1876,6 +1898,7 @@ function logSections(){
     +'<textarea class="backup-area" id="backup" spellcheck="false">'+esc(JSON.stringify(state.data))+'</textarea>'
     +'<div class="btn-row"><button class="btn primary" data-act="copy">העתק גיבוי</button>'
     +'<button class="btn" data-act="restore">שחזר מהטקסט</button>'
+    +'<button class="btn" data-act="haptics">'+(hapticsOn()?'רטט: פועל':'רטט: כבוי')+'</button>'
     +'<button class="btn" data-act="switch">החלף משתמש</button>'
     +'<button class="btn danger" data-act="reset">מחק הכל</button></div></div></details>';
 }
@@ -1906,18 +1929,21 @@ function render(){
 }
 
 /* ================= events ================= */
+/* 'ck' is missing on purpose — toggleSet picks its own pattern, and 'haptics'
+   fires after the setting flips so switching it on is something you can feel. */
+const HAPTIC_FOR = {
+  pick:'nav', back:'nav', home:'nav', open:'nav', closemodal:'nav', switch:'nav',
+  kill:'warn', reset:'warn', resetprefs:'warn',
+  coach:'tick', addex:'tick', hold:'tick', restore:'tick', savecardio:'done'
+};
 app.addEventListener('click', e=>{
   if(e.target.classList && e.target.classList.contains('modal')){ goBack(); return; }
   const t=e.target.closest('[data-act]'); if(!t) return;
   const a=t.dataset.act, v=t.dataset.v, k=t.dataset.k;
+  if(a!=='ck' && a!=='haptics') haptic(HAPTIC_FOR[a] || 'tap');
   if(a==='pick'){ enter(v); }
   else if(a==='theme'){ toggleTheme(); render(); }
   else if(a==='back'||a==='home'){ goBack(); }
-  else if(a==='quote'){
-    LS('icon4me_qoff', String(((+LS('icon4me_qoff')||0)+1) % QUOTES.length));
-    render();
-    const q=app.querySelector('.quote'); if(q){ q.classList.add('swap'); }
-  }
   else if(a==='body'){ openModal({type:'body', ex:k}); }
   else if(a==='pool'){ openModal({type:'pool'}); }
   else if(a==='plan'){ openModal({type:'plan', ex:k}); }
@@ -1931,6 +1957,13 @@ app.addEventListener('click', e=>{
   else if(a==='coach') applyWeight(k, +t.dataset.w);
   else if(a==='kill'){ if(state.modal) closeModal(); removeExercise(k); }
   else if(a==='addex') addExercise(k);
+  else if(a==='haptics'){
+    const on = !hapticsOn();
+    LS('icon4me_haptics', on ? '1' : '0');
+    render();
+    if(on) haptic('tick');
+    toast(on ? 'רטט הופעל' : 'רטט כובה');
+  }
   else if(a==='plan+') changePlan(k, t.dataset.f, 1);
   else if(a==='plan-') changePlan(k, t.dataset.f, -1);
   else if(a==='planreset') resetPlan(k);
@@ -1991,6 +2024,7 @@ app.addEventListener('toggle', e=>{
 }, true);
 document.getElementById('restBar').addEventListener('click', e=>{
   const b=e.target.closest('[data-rest]'); if(!b) return;
+  haptic('tap');
   if(b.dataset.rest==='skip'){ stopRest(); return; }
   restLeft=Math.max(1,restLeft+(+b.dataset.rest)); restTotal=Math.max(restTotal,restLeft); paintRest();
 });
@@ -2032,12 +2066,25 @@ if('serviceWorker' in navigator && location.protocol.indexOf('http')===0){
     navigator.serviceWorker.register('./sw.js').catch(function(){});
   });
 }
+/* The splash would otherwise flash by in a few milliseconds — everything it waits
+   for is synchronous. Hold it to SPLASH_MS from page load, then fade into the app. */
+const SPLASH_MS = 700;
 function boot(){
   migrateKeys();
   const saved=LS('icon4me_profile');
-  state.loading=false;
-  if(saved && CATALOG[saved]) enter(saved);
-  else { state.screen='pick'; try{history.replaceState(navSnap(),'');}catch(e){} render(); }
+  const start=function(){
+    state.loading=false;
+    if(saved && CATALOG[saved]) enter(saved);
+    else { state.screen='pick'; try{history.replaceState(navSnap(),'');}catch(e){} render(); }
+  };
+  if(reduced()){ start(); return; }
+  let shown=0;
+  try{ shown=performance.now(); }catch(e){}
+  setTimeout(function(){
+    const b=app.querySelector('.boot');
+    if(b){ b.classList.add('out'); setTimeout(start,220); }
+    else start();
+  }, Math.max(0, SPLASH_MS-shown));
 }
 boot();
 })();
