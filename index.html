@@ -156,6 +156,54 @@
   .tile.done .flag{background:var(--green);}
   .switch-user{margin:20px auto 6px;display:block;background:none;border:none;color:var(--text-dim);font-size:12.5px;text-decoration:underline;cursor:pointer;padding:8px;}
 
+  /* ---------- home: מסך אחד בדיוק, בלי גלילה ---------- */
+  body.home-lock{padding-bottom:0;height:100vh;height:100dvh;overflow:hidden;}
+  .wrap.home{
+    height:100vh;height:100dvh;overflow:hidden;
+    display:flex;flex-direction:column;
+    padding-top:calc(10px + var(--safe-top));
+    padding-bottom:calc(6px + var(--safe-bottom));
+  }
+  .wrap.home .hero{flex:0 0 auto;}
+  .wrap.home .hello{font-size:clamp(21px,3.4vh,30px);}
+  .wrap.home .hero-sub{font-size:clamp(11.5px,1.7vh,13.5px);margin-top:clamp(2px,.6vh,5px);}
+  .wrap.home .rainbow-bar{margin-top:clamp(7px,1.5vh,13px);}
+  .wrap.home .quote{
+    margin-top:clamp(9px,1.8vh,16px);
+    padding:clamp(11px,1.9vh,20px) clamp(14px,2vw,20px);
+    gap:clamp(9px,1.4vw,14px);flex:0 0 auto;
+  }
+  .wrap.home .quote .qi{font-size:clamp(19px,2.9vh,26px);}
+  .wrap.home .quote .qt{
+    font-size:clamp(15px,2.35vh,21px);line-height:1.35;
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+  }
+  .wrap.home .hero-stats{margin-top:clamp(8px,1.5vh,14px);flex:0 0 auto;}
+  .wrap.home .hstat{padding:clamp(6px,1.2vh,10px) 8px;}
+  .wrap.home .hstat .n{font-size:clamp(15px,2.1vh,18px);}
+  .wrap.home .hstat .l{font-size:clamp(9px,1.3vh,10.5px);margin-top:2px;}
+
+  .wrap.home .tiles{
+    flex:1 1 auto;min-height:0;
+    margin-top:clamp(9px,1.8vh,18px);
+    gap:clamp(7px,1.3vh,11px);
+    grid-auto-rows:1fr;                 /* כל השורות בגובה זהה וממלאות את מה שנשאר */
+  }
+  .wrap.home .tile{
+    min-height:0;overflow:hidden;
+    padding:clamp(8px,1.4vh,15px) clamp(11px,3vw,14px);
+    border-radius:clamp(14px,2.2vh,20px);gap:2px;justify-content:center;
+  }
+  .wrap.home .tile .ic{font-size:clamp(17px,2.7vh,24px);}
+  .wrap.home .tile .t{font-size:clamp(12.5px,1.95vh,16px);margin-top:clamp(2px,.7vh,6px);}
+  .wrap.home .tile .s{
+    font-size:clamp(9.5px,1.4vh,11.5px);line-height:1.3;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
+  .wrap.home .switch-user{flex:0 0 auto;margin:clamp(6px,1.2vh,14px) auto 0;padding:6px 8px;}
+  /* מסכים נמוכים מאוד — מוותרים על משפט היום כדי שהכל עדיין ייכנס */
+  @media (max-height:560px){ .wrap.home .quote{display:none;} }
+
   /* ---------- top bar ---------- */
   .topbar{display:flex;align-items:center;gap:11px;padding:2px 0;}
   .back{
@@ -868,8 +916,8 @@ function setSync(s){
 }
 function syncText(s){
   if(s==='ok') return 'מסונכרן עם הענן';
-  if(s==='off') return 'נשמר במכשיר — הענן לא זמין כרגע';
-  return 'נשמר במכשיר בלבד';
+  if(s==='off') return 'הענן לא זמין כרגע';
+  return '';
 }
 function persist(){
   saveLocal();
@@ -1596,7 +1644,7 @@ function screenHome(){
   }).join('');
   const n=CFG.programs.length;
 
-  return '<div class="wrap screen-in"><div class="hero">'
+  return '<div class="wrap home screen-in"><div class="hero">'
     +'<div class="hero-row"><div class="hello">'+greet+',<br><span>'+esc(CFG.name)+'</span> 👋</div>'+themeBtn()+'</div>'
     +'<div class="hero-sub">'+gapTxt+'</div><div class="rainbow-bar"></div>'
     +'<div class="quote anim" style="--i:1">'
@@ -1612,7 +1660,6 @@ function screenHome(){
     +'<button class="tile anim" style="--tc:var(--pc);--i:'+(n+3)+'" data-act="open" data-v="__progress"><span class="ic">📈</span>'
     +'<span class="t">התקדמות</span><span class="s">לוח, גרפים, צעדים ומשקל</span></button>'
     +'</div>'
-    +'<div class="sync '+state.sync+'" id="syncDot"><i></i><span>'+syncText(state.sync)+'</span></div>'
     +'<button class="switch-user" data-act="switch">מחליפים משתמש</button>'
     +'</div>';
 }
@@ -1999,6 +2046,8 @@ function render(){
     else if(state.modal.type==='body') html += bodyModal();
   }
   app.innerHTML=html;
+  document.body.classList.toggle('home-lock', state.screen==='home' && !state.modal);
+  if(state.screen==='home') window.scrollTo(0,0);
   if(fk){ const el=app.querySelector('[data-k="'+fk+'"]'); if(el){ el.focus(); try{ el.setSelectionRange(el.value.length,el.value.length); }catch(e){} } }
   if(state.screen==='home') countUp();
   if(state.screen!=='home') window.scrollTo(0,sy);
