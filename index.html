@@ -276,14 +276,32 @@
     box-shadow:var(--shadow);animation:sheetUp .28s cubic-bezier(.22,.9,.3,1);}
   .modal-title{font-family:var(--font-display);font-weight:800;font-size:17px;margin-bottom:2px;}
   .modal-sub{font-size:12.5px;color:var(--text-dim);margin-bottom:12px;line-height:1.5;}
+  .exfig-wrap{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;
+    padding:6px 4px 2px;margin-bottom:10px;text-align:center;}
+  .exfig{width:100%;height:auto;max-height:34vh;display:block;}
+  .exfig .ex-limb,.exfig .ex-torso,.exfig .ex-foot{fill:none;stroke:var(--pc);stroke-linecap:round;}
+  .exfig .ex-limb{stroke-width:8;}
+  .exfig .ex-torso{stroke-width:15;stroke:var(--green);}
+  .exfig .ex-foot{stroke-width:6;}
+  .exfig .ex-head{fill:var(--green);}
+  .exfig .ex-far{opacity:.35;}
+  .exfig .ex-load{fill:var(--red);}
+  .exfig .ex-gear{fill:var(--line);}
   .modal-figs{display:flex;gap:10px;}
   .modal-fig{flex:1;background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:8px;text-align:center;}
   .modal-fig svg{width:100%;height:auto;max-height:44vh;display:block;}
   .modal-fig .cap{font-size:11.5px;color:var(--text-dim);margin-top:5px;}
   .modal-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
-  .mtag{font-size:12px;border-radius:20px;padding:4px 11px;background:var(--surface-2);border:1px solid var(--line);color:var(--text-dim);}
-  .mtag.on{background:var(--red);border-color:var(--red);color:#fff;font-weight:700;}
-  .mtag.sec{background:transparent;border-color:var(--yellow);color:var(--yellow);font-weight:700;}
+  /* every tag keeps the same box — same height, padding, radius and border width.
+     Only the colour says whether a muscle is primary, secondary or untouched. */
+  .mtag{
+    display:inline-flex;align-items:center;justify-content:center;
+    height:28px;padding:0 12px;border-radius:14px;box-sizing:border-box;
+    font-size:12px;font-weight:700;line-height:1;white-space:nowrap;
+    background:var(--surface-2);border:1.5px solid var(--line);color:var(--text-dim);
+  }
+  .mtag.on{background:var(--red);border-color:var(--red);color:#fff;}
+  .mtag.sec{background:transparent;border-color:var(--yellow);color:var(--yellow);}
   .modal-close{margin-top:13px;width:100%;padding:13px;border-radius:13px;border:none;background:var(--surface-2);
     color:var(--text);font-family:var(--font-display);font-weight:700;font-size:14px;cursor:pointer;}
 
@@ -1069,6 +1087,63 @@ function bodySVG(view, hl, hl2, heat, big){
     + paths + '</svg>';
 }
 
+
+/* ---- exercise figure: a side-view stick figure performing the movement ----
+   Angles are absolute degrees (0 = down, 180 = up, -90 = forward). The builder
+   converts them to relative rotations so nested joints inherit their parent. */
+const EXFIG = {"P":{"pressH":{"h":[84,86],"hd":[0,0],"t":[178,178],"s":[-35,-95],"e":[-125,-95],"th":[-95,-95],"k":[-8,-8],"f":[-70,-70],"g":"seatBack","w":"grip","d":2.6},"fly":{"h":[84,86],"hd":[0,0],"t":[178,178],"s":[-20,-80],"e":[-95,-85],"th":[-95,-95],"k":[-8,-8],"f":[-70,-70],"g":"seatBack","w":"grip","d":2.6},"pulldown":{"h":[88,88],"hd":[0,0],"t":[184,184],"s":[-168,-120],"e":[-172,-95],"th":[-95,-95],"k":[-5,-5],"f":[-70,-70],"g":"cableHigh","w":"bar","d":2.6},"rowSeat":{"h":[88,88],"hd":[0,0],"t":[186,178],"s":[-88,-30],"e":[-88,-70],"th":[-95,-95],"k":[-5,-5],"f":[-70,-70],"g":"cableLow","w":"grip","d":2.6},"pressOH":{"h":[84,86],"hd":[0,0],"t":[178,178],"s":[-140,-178],"e":[-95,-178],"th":[-95,-95],"k":[-8,-8],"f":[-70,-70],"g":"seatBack","w":"db","d":2.6},"facePull":{"h":[92,88],"hd":[0,0],"t":[180,180],"s":[-95,-115],"e":[-95,-40],"th":[0,0],"k":[0,0],"f":[-70,-70],"g":"cableHigh","w":"grip","d":2.6},"curl":{"h":[96,84],"hd":[0,0],"t":[180,180],"s":[-8,-18],"e":[-8,-150],"th":[0,0],"k":[0,0],"f":[-70,-70],"g":"floor","w":"bar","d":2.6},"pushdown":{"h":[96,88],"hd":[0,0],"t":[182,182],"s":[-14,-14],"e":[-70,-8],"th":[0,0],"k":[0,0],"f":[-70,-70],"g":"cableHigh","w":"grip","d":2.6},"ohExt":{"h":[96,88],"hd":[0,0],"t":[180,180],"s":[-172,-172],"e":[-90,-172],"th":[0,0],"k":[0,0],"f":[-70,-70],"g":"cableHigh","w":"grip","d":2.6},"latRaise":{"h":[96,84],"hd":[0,0],"t":[180,180],"s":[-8,-92],"e":[-10,-92],"th":[0,0],"k":[0,0],"f":[-70,-70],"g":"floor","w":"db","d":2.6},"pushup":{"h":[100,112],"hd":[0,-4],"t":[-125,-125],"s":[-38,4],"e":[46,4],"th":[55,55],"k":[55,55],"f":[-70,-70],"g":"floor","w":"","d":2.6},"dip":{"h":[104,96],"hd":[0,0],"t":[188,188],"s":[60,20],"e":[6,6],"th":[-70,-70],"k":[-6,-6],"f":[-70,-70],"g":"benchLow","w":"","d":2.6},"pullup":{"h":[96,96],"hd":[0,-22],"t":[180,180],"s":[-178,-152],"e":[-178,-108],"th":[30,30],"k":[30,30],"f":[-70,-70],"g":"barHigh","w":"","d":2.6},"squat":{"h":[96,84],"hd":[0,26],"t":[180,206],"s":[-70,-70],"e":[-70,-70],"th":[0,-50],"k":[0,60],"f":[-70,-70],"g":"floor","w":"","d":2.6},"lunge":{"h":[96,84],"hd":[0,20],"t":[180,186],"s":[-6,-6],"e":[-6,-6],"th":[-20,-42],"k":[20,78],"f":[-70,-70],"g":"floor","w":"","d":2.6},"legPress":{"h":[70,96],"hd":[0,0],"t":[250,250],"s":[-96,-96],"e":[-40,-40],"th":[-96,-40],"k":[74,4],"f":[-70,-70],"g":"pressSled","w":"","d":2.6},"legExt":{"h":[88,88],"hd":[0,0],"t":[180,180],"s":[-60,-60],"e":[-60,-60],"th":[-95,-95],"k":[74,2],"f":[-70,-70],"g":"seatBack","w":"","d":2.6},"legCurl":{"h":[104,108],"hd":[0,0],"t":[272,272],"s":[-96,-96],"e":[-40,-40],"th":[-92,-92],"k":[4,84],"f":[-70,-70],"g":"bench","w":"","d":2.6},"hinge":{"h":[96,84],"hd":[0,0],"t":[180,232],"s":[-8,-8],"e":[-8,-8],"th":[0,-12],"k":[8,14],"f":[-70,-70],"g":"floor","w":"db","d":2.6},"calf":{"h":[96,86],"hd":[0,-10],"t":[180,180],"s":[-8,-8],"e":[-8,-8],"th":[0,0],"k":[0,0],"f":[-70,-40],"g":"step","w":"","d":2.6},"abduct":{"h":[88,88],"hd":[0,0],"t":[180,180],"s":[-60,-60],"e":[-60,-60],"th":[-95,-95],"k":[-5,-5],"f":[-70,-70],"g":"seatBack","w":"","d":2.6},"cableCrunch":{"h":[104,104],"hd":[0,0],"t":[206,236],"s":[-172,-172],"e":[-150,-140],"th":[-96,-96],"k":[88,88],"f":[-70,-70],"g":"cableHigh","w":"","d":2.6},"superman":{"h":[110,120],"hd":[0,0],"t":[268,262],"s":[-192,-206],"e":[-96,-96],"th":[-6,4],"k":[2,2],"f":[-70,-70],"g":"floor","w":"","d":2.6},"birdDog":{"h":[108,110],"hd":[0,0],"t":[272,272],"s":[-186,-206],"e":[-96,-96],"th":[-96,-30],"k":[90,10],"f":[-70,-70],"g":"floor","w":"","d":2.6}},"A":{"upper-01":"pressH","upper-02":"pulldown","upper-03":"rowSeat","upper-04":"fly","upper-05":"pressOH","upper-06":"curl","upper-07":"pushdown","upper-08":"pushdown","upper-p1":"rowSeat","upper-p2":"curl","upper-p3":"latRaise","upper-p4":"curl","upper-p5":"ohExt","upper-p6":"pressH","upper-p7":"facePull","upper-p8":"rowSeat","upper-p9":"dip","upper-p10":"pullup","upper-p11":"curl","lower-01":"legPress","lower-02":"legExt","lower-03":"legCurl","lower-04":"hinge","lower-06":"calf","lower-p1":"squat","lower-p2":"lunge","lower-p3":"lunge","lower-p4":"calf","lower-p5":"abduct","lower-p6":"hinge","lower-p7":"lunge","core-p1":"cableCrunch","core-p5":"birdDog","core-p7":"superman","home-01":"squat","home-02":"pushup","home-04":"lunge","home-05":"superman","home-06":"pushup","home-p1":"pushup","home-p2":"dip","home-p3":"squat","home-p5":"squat","home-p6":"latRaise"},"G":{"seatBack":"<rect x=\"52\" y=\"84\" width=\"46\" height=\"9\" rx=\"4\"/><rect x=\"48\" y=\"42\" width=\"10\" height=\"46\" rx=\"5\"/>","bench":"<rect x=\"60\" y=\"112\" width=\"86\" height=\"9\" rx=\"4\"/><rect x=\"66\" y=\"121\" width=\"7\" height=\"26\" rx=\"3\"/><rect x=\"133\" y=\"121\" width=\"7\" height=\"26\" rx=\"3\"/>","benchLow":"<rect x=\"56\" y=\"104\" width=\"52\" height=\"9\" rx=\"4\"/><rect x=\"60\" y=\"113\" width=\"7\" height=\"30\" rx=\"3\"/>","floor":"<rect x=\"24\" y=\"146\" width=\"172\" height=\"6\" rx=\"3\"/>","step":"<rect x=\"76\" y=\"128\" width=\"60\" height=\"12\" rx=\"4\"/>","cableHigh":"<rect x=\"18\" y=\"18\" width=\"12\" height=\"128\" rx=\"5\"/><circle cx=\"24\" cy=\"26\" r=\"7\"/>","cableLow":"<rect x=\"18\" y=\"70\" width=\"12\" height=\"76\" rx=\"5\"/><circle cx=\"24\" cy=\"118\" r=\"7\"/>","bar":"<rect x=\"36\" y=\"20\" width=\"150\" height=\"7\" rx=\"3.5\"/>","barHigh":"<rect x=\"36\" y=\"6\" width=\"150\" height=\"7\" rx=\"3.5\"/>","pressSled":"<rect x=\"150\" y=\"34\" width=\"12\" height=\"86\" rx=\"5\"/><rect x=\"126\" y=\"46\" width=\"26\" height=\"9\" rx=\"4\"/>"}};
+const EXSEG = {torso:40, head:11, up:25, fore:23, thigh:30, shin:30, foot:12};
+function exAnim(a0, a1, dur){
+  if(reduced() || a0===a1) return '';
+  return '<animateTransform attributeName="transform" type="rotate" additive="sum"'
+    + ' values="'+a0+';'+a1+';'+a0+'" keyTimes="0;0.5;1" calcMode="spline"'
+    + ' keySplines=".4 0 .2 1;.4 0 .2 1" dur="'+dur+'s" repeatCount="indefinite"/>';
+}
+function exArm(p, dur){
+  const s0=p.s[0], s1=p.s[1], e0=p.e[0], e1=p.e[1], t0=p.t[0], t1=p.t[1];
+  const load = p.w==='db'
+      ? '<g class="ex-load" transform="translate(0 '+EXSEG.fore+')"><rect x="-11" y="-3" width="22" height="6" rx="3"/>'
+        +'<rect x="-15" y="-7" width="6" height="14" rx="2.5"/><rect x="9" y="-7" width="6" height="14" rx="2.5"/></g>'
+    : p.w==='bar'
+      ? '<rect class="ex-load" x="-30" y="'+(EXSEG.fore-3)+'" width="60" height="6" rx="3"/>'
+    : p.w==='grip'
+      ? '<circle class="ex-load" cx="0" cy="'+EXSEG.fore+'" r="5.5"/>' : '';
+  return '<g transform="rotate('+(s0-t0)+')">'+exAnim(0,(s1-t1)-(s0-t0),dur)
+    + '<path class="ex-limb" d="M0 0 L0 '+EXSEG.up+'"/>'
+    + '<g transform="translate(0 '+EXSEG.up+')"><g transform="rotate('+(e0-s0)+')">'
+    + exAnim(0,(e1-s1)-(e0-s0),dur)
+    + '<path class="ex-limb" d="M0 0 L0 '+EXSEG.fore+'"/>'+load+'</g></g></g>';
+}
+function exLeg(p, dur){
+  const h0=p.th[0], h1=p.th[1], k0=p.k[0], k1=p.k[1], f0=p.f[0], f1=p.f[1];
+  return '<g transform="rotate('+h0+')">'+exAnim(0,h1-h0,dur)
+    + '<path class="ex-limb" d="M0 0 L0 '+EXSEG.thigh+'"/>'
+    + '<g transform="translate(0 '+EXSEG.thigh+')"><g transform="rotate('+(k0-h0)+')">'
+    + exAnim(0,(k1-h1)-(k0-h0),dur)
+    + '<path class="ex-limb" d="M0 0 L0 '+EXSEG.shin+'"/>'
+    + '<g transform="translate(0 '+EXSEG.shin+')"><g transform="rotate('+(f0-k0)+')">'
+    + exAnim(0,(f1-k1)-(f0-k0),dur)
+    + '<path class="ex-foot" d="M0 0 L0 '+EXSEG.foot+'"/></g></g></g></g></g>';
+}
+function exFigSVG(key){
+  const name = EXFIG.A[key]; if(!name) return '';
+  const p = EXFIG.P[name]; if(!p) return '';
+  const dur = p.d, arm = exArm(p,dur), leg = exLeg(p,dur);
+  const move = (reduced() || (!p.hd[0] && !p.hd[1])) ? ''
+    : '<animateTransform attributeName="transform" type="translate" additive="sum"'
+      + ' values="0 0;'+p.hd[0]+' '+p.hd[1]+';0 0" keyTimes="0;0.5;1" calcMode="spline"'
+      + ' keySplines=".4 0 .2 1;.4 0 .2 1" dur="'+dur+'s" repeatCount="indefinite"/>';
+  const body = '<g transform="rotate('+p.t[0]+')">'+exAnim(0,p.t[1]-p.t[0],dur)
+    + '<path class="ex-torso" d="M0 0 L0 '+EXSEG.torso+'"/>'
+    + '<g transform="translate(0 '+EXSEG.torso+')">'
+    + '<circle class="ex-head" cx="0" cy="'+EXSEG.head+'" r="10.5"/>'
+    + '<g class="ex-far" transform="translate(-5 0)">'+arm+'</g>'+arm+'</g></g>';
+  const legs = '<g class="ex-far" transform="translate(-5 0)">'+leg+'</g>'+leg;
+  return '<svg class="exfig" viewBox="0 0 220 170" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+    + '<g class="ex-gear">'+(EXFIG.G[p.g]||'')+'</g>'
+    + '<g transform="translate('+p.h[0]+' '+p.h[1]+')">'+move+legs+body+'</g></svg>';
+}
+
 function equipIcon(eq,hex){
   if(eq==='barbell') return '<svg viewBox="0 0 18 14" width="14" height="12"><rect x="0" y="6" width="18" height="2.4" rx="1" fill="'+hex+'"/><circle cx="3" cy="7.2" r="3.6" fill="none" stroke="'+hex+'" stroke-width="1.8"/><circle cx="15" cy="7.2" r="3.6" fill="none" stroke="'+hex+'" stroke-width="1.8"/></svg>';
   if(eq==='dumbbell') return '<svg viewBox="0 0 18 10" width="14" height="9"><rect x="6" y="3.5" width="6" height="2.2" fill="'+hex+'"/><circle cx="3.2" cy="4.6" r="3" fill="'+hex+'"/><circle cx="14.8" cy="4.6" r="3" fill="'+hex+'"/></svg>';
@@ -1701,6 +1776,7 @@ function bodyModal(){
   return '<div class="modal"><div class="modal-box">'
     +'<div class="modal-title">'+esc(exo.n)+'</div>'
     +'<div class="modal-sub">באדום — השרירים המובילים בתרגיל. בצהוב — שרירי עזר שמשתתפים בתנועה.</div>'
+    +(exFigSVG(exo.k) ? '<div class="exfig-wrap">'+exFigSVG(exo.k)+'</div>' : '')
     +'<div class="modal-figs">'
     +'<div class="modal-fig">'+bodySVG('front',hl,hl2,null,true)+'<div class="cap">מלפנים</div></div>'
     +'<div class="modal-fig">'+bodySVG('back',hl,hl2,null,true)+'<div class="cap">מאחור</div></div>'
