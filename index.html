@@ -350,6 +350,11 @@
   .demo-foot .nm{flex:1;font-weight:700;color:#3B3960;}
   .demo-foot a{color:#6B6890;text-decoration:underline;}
   @media (prefers-reduced-motion: reduce){.demo-stage img{animation:none;}}
+  .demo-alt{display:none;}
+  .demo.broke .demo-stage,.demo.broke .demo-foot{display:none;}
+  .demo.broke{background:var(--surface-2);}
+  .demo.broke .demo-alt{display:block;}
+  .demo-alt .why{font-size:11px;color:var(--text-dim);text-align:center;padding:0 10px 9px;line-height:1.5;}
   .modal-figs{display:flex;gap:10px;}
   .modal-fig{flex:1;background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:8px;text-align:center;}
   .modal-fig svg{width:100%;height:auto;max-height:44vh;display:block;}
@@ -1840,17 +1845,26 @@ const DEMO_SET = DEMO_KEYS.reduce(function(o,k){ o[k]=1; return o; }, {});
 const DEMO_CREDIT = '\u00A9 Gym visual';
 
 function exDemo(k){
-  if(DEMO_SET[k]){
-    return '<div class="demo">'
-      + '<div class="demo-stage"><img src="demos/'+k+'.gif" width="180" height="180" '
-      + 'loading="lazy" decoding="async" alt="הדגמת התרגיל"></div>'
-      + '<div class="demo-foot"><span class="nm">הדגמה</span>'
-      + '<span>'+DEMO_CREDIT+' — <a href="https://gymvisual.com/" target="_blank" rel="noopener">gymvisual.com</a></span>'
-      + '</div></div>';
-  }
   const fig = exFigSVG(k);
-  return fig ? '<div class="exfig-wrap">'+fig+'</div>' : '';
+  const drawn = fig ? '<div class="exfig-wrap">'+fig+'</div>' : '';
+  if(!DEMO_SET[k]) return drawn;
+  /* If demos/ never made it onto the server the <img> would sit there as a
+     broken-image box. Fall back to the drawn figure instead, and say why —
+     a silent fallback would look like the animation was simply never added. */
+  return '<div class="demo">'
+    + '<div class="demo-stage"><img src="'+k+'.gif" width="180" height="180" '
+    + 'decoding="async" alt="הדגמת התרגיל" onerror="demoFail(this)"></div>'
+    + '<div class="demo-foot"><span class="nm">הדגמה</span>'
+    + '<span>'+DEMO_CREDIT+' — <a href="https://gymvisual.com/" target="_blank" rel="noopener">gymvisual.com</a></span>'
+    + '</div>'
+    + '<div class="demo-alt">'+drawn
+    + '<div class="why">האנימציה לא נטענה — קובץ <code>'+k+'.gif</code> חסר באותה תיקייה כמו index.html.</div>'
+    + '</div></div>';
 }
+window.demoFail = function(img){
+  const box = img.closest('.demo');
+  if(box) box.classList.add('broke');
+};
 
 /* Pull every animation through the service-worker cache while there is signal.
    5MB once, and then the sheets open instantly in the corner of the gym where
@@ -1860,7 +1874,7 @@ function prefetchDemos(){
   let i = 0;
   (function next(){
     if(i >= DEMO_KEYS.length) return;
-    const u = 'demos/'+DEMO_KEYS[i++]+'.gif';
+    const u = DEMO_KEYS[i++]+'.gif';
     try{ fetch(u).then(next).catch(next); }catch(e){ next(); }
   })();
 }

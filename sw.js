@@ -37,7 +37,7 @@ self.addEventListener('fetch', e => {
   try { url = new URL(req.url); } catch (err) { return; }
 
   // Exercise animations: cache first, in their own bucket, forever.
-  if (url.pathname.indexOf('/demos/') >= 0 && url.pathname.endsWith('.gif')) {
+  if (url.pathname.endsWith('.gif')) {
     e.respondWith(
       caches.match(req).then(hit => hit || fetch(req).then(resp => {
         if (resp && resp.status === 200) {
