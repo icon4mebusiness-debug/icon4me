@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="he" dir="rtl" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -23,34 +23,69 @@
     --bg:#1F1D2B; --surface:#2A2838; --surface-2:#363450; --line:#494667;
     --text:#F5F3FF; --text-dim:#A9A6C4;
     --red:#FF4D6D; --blue:#3DA9FC; --yellow:#FFD23F; --green:#2FE6A7;
-    --muscle:#D9D6EC; --pc:#5EE7FF;
+    --muscle:#D9D6EC; --pc:#5EE7FF; --ink:#1a1826;
+    --shadow:0 10px 30px rgba(0,0,0,.45); --shadow-s:0 4px 14px rgba(0,0,0,.3);
+    --glass:rgba(42,40,56,.86);
     --font-display:'Heebo',sans-serif; --font-body:'Assistant',sans-serif; --font-mono:'JetBrains Mono',monospace;
     --safe-top:env(safe-area-inset-top,0px); --safe-bottom:env(safe-area-inset-bottom,0px);
   }
+  html[data-theme="light"]{
+    --bg:#F1F2FA; --surface:#FFFFFF; --surface-2:#EDEFF9; --line:#D9DCEE;
+    --text:#1B1930; --text-dim:#63607D; --muscle:#4A4770; --ink:#151327;
+    --shadow:0 10px 30px rgba(40,38,80,.14); --shadow-s:0 4px 14px rgba(40,38,80,.10);
+    --glass:rgba(255,255,255,.9);
+  }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-  button,.dot,.tile,.pick-card,.kind-btn,.step{touch-action:manipulation;-webkit-touch-callout:none;
+  button,.dot,.tile,.pick-card,.kind-btn,.step,.chip{touch-action:manipulation;-webkit-touch-callout:none;
     -webkit-user-select:none;user-select:none;}
   html,body{margin:0;padding:0;overscroll-behavior-y:contain;}
   body{
-    background: radial-gradient(circle at 8% 0%, color-mix(in srgb, var(--pc) 12%, transparent) 0%, transparent 42%), var(--bg);
+    background: radial-gradient(circle at 8% 0%, color-mix(in srgb, var(--pc) 14%, transparent) 0%, transparent 44%), var(--bg);
     color:var(--text); font-family:var(--font-body); min-height:100vh; min-height:100dvh;
-    padding-bottom:calc(90px + var(--safe-bottom)); -webkit-text-size-adjust:100%;
+    padding-bottom:calc(120px + var(--safe-bottom)); -webkit-text-size-adjust:100%;
+    transition:background-color .3s, color .3s;
   }
   button{font-family:inherit;}
   input,select,textarea{font-family:inherit;font-size:16px;}
   :focus-visible{outline:2px solid var(--yellow); outline-offset:2px;}
-  @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important;}}
   .wrap{max-width:540px;margin:0 auto;padding:calc(14px + var(--safe-top)) 16px 8px;}
+
+  /* ================= animations ================= */
+  @keyframes riseIn{from{opacity:0;transform:translateY(14px) scale(.985);}to{opacity:1;transform:none;}}
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+  @keyframes popIn{0%{transform:scale(.6);}55%{transform:scale(1.18);}100%{transform:scale(1);}}
+  @keyframes shimmer{0%{background-position:-160% 0;}100%{background-position:260% 0;}}
+  @keyframes rainbowSlide{0%{background-position:0% 50%;}100%{background-position:200% 50%;}}
+  @keyframes floaty{0%,100%{transform:translateY(0);}50%{transform:translateY(-3px);}}
+  @keyframes glowPulse{0%,100%{opacity:1;filter:none;}50%{opacity:.5;}}
+  @keyframes ringWarn{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
+  @keyframes sheetUp{from{transform:translateY(26px);opacity:0;}to{transform:none;opacity:1;}}
+  @keyframes confetti{0%{transform:translateY(-10vh) rotate(0);opacity:1;}100%{transform:translateY(105vh) rotate(720deg);opacity:0;}}
+  @keyframes barGrow{from{transform:scaleX(0);}to{transform:scaleX(1);}}
+  @keyframes spinSlow{to{transform:rotate(360deg);}}
+
+  .anim{animation:riseIn .34s cubic-bezier(.22,.9,.3,1) both; animation-delay:calc(var(--i,0) * 42ms);}
+  .screen-in{animation:fadeIn .22s ease both;}
+  @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important;}}
+
+  /* ================= theme toggle ================= */
+  .theme-btn{
+    width:38px;height:38px;flex-shrink:0;border-radius:12px;background:var(--surface);
+    border:1px solid var(--line);color:var(--text);font-size:17px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-s);
+    transition:transform .15s, background .2s;
+  }
+  .theme-btn:active{transform:scale(.9) rotate(-18deg);}
 
   /* ---------- profile picker ---------- */
   .pick{min-height:100dvh;display:flex;flex-direction:column;justify-content:center;gap:14px;padding:24px 20px;max-width:460px;margin:0 auto;}
   .pick-mark{font-family:var(--font-display);font-weight:900;font-size:40px;letter-spacing:-1px;display:flex;align-items:center;gap:12px;}
-  .pick-mark .badge{width:44px;height:44px;border-radius:13px;background:var(--pc);display:flex;align-items:center;justify-content:center;font-size:22px;}
+  .pick-mark .badge{width:44px;height:44px;border-radius:13px;background:var(--pc);display:flex;align-items:center;justify-content:center;font-size:22px;animation:floaty 3s ease-in-out infinite;}
   .pick-q{font-size:16px;color:var(--text-dim);margin:6px 0 10px;}
   .pick-card{
     display:flex;align-items:center;gap:14px;width:100%;text-align:start;cursor:pointer;
-    background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:18px 18px;color:var(--text);
-    transition:border-color .15s,transform .1s;
+    background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:18px;color:var(--text);
+    transition:border-color .15s,transform .1s;box-shadow:var(--shadow-s);
   }
   .pick-card:active{transform:scale(.985);}
   .pick-card .av{width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:900;font-size:24px;color:#1a1826;flex-shrink:0;}
@@ -61,12 +96,29 @@
 
   /* ---------- home ---------- */
   .hero{padding:4px 2px 0;}
-  .hello{font-family:var(--font-display);font-weight:900;font-size:30px;letter-spacing:-.5px;line-height:1.2;}
+  .hero-row{display:flex;align-items:flex-start;gap:10px;}
+  .hello{font-family:var(--font-display);font-weight:900;font-size:30px;letter-spacing:-.5px;line-height:1.2;flex:1;}
   .hello span{color:var(--pc);}
   .hero-sub{color:var(--text-dim);font-size:13.5px;margin-top:5px;}
-  .rainbow-bar{height:4px;border-radius:4px;margin-top:13px;background:linear-gradient(90deg,var(--red),var(--blue),var(--yellow),var(--green));}
+  .rainbow-bar{height:4px;border-radius:4px;margin-top:13px;
+    background:linear-gradient(90deg,var(--red),var(--blue),var(--yellow),var(--green),var(--red));
+    background-size:200% 100%;animation:rainbowSlide 7s linear infinite;}
+
+  .quote{
+    margin-top:14px;background:var(--surface);border:1px solid var(--line);border-radius:16px;
+    padding:14px 15px;display:flex;gap:11px;align-items:flex-start;cursor:pointer;position:relative;
+    overflow:hidden;box-shadow:var(--shadow-s);transition:transform .12s;
+  }
+  .quote:active{transform:scale(.99);}
+  .quote::before{content:'';position:absolute;inset-inline-start:0;top:0;bottom:0;width:3px;
+    background:linear-gradient(180deg,var(--pc),var(--green));}
+  .quote .qi{font-size:20px;line-height:1.2;animation:floaty 4s ease-in-out infinite;}
+  .quote .qt{flex:1;font-size:14.5px;line-height:1.55;font-weight:600;}
+  .quote .qn{font-size:10.5px;color:var(--text-dim);margin-top:5px;font-family:var(--font-mono);}
+  .quote.swap .qt,.quote.swap .qn{animation:riseIn .3s ease both;}
+
   .hero-stats{display:flex;gap:9px;margin-top:14px;}
-  .hstat{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 8px;text-align:center;}
+  .hstat{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 8px;text-align:center;box-shadow:var(--shadow-s);}
   .hstat .n{font-family:var(--font-mono);font-weight:700;font-size:18px;color:var(--sc,var(--text));}
   .hstat .l{font-size:10.5px;color:var(--text-dim);margin-top:3px;}
 
@@ -74,61 +126,70 @@
   .tile{
     position:relative;border-radius:20px;padding:15px 14px 14px;cursor:pointer;text-align:start;color:var(--text);
     background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--tc);
-    display:flex;flex-direction:column;gap:3px;min-height:104px;transition:transform .1s,background .15s;
+    display:flex;flex-direction:column;gap:3px;min-height:104px;transition:transform .12s,box-shadow .2s;
+    box-shadow:var(--shadow-s);overflow:hidden;
   }
-  .tile:active{transform:scale(.98);}
+  .tile::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 88% 8%, color-mix(in srgb,var(--tc) 22%,transparent), transparent 62%);pointer-events:none;}
+  .tile:active{transform:scale(.97);}
   .tile .ic{font-size:24px;line-height:1;}
+  .tile:active .ic{animation:popIn .3s ease;}
   .tile .t{font-family:var(--font-display);font-weight:800;font-size:16px;margin-top:6px;}
   .tile .s{font-size:11.5px;color:var(--text-dim);line-height:1.4;}
   .tile .flag{
     position:absolute;top:11px;inset-inline-end:11px;font-size:9.5px;font-weight:800;border-radius:7px;padding:2px 6px;
-    background:var(--tc);color:#1a1826;
+    background:var(--tc);color:#1a1826;z-index:1;
   }
   .tile.done .flag{background:var(--green);}
-  .tile.wide{grid-column:1 / -1;flex-direction:row;align-items:center;gap:13px;min-height:0;padding:14px;}
-  .tile.wide .ic{font-size:22px;}
-  .tile.wide .t{margin-top:0;}
   .switch-user{margin:20px auto 6px;display:block;background:none;border:none;color:var(--text-dim);font-size:12.5px;text-decoration:underline;cursor:pointer;padding:8px;}
 
-  /* ---------- top bar on inner screens ---------- */
-  .topbar{display:flex;align-items:center;gap:11px;padding:2px 0 2px;}
+  /* ---------- top bar ---------- */
+  .topbar{display:flex;align-items:center;gap:11px;padding:2px 0;}
   .back{
     width:38px;height:38px;flex-shrink:0;border-radius:12px;background:var(--surface);border:1px solid var(--line);
     color:var(--text);font-size:19px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    transition:transform .12s;box-shadow:var(--shadow-s);
   }
+  .back:active{transform:translateX(4px) scale(.94);}
   .topbar h1{font-family:var(--font-display);font-weight:800;font-size:19px;margin:0;flex:1;min-width:0;}
   .topbar .sub{display:block;font-family:var(--font-body);font-weight:500;font-size:11.5px;color:var(--text-dim);margin-top:1px;}
   .topbar .pill{font-family:var(--font-mono);font-size:11.5px;color:var(--text-dim);background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:5px 9px;white-space:nowrap;}
 
-  .progress-bar{height:6px;border-radius:4px;background:var(--surface-2);margin-top:13px;overflow:hidden;}
-  .progress-fill{height:100%;width:0%;transition:width .25s;}
+  .progress-bar{height:8px;border-radius:5px;background:var(--surface-2);margin-top:13px;overflow:hidden;position:relative;}
+  .progress-fill{height:100%;width:0%;transition:width .4s cubic-bezier(.3,1.2,.5,1);position:relative;border-radius:5px;}
+  .progress-fill::after{content:'';position:absolute;inset:0;border-radius:5px;
+    background:linear-gradient(100deg,transparent 20%,rgba(255,255,255,.45) 50%,transparent 80%);
+    background-size:220% 100%;animation:shimmer 2.4s linear infinite;}
   .progress-label{color:var(--text-dim);font-size:12.5px;margin-top:6px;font-family:var(--font-mono);display:flex;justify-content:space-between;}
 
   /* ---------- exercise cards ---------- */
   .ex-list{margin-top:14px;display:flex;flex-direction:column;gap:10px;}
-  .ex-card{background:var(--surface);border-radius:16px;padding:13px;border:1px solid var(--line);}
-  .ex-card.complete{border-color:color-mix(in srgb, var(--dc) 55%, var(--line));}
+  .ex-card{background:var(--surface);border-radius:16px;padding:13px;border:1px solid var(--line);position:relative;box-shadow:var(--shadow-s);transition:border-color .25s;}
+  .ex-card.complete{border-color:color-mix(in srgb, var(--dc) 60%, var(--line));}
+  .ex-card.complete::before{content:'';position:absolute;inset:0;border-radius:16px;pointer-events:none;
+    background:linear-gradient(160deg,color-mix(in srgb,var(--dc) 10%,transparent),transparent 55%);}
   .ex-top{display:flex;gap:11px;align-items:flex-start;}
-  .pictogram{flex-shrink:0;width:52px;height:92px;border-radius:12px;position:relative;background:var(--surface-2);border:1px solid var(--line);overflow:hidden;}
+  .pictogram{flex-shrink:0;width:54px;height:96px;border-radius:12px;position:relative;background:var(--surface-2);border:1px solid var(--line);overflow:hidden;cursor:pointer;transition:transform .15s;}
+  .pictogram:active{transform:scale(.94);}
   .pictogram svg{width:100%;height:100%;display:block;}
-  .muscle-base{fill:var(--muscle);opacity:.45;}
-  .muscle-hl{fill:var(--red);animation:pulse-muscle 1.8s ease-in-out infinite;}
-  @keyframes pulse-muscle{0%,100%{opacity:1;}50%{opacity:.55;}}
+  .muscle-base{fill:var(--muscle);opacity:.34;}
+  .muscle-sec{fill:var(--yellow);opacity:.55;}
+  .muscle-hl{fill:var(--red);animation:glowPulse 2s ease-in-out infinite;}
+  .body-outline{fill:none;stroke:var(--muscle);stroke-width:1.4;opacity:.4;}
   .view-tag{position:absolute;top:3px;right:3px;font-family:var(--font-mono);font-size:8.5px;color:var(--text-dim);background:var(--bg);padding:1px 4px;border-radius:4px;}
   .equip-badge{position:absolute;bottom:2px;left:2px;width:19px;height:19px;border-radius:6px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;}
+  .zoom-tag{position:absolute;bottom:2px;right:2px;font-size:9px;color:var(--text-dim);background:var(--bg);border-radius:4px;padding:0 3px;}
   .ex-head{flex:1;min-width:0;}
-  .ex-name{font-weight:700;font-size:15px;line-height:1.3;}
+  .ex-name{font-weight:700;font-size:15px;line-height:1.3;padding-inline-end:26px;}
   .ex-meta{font-family:var(--font-mono);color:var(--dc);font-weight:700;font-size:12.5px;margin-top:3px;}
+  .ex-meta small{color:var(--text-dim);font-weight:500;}
   .ex-spark{margin-top:6px;direction:ltr;}
   .ex-spark svg{display:block;}
-
-  /* working weight */
-  .ww{display:flex;align-items:center;gap:8px;margin-top:11px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:8px 10px;}
-  .ww .lbl{font-size:12px;color:var(--text-dim);}
-  .ww .step{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:18px;cursor:pointer;line-height:1;}
-  .ww input{width:74px;background:var(--bg);border:1px solid var(--line);border-radius:10px;color:var(--text);font-family:var(--font-mono);font-weight:700;font-size:16px;padding:7px 4px;text-align:center;}
-  .ww .unit{font-size:12px;color:var(--text-dim);margin-inline-start:-4px;}
-  .ww .saved{margin-inline-start:auto;font-size:10.5px;color:var(--text-dim);text-align:end;line-height:1.35;}
+  .ex-kill{position:absolute;top:9px;inset-inline-end:9px;width:26px;height:26px;border-radius:9px;
+    background:var(--surface-2);border:1px solid var(--line);color:var(--text-dim);font-size:13px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;transition:transform .12s,color .15s;z-index:2;}
+  .ex-kill:active{transform:scale(.85);color:var(--red);}
+  .added-tag{display:inline-block;font-size:9.5px;font-weight:800;border-radius:6px;padding:1px 6px;
+    background:color-mix(in srgb,var(--dc) 26%, transparent);color:var(--dc);margin-inline-start:6px;vertical-align:middle;}
 
   .coach{margin-top:9px;display:flex;align-items:center;gap:7px;font-size:12.5px;line-height:1.4;border-radius:10px;padding:7px 9px;background:var(--surface-2);border:1px solid var(--line);color:var(--text-dim);}
   .coach b{color:var(--text);}
@@ -136,34 +197,27 @@
   .coach.up b{color:var(--green);}
   .coach .apply{margin-inline-start:auto;background:var(--green);color:#12241d;border:none;border-radius:8px;padding:5px 9px;font-size:11.5px;font-weight:700;cursor:pointer;white-space:nowrap;}
 
-  .sets{margin-top:10px;display:flex;flex-direction:column;gap:6px;}
-  .set-head,.set-row{display:grid;grid-template-columns:26px 1fr 1fr 44px;gap:7px;align-items:center;}
-  .set-head span{font-size:10.5px;color:var(--text-dim);text-align:center;font-family:var(--font-mono);}
-  .set-n{font-family:var(--font-mono);font-size:12.5px;color:var(--text-dim);text-align:center;}
-  .field input{width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:9px;color:var(--text);font-family:var(--font-mono);font-size:15px;padding:9px 4px;text-align:center;}
-  .field input:disabled{color:var(--text-dim);opacity:.6;}
-  .set-row.done .field input{border-color:color-mix(in srgb, var(--dc) 45%, var(--line));background:color-mix(in srgb, var(--dc) 9%, var(--surface-2));}
-  .check{width:44px;height:40px;border-radius:11px;border:2px solid var(--dc);background:transparent;color:var(--dc);font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,color .15s;}
-  .check.on{background:var(--dc);color:#1a1826;}
-  .note-row{margin-top:12px;}
-  .note-row input{width:100%;background:transparent;border:none;border-bottom:1px dashed var(--line);color:var(--text);font-size:14px;padding:7px 2px;}
-
   details.cues{margin-top:9px;}
   details.cues summary{cursor:pointer;font-size:12.5px;color:var(--text-dim);list-style:none;display:flex;align-items:center;gap:5px;padding:3px 0;}
   details.cues summary::-webkit-details-marker{display:none;}
   details.cues summary::before{content:'▸';font-size:10px;transition:transform .15s;}
   details.cues[open] summary::before{transform:rotate(90deg);}
-  details.cues ul{margin:6px 0 2px;padding-inline-start:18px;color:var(--text-dim);font-size:13px;line-height:1.6;}
+  details.cues ul{margin:6px 0 2px;padding-inline-start:18px;color:var(--text-dim);font-size:13px;line-height:1.6;animation:fadeIn .25s ease;}
 
   /* ---------- target + set dots ---------- */
   .ex-target{display:flex;align-items:center;gap:10px;margin-top:11px;flex-wrap:wrap;}
-  .target-box{display:flex;align-items:baseline;gap:3px;background:var(--surface-2);border:1px solid var(--line);
-    border-radius:12px;padding:9px 13px;font-family:var(--font-mono);font-weight:700;}
+  .target-box{display:flex;align-items:baseline;gap:5px;background:var(--surface-2);border:1px solid var(--line);
+    border-radius:12px;padding:9px 13px;font-family:var(--font-mono);font-weight:700;cursor:pointer;
+    transition:transform .12s,border-color .2s;position:relative;}
+  .target-box:active{transform:scale(.96);}
+  .target-box.custom{border-color:color-mix(in srgb,var(--dc) 60%,var(--line));}
   .target-box .big{font-size:22px;color:var(--dc);line-height:1;}
   .target-box .cap{font-size:10.5px;color:var(--text-dim);font-family:var(--font-body);font-weight:600;}
+  .target-box .pen{font-size:11px;opacity:.65;}
   .wbox{display:flex;align-items:center;gap:6px;margin-inline-start:auto;}
   .wbox .step{width:36px;height:36px;border-radius:11px;border:1px solid var(--line);background:var(--surface-2);
-    color:var(--text);font-size:19px;cursor:pointer;line-height:1;}
+    color:var(--text);font-size:19px;cursor:pointer;line-height:1;transition:transform .1s;}
+  .wbox .step:active{transform:scale(.88);}
   .wbox input{width:66px;background:var(--surface-2);border:1px solid var(--line);border-radius:11px;color:var(--text);
     font-family:var(--font-mono);font-weight:700;font-size:17px;padding:8px 3px;text-align:center;}
   .wbox .unit{font-size:11px;color:var(--text-dim);}
@@ -171,61 +225,98 @@
   .dots{display:flex;gap:9px;margin-top:12px;align-items:center;flex-wrap:wrap;}
   .dot{width:42px;height:42px;border-radius:50%;border:2px solid var(--dc);background:transparent;color:var(--dc);
     font-family:var(--font-mono);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;
-    cursor:pointer;transition:background .15s,color .15s;}
-  .dot.on{background:var(--dc);color:#1a1826;}
+    cursor:pointer;transition:background .18s,color .18s,transform .12s;}
+  .dot:active{transform:scale(.88);}
+  .dot.on{background:var(--dc);color:#1a1826;animation:popIn .28s cubic-bezier(.3,1.4,.5,1);}
   .dots-hint{font-size:11.5px;color:var(--text-dim);margin-inline-start:4px;}
-  .pictogram{cursor:pointer;}
-  .zoom-tag{position:absolute;bottom:2px;right:2px;font-size:9px;color:var(--text-dim);background:var(--bg);
-    border-radius:4px;padding:0 3px;}
 
-  /* ---------- body modal ---------- */
-  .modal{position:fixed;inset:0;background:rgba(10,9,18,.8);z-index:60;display:flex;align-items:center;
-    justify-content:center;padding:calc(16px + var(--safe-top)) 16px calc(16px + var(--safe-bottom));
-    -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);}
-  .modal-box{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:16px;
-    max-width:460px;width:100%;max-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;}
-  .modal-title{font-family:var(--font-display);font-weight:800;font-size:16px;margin-bottom:2px;}
-  .modal-sub{font-size:12.5px;color:var(--text-dim);margin-bottom:12px;}
+  /* ---------- more-exercises button ---------- */
+  .more-btn{
+    margin-top:14px;width:100%;padding:15px;border-radius:16px;cursor:pointer;
+    background:var(--surface);border:1.5px dashed var(--line);color:var(--text);
+    font-family:var(--font-display);font-weight:800;font-size:15px;
+    display:flex;align-items:center;justify-content:center;gap:9px;transition:transform .12s,border-color .2s;
+  }
+  .more-btn:active{transform:scale(.98);}
+  .more-btn .cnt{font-family:var(--font-mono);font-size:11.5px;font-weight:700;color:var(--ink);
+    background:var(--dc);border-radius:8px;padding:2px 7px;}
+
+  /* ---------- sheets / modals ---------- */
+  .modal{position:fixed;inset:0;background:rgba(10,9,18,.72);z-index:60;display:flex;align-items:center;
+    justify-content:center;padding:calc(16px + var(--safe-top)) 14px calc(16px + var(--safe-bottom));
+    -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);animation:fadeIn .2s ease;}
+  html[data-theme="light"] .modal{background:rgba(30,28,60,.42);}
+  .modal-box{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:16px;
+    max-width:470px;width:100%;max-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    box-shadow:var(--shadow);animation:sheetUp .28s cubic-bezier(.22,.9,.3,1);}
+  .modal-title{font-family:var(--font-display);font-weight:800;font-size:17px;margin-bottom:2px;}
+  .modal-sub{font-size:12.5px;color:var(--text-dim);margin-bottom:12px;line-height:1.5;}
   .modal-figs{display:flex;gap:10px;}
   .modal-fig{flex:1;background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:8px;text-align:center;}
-  .modal-fig svg{width:100%;height:auto;max-height:46vh;display:block;}
+  .modal-fig svg{width:100%;height:auto;max-height:44vh;display:block;}
   .modal-fig .cap{font-size:11.5px;color:var(--text-dim);margin-top:5px;}
   .modal-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
   .mtag{font-size:12px;border-radius:20px;padding:4px 11px;background:var(--surface-2);border:1px solid var(--line);color:var(--text-dim);}
   .mtag.on{background:var(--red);border-color:var(--red);color:#fff;font-weight:700;}
-  .modal-close{margin-top:13px;width:100%;padding:12px;border-radius:12px;border:none;background:var(--surface-2);
+  .mtag.sec{background:transparent;border-color:var(--yellow);color:var(--yellow);font-weight:700;}
+  .modal-close{margin-top:13px;width:100%;padding:13px;border-radius:13px;border:none;background:var(--surface-2);
     color:var(--text);font-family:var(--font-display);font-weight:700;font-size:14px;cursor:pointer;}
+
+  /* pool list */
+  .pool-group{margin-top:12px;}
+  .pool-h{font-size:11.5px;color:var(--text-dim);font-weight:700;margin-bottom:7px;display:flex;align-items:center;gap:7px;}
+  .pool-h::after{content:'';flex:1;height:1px;background:var(--line);}
+  .pool-item{display:flex;align-items:center;gap:10px;background:var(--surface-2);border:1px solid var(--line);
+    border-radius:13px;padding:10px 11px;margin-bottom:7px;animation:riseIn .3s ease both;animation-delay:calc(var(--i,0)*28ms);}
+  .pool-fig{width:26px;height:46px;border-radius:7px;background:var(--bg);border:1px solid var(--line);overflow:hidden;flex-shrink:0;}
+  .pool-fig svg{width:100%;height:100%;display:block;}
+  .pool-mid{flex:1;min-width:0;}
+  .pool-nm{font-size:13.5px;font-weight:700;line-height:1.35;}
+  .pool-mt{font-size:11px;color:var(--text-dim);margin-top:2px;font-family:var(--font-mono);}
+  .pool-add{border:none;border-radius:10px;padding:9px 13px;font-weight:800;font-size:12.5px;cursor:pointer;
+    background:var(--pc);color:var(--ink);white-space:nowrap;transition:transform .12s;}
+  .pool-add:active{transform:scale(.9);}
+  .pool-add.off{background:var(--surface);border:1px solid var(--line);color:var(--text-dim);}
+  .pool-empty{font-size:13px;color:var(--text-dim);text-align:center;padding:16px 4px;line-height:1.6;}
+
+  /* plan editor */
+  .plan-row{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface-2);
+    border:1px solid var(--line);border-radius:14px;padding:12px 13px;margin-bottom:9px;}
+  .plan-lbl{font-size:13.5px;font-weight:700;}
+  .plan-lbl small{display:block;font-weight:400;font-size:11px;color:var(--text-dim);margin-top:2px;}
+  .plan-ctl{display:flex;align-items:center;gap:8px;}
+  .plan-ctl button{width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:var(--bg);
+    color:var(--text);font-size:20px;cursor:pointer;line-height:1;transition:transform .1s;}
+  .plan-ctl button:active{transform:scale(.86);}
+  .plan-ctl .val{min-width:62px;text-align:center;font-family:var(--font-mono);font-weight:700;font-size:19px;color:var(--dc);}
 
   /* ---------- cardio ---------- */
   .kind-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;}
   .kind-btn{padding:12px 4px;border-radius:14px;border:2px solid var(--line);background:var(--surface);
     color:var(--text-dim);font-family:var(--font-display);font-weight:700;font-size:12.5px;cursor:pointer;
-    display:flex;flex-direction:column;align-items:center;gap:5px;transition:background .15s,color .15s,border-color .15s;}
+    display:flex;flex-direction:column;align-items:center;gap:5px;transition:background .15s,color .15s,border-color .15s,transform .12s;}
+  .kind-btn:active{transform:scale(.94);}
   .kind-btn .ki{font-size:21px;}
   .kind-btn.active{border-color:var(--dc);background:var(--dc);color:#1a1826;}
-  .cardio-toggle{display:flex;gap:8px;margin-top:14px;}
-  .cardio-toggle button{flex:1;padding:11px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--text-dim);font-weight:700;font-family:var(--font-display);cursor:pointer;font-size:14px;}
-  .cardio-toggle button.active{border-color:var(--dc);background:var(--dc);color:#1a1826;}
-  .stage-card{margin-top:14px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:15px;}
-  .stage-badge{display:inline-block;font-family:var(--font-mono);font-size:11.5px;color:var(--dc);border:1px solid var(--dc);border-radius:10px;padding:2px 8px;margin-bottom:8px;}
-  .stage-desc{font-size:15px;line-height:1.6;}
-  .stage-pace{margin-top:8px;font-size:13px;color:var(--text-dim);}
-  .stage-pace b{color:var(--text);}
-  .stage-track{display:flex;gap:4px;margin-top:10px;}
-  .stage-track i{flex:1;height:5px;border-radius:3px;background:var(--surface-2);}
-  .stage-track i.on{background:var(--dc);}
+  .kind-btn.active .ki{animation:popIn .3s ease;}
+  .stage-card{margin-top:14px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:15px;box-shadow:var(--shadow-s);}
+  .stage-desc{font-size:16px;line-height:1.6;font-weight:700;}
+  .stage-pace{margin-top:8px;font-size:13px;color:var(--text-dim);line-height:1.6;}
   .cardio-form{margin-top:13px;display:flex;flex-direction:column;gap:9px;}
   .cardio-field{display:flex;justify-content:space-between;align-items:center;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;}
   .cardio-field label{font-size:13.5px;color:var(--text-dim);}
   .cardio-field input{width:86px;background:transparent;border:none;color:var(--text);font-family:var(--font-mono);font-size:15px;text-align:end;}
   .cardio-field input:focus{outline:none;}
-  .rpe{display:flex;gap:7px;}
-  .rpe button{flex:1;padding:10px 4px;border-radius:10px;border:2px solid var(--line);background:var(--surface-2);color:var(--text-dim);font-size:12.5px;font-weight:600;cursor:pointer;}
-  .rpe button.on{border-color:var(--dc);color:var(--text);}
-  .rpe-label{font-size:12.5px;color:var(--text-dim);}
-  .cardio-save{padding:13px;border-radius:12px;border:none;background:var(--dc);color:#1a1826;font-family:var(--font-display);font-weight:800;font-size:15px;cursor:pointer;}
+  .cardio-save{padding:14px;border-radius:13px;border:none;background:var(--dc);color:#1a1826;font-family:var(--font-display);font-weight:800;font-size:15px;cursor:pointer;transition:transform .12s;}
+  .cardio-save:active{transform:scale(.97);}
   .cardio-last{margin-top:9px;font-size:12.5px;color:var(--text-dim);font-family:var(--font-mono);}
   .cardio-speed{color:var(--dc);font-weight:700;}
+  .stopwatch{display:flex;align-items:center;gap:10px;margin-top:12px;background:var(--surface-2);
+    border:1px solid var(--line);border-radius:13px;padding:11px 13px;}
+  .stopwatch .sw-t{font-family:var(--font-mono);font-weight:700;font-size:26px;flex:1;letter-spacing:1px;}
+  .stopwatch button{border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:10px;
+    padding:9px 13px;font-weight:700;font-size:12.5px;cursor:pointer;}
+  .stopwatch button.go{background:var(--dc);color:var(--ink);border-color:transparent;}
 
   /* ---------- month calendar ---------- */
   .cal-nav{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:11px;}
@@ -238,9 +329,11 @@
     aspect-ratio:1;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
     font-family:var(--font-mono);font-size:11.5px;color:var(--text-dim);cursor:default;padding:2px;
+    transition:transform .12s;
   }
   .cal-cell.blank{border:none;background:transparent;}
-  .cal-cell.has{cursor:pointer;color:var(--text);border-color:transparent;}
+  .cal-cell.has{cursor:pointer;color:var(--text);border-color:transparent;animation:popIn .3s ease both;animation-delay:calc(var(--i,0)*14ms);}
+  .cal-cell.has:active{transform:scale(.9);}
   .cal-cell.today{outline:2px solid var(--pc);outline-offset:-2px;}
   .cal-cell.sel{outline:2px solid var(--yellow);outline-offset:-2px;}
   .cal-dots{display:flex;gap:2px;}
@@ -248,7 +341,7 @@
   .cal-legend{display:flex;flex-wrap:wrap;gap:9px;margin-top:11px;font-size:11.5px;color:var(--text-dim);}
   .cal-legend span{display:flex;align-items:center;gap:5px;}
   .cal-legend i{width:9px;height:9px;border-radius:50%;}
-  .cal-detail{margin-top:12px;background:var(--surface-2);border-radius:12px;padding:11px 13px;font-size:13px;line-height:1.6;}
+  .cal-detail{margin-top:12px;background:var(--surface-2);border-radius:12px;padding:11px 13px;font-size:13px;line-height:1.6;animation:riseIn .28s ease;}
   .cal-detail .d{font-family:var(--font-mono);color:var(--text-dim);font-size:11.5px;margin-bottom:4px;}
   .cal-sum{display:flex;gap:9px;margin-top:11px;}
 
@@ -256,10 +349,10 @@
   .sec{margin-top:20px;}
   .sec-title{font-family:var(--font-display);font-weight:800;font-size:15px;margin-bottom:9px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
   .sec-title .hint{font-weight:500;font-size:11.5px;color:var(--text-dim);font-family:var(--font-body);}
-  .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow-s);}
   .heat{display:flex;gap:8px;align-items:center;justify-content:center;}
-  .heat-fig{flex:1;max-width:150px;text-align:center;}
-  .heat-fig svg{width:100%;height:auto;max-height:230px;}
+  .heat-fig{flex:1;max-width:158px;text-align:center;}
+  .heat-fig svg{width:100%;height:auto;max-height:250px;}
   .heat-fig .cap{font-size:11px;color:var(--text-dim);font-family:var(--font-mono);margin-top:2px;}
   .heat-legend{display:flex;align-items:center;gap:6px;justify-content:center;margin-top:10px;font-size:11px;color:var(--text-dim);}
   .heat-legend i{width:16px;height:8px;border-radius:2px;display:inline-block;}
@@ -278,7 +371,7 @@
   .stat .n{font-family:var(--font-mono);font-weight:700;font-size:19px;}
   .stat .l{font-size:11px;color:var(--text-dim);margin-top:2px;}
 
-  .hist-list{max-height:300px;overflow-y:auto;}
+  .hist-list{max-height:320px;overflow-y:auto;}
   .hist-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px;}
   .hist-row:last-child{border-bottom:none;}
   .hist-date{font-family:var(--font-mono);color:var(--text-dim);font-size:12px;}
@@ -294,7 +387,7 @@
   .log-table td{padding:4px 6px;border-top:1px solid var(--line);}
   .log-table .day-cell{font-family:var(--font-mono);color:var(--text-dim);font-size:12px;white-space:nowrap;}
   .log-table input{width:100%;background:transparent;border:none;color:var(--text);font-family:var(--font-mono);font-size:14px;text-align:center;padding:6px 2px;}
-  .log-table tr.today-row td{background:color-mix(in srgb, var(--pc) 14%, transparent);}
+  .log-table tr.today-row td{background:color-mix(in srgb, var(--pc) 16%, transparent);}
   .log-note{margin-top:10px;font-size:12px;color:var(--text-dim);line-height:1.6;}
 
   details.panel{margin-top:14px;background:var(--surface);border-radius:14px;border:1px solid var(--line);padding:2px 14px;}
@@ -302,12 +395,13 @@
   details.panel summary::-webkit-details-marker{display:none;}
   details.panel summary::after{content:'+';font-size:20px;color:var(--text-dim);}
   details.panel[open] summary::after{content:'–';}
-  .panel-body{padding-bottom:14px;color:var(--text-dim);font-size:13.5px;line-height:1.7;}
+  .panel-body{padding-bottom:14px;color:var(--text-dim);font-size:13.5px;line-height:1.7;animation:fadeIn .25s ease;}
   .panel-body p{margin:8px 0;}
   .panel-body b{color:var(--text);}
   .backup-area{width:100%;height:90px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;color:var(--text-dim);font-family:var(--font-mono);font-size:11px;padding:8px;margin-top:8px;direction:ltr;}
   .btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px;}
-  .btn{background:var(--surface-2);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px 14px;font-size:13px;cursor:pointer;font-weight:600;}
+  .btn{background:var(--surface-2);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px 14px;font-size:13px;cursor:pointer;font-weight:600;transition:transform .12s;}
+  .btn:active{transform:scale(.96);}
   .btn.primary{background:var(--pc);color:#1a1826;border-color:transparent;}
   .btn.danger{color:var(--red);border-color:color-mix(in srgb,var(--red) 40%,var(--line));}
 
@@ -316,46 +410,85 @@
   .sync.ok i{background:var(--green);}
   .sync.off i{background:var(--yellow);}
 
+  /* ---------- BIG rest timer ---------- */
   .rest-bar{
-    position:fixed;bottom:calc(16px + var(--safe-bottom));left:50%;transform:translateX(-50%) translateY(200%);
-    background:var(--surface);border:1px solid var(--dc);color:var(--text);padding:9px 12px;border-radius:20px;
-    display:flex;align-items:center;gap:9px;font-family:var(--font-mono);font-weight:700;font-size:14px;
-    box-shadow:0 10px 30px rgba(0,0,0,.45);transition:transform .25s;z-index:30;
+    position:fixed;bottom:calc(14px + var(--safe-bottom));left:50%;
+    transform:translateX(-50%) translateY(150%);
+    width:min(430px, calc(100vw - 24px));
+    background:var(--glass);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+    border:1.5px solid var(--dc,var(--pc));border-radius:26px;padding:16px 16px 14px;
+    box-shadow:var(--shadow);transition:transform .32s cubic-bezier(.22,.9,.3,1);z-index:55;
   }
   .rest-bar.show{transform:translateX(-50%) translateY(0);}
-  .rest-ring{width:34px;height:34px;flex-shrink:0;}
-  .rest-ring circle{fill:none;stroke-width:4;}
-  .rest-ring .bg{stroke:var(--surface-2);}
-  .rest-ring .fg{stroke:var(--dc);stroke-linecap:round;transition:stroke-dashoffset .95s linear;}
-  .rest-bar button{background:var(--surface-2);border:1px solid var(--line);color:var(--text);font-weight:700;border-radius:9px;padding:6px 10px;font-size:12px;cursor:pointer;font-family:var(--font-body);}
-  .rest-bar .skip{background:var(--dc);color:#1a1826;border-color:transparent;}
+  .rest-main{display:flex;align-items:center;gap:16px;}
+  .rest-dial{position:relative;width:104px;height:104px;flex-shrink:0;}
+  .rest-dial svg{width:104px;height:104px;display:block;transform:rotate(-90deg);}
+  .rest-dial circle{fill:none;stroke-width:8;stroke-linecap:round;}
+  .rest-dial .bg{stroke:var(--surface-2);}
+  .rest-dial .fg{stroke:var(--dc,var(--pc));transition:stroke-dashoffset .95s linear;}
+  .rest-num{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-mono);font-weight:700;font-size:29px;letter-spacing:-1px;color:var(--text);
+  }
+  .rest-bar.low .rest-dial{animation:ringWarn 1s ease-in-out infinite;}
+  .rest-bar.low .rest-dial .fg{stroke:var(--red);}
+  .rest-bar.low .rest-num{color:var(--red);}
+  .rest-info{flex:1;min-width:0;}
+  .rest-cap{font-family:var(--font-display);font-weight:800;font-size:16px;line-height:1.25;}
+  .rest-ex{font-size:12px;color:var(--text-dim);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .rest-actions{display:flex;gap:7px;margin-top:11px;flex-wrap:wrap;}
+  .rest-actions button{
+    flex:1;min-width:64px;background:var(--surface-2);border:1px solid var(--line);color:var(--text);
+    font-weight:700;border-radius:12px;padding:11px 6px;font-size:13px;cursor:pointer;font-family:var(--font-body);
+    transition:transform .12s;
+  }
+  .rest-actions button:active{transform:scale(.93);}
+  .rest-actions .skip{background:var(--dc,var(--pc));color:var(--ink);border-color:transparent;}
 
   .toast{
     position:fixed;top:calc(14px + var(--safe-top));left:50%;transform:translateX(-50%) translateY(-16px);
-    background:var(--surface-2);border:1px solid var(--line);padding:9px 16px;border-radius:20px;font-size:12.5px;
-    color:var(--text);opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:40;
-    box-shadow:0 8px 24px rgba(0,0,0,.4);max-width:90vw;text-align:center;
+    background:var(--surface-2);border:1px solid var(--line);padding:10px 17px;border-radius:20px;font-size:13px;
+    color:var(--text);opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;z-index:70;
+    box-shadow:var(--shadow);max-width:90vw;text-align:center;font-weight:600;
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .confetti{position:fixed;inset:0;pointer-events:none;z-index:65;overflow:hidden;}
+  .confetti i{position:absolute;top:-10vh;width:9px;height:14px;border-radius:2px;display:block;
+    animation:confetti linear forwards;}
   .loading,.error{margin-top:40px;text-align:center;color:var(--text-dim);font-size:14px;}
   .error{color:var(--red);}
 </style>
 </head>
 <body>
 <div id="app"><div class="wrap"><div class="loading">טוען...</div></div></div>
+
 <div class="rest-bar" id="restBar">
-  <svg class="rest-ring" viewBox="0 0 40 40"><circle class="bg" cx="20" cy="20" r="16"></circle><circle class="fg" id="restRing" cx="20" cy="20" r="16" transform="rotate(-90 20 20)"></circle></svg>
-  <span id="restTime">0:00</span>
-  <button data-rest="-15">−15</button><button data-rest="30">+30</button><button class="skip" data-rest="skip">סיים</button>
+  <div class="rest-main">
+    <div class="rest-dial">
+      <svg viewBox="0 0 104 104"><circle class="bg" cx="52" cy="52" r="45"></circle><circle class="fg" id="restRing" cx="52" cy="52" r="45"></circle></svg>
+      <div class="rest-num" id="restTime">0:00</div>
+    </div>
+    <div class="rest-info">
+      <div class="rest-cap" id="restCap">מנוחה בין סטים</div>
+      <div class="rest-ex" id="restEx"></div>
+    </div>
+  </div>
+  <div class="rest-actions">
+    <button data-rest="-15">−15 שנ׳</button>
+    <button data-rest="30">+30 שנ׳</button>
+    <button class="skip" data-rest="skip">דילוג ▸</button>
+  </div>
 </div>
+
 <div class="toast" id="toast">נשמר ✓</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
 <script>
 (function(){
 'use strict';
 
-const CATALOG = {"yonatan": {"id": "yonatan", "name": "יונתן", "goal": "ירידה בשומן + עלייה במסת שריר", "accent": "#5EE7FF", "weekGoal": 4, "logNote": "צעדים — כל יום שנרשם זה מעולה. משקל גוף — מספיק פעם בשבוע, באותו יום ובאותה שעה. המשקל משתנה מיום ליום בגלל מים ואוכל, וזה נורמלי; המגמה לאורך שבועות היא מה שמעניין.", "tips": [["חימום", "5 דקות קרדיו קל ומתיחות דינמיות לפני כל אימון כוח. סט ראשון קליל במשקל נמוך זה גם חלק מהחימום."], ["טכניקה קודם, משקל אחר כך", "מתחילים במשקל שאתה שולט בו לאורך כל טווח התנועה. משקל שגורם לך לזרוק את הגוף לא נחשב."], ["ככה האפליקציה מעלה אותך", "כשאתה משלים את כל הסטים במספר החזרות היעד בשני אימונים ברצף, מופיע לך בכרטיס התרגיל משקל חדש מוצע. לחיצה על \"קבע\" ממלאת אותו לכל הסטים."], ["תרשום גם כשלא הצליח", "סט שיצא 8 חזרות במקום 10 שווה לרשום בדיוק ככה. הגרף אמין רק אם המספרים אמיתיים, וסטגנציה של שבועיים היא מידע חשוב."], ["מנוחה בין סטים", "הטיימר נדלק לבד אחרי כל סט. לתרגילים גדולים כדאי 90 שניות, לתרגילים קטנים 60. פחות מזה, המשקל יירד בסטים הבאים."], ["שינה ואוכל", "השריר נבנה בין האימונים, לא בזמנם. שינה מספקת וארוחות סדירות עם חלבון משפיעות על הגרף בדיוק כמו האימון עצמו."], ["תזונה", "הגוף עדיין בונה ומתפתח, ולכן הדגש הוא לאכול מספיק ומגוון, עם חלבון בכל ארוחה — לא על לאכול פחות."]], "programs": [{"id": "gym", "label": "חדר כושר", "short": "חדר כושר", "sub": "כל הגוף", "icon": "🏋️", "hex": "#FF4D6D", "type": "strength", "title": "חדר כושר · כל הגוף", "ex": [{"n": "סקוואט עם משקולת / לחיצת רגליים", "sets": 3, "reps": 10, "w": true, "inc": 5, "equip": "machine", "view": "front", "hl": ["quads"], "cues": ["כפות הרגליים ברוחב כתפיים על המשטח", "לא נועלים ברכיים בחוזקה בקצה העלייה", "לא מרימים את הישבן מהמושב בירידה", "שליטה מלאה בשני הכיוונים"]}, {"n": "לחיצת חזה במכונה (Chest Press)", "sets": 3, "reps": 10, "w": true, "inc": 2.5, "equip": "machine", "view": "front", "hl": ["chest"], "cues": ["מכוונים גובה מושב כך שהידיות בגובה החזה", "דוחפים קדימה בשליטה, בלי לנעול מרפקים בסוף", "חוזרים לאט לנקודת ההתחלה", "גב צמוד למשענת לאורך כל התנועה"]}, {"n": "פולי עליון (Lat Pulldown)", "sets": 3, "reps": 10, "w": true, "inc": 2.5, "equip": "cable", "view": "back", "hl": ["lats"], "cues": ["אחיזה מעט רחבה מהכתפיים", "מושכים את המרפקים למטה ואחורה, החזה מוביל", "לא מתנופפים אחורה עם הגוף", "עוצרים רגע למטה ואז חוזרים בשליטה"]}, {"n": "לחיצת כתפיים בישיבה (Shoulder Press)", "sets": 2, "reps": 10, "w": true, "inc": 2, "equip": "dumbbell", "view": "front", "hl": ["shoulders"], "cues": ["גב תחתון צמוד למשענת, בטן מכווצת קלות", "דוחפים למעלה בלי לקשת יתר בגב", "לא נועלים מרפקים בחוזקה למעלה", "מורידים עד שהמרפקים בערך בגובה הכתפיים"]}, {"n": "דדליפט רומני (RDL)", "sets": 2, "reps": 10, "w": true, "inc": 2.5, "equip": "dumbbell", "view": "back", "hl": ["hamstrings", "glutes"], "cues": ["ברכיים כמעט ישרות עם כפיפה קלה בלבד", "מרימים את האגן אחורה, לא כופפים את הגב", "המשקולות נשארות קרובות לרגליים", "עוצרים כשמרגישים מתיחה בירך האחורית"]}, {"n": "כפיפת מרפקים במוט (בייספס)", "sets": 2, "reps": 10, "w": true, "inc": 2.5, "equip": "barbell", "view": "front", "hl": ["biceps"], "cues": ["אחיזה ברוחב כתפיים בערך", "מרפקים צמודים לצדי הגוף", "עולים בשליטה, לא בתנופת גב", "ירידה איטית — כאן קורה הרוב"]}, {"n": "טרייספס בפולי (Triceps Pushdown)", "sets": 2, "reps": 12, "w": true, "inc": 2.5, "equip": "cable", "view": "back", "hl": ["triceps"], "cues": ["מרפקים צמודים לגוף וקבועים במקום", "רק האמה זזה, לא הכתף", "מיישרים עד הסוף בלי לנעול בחוזקה", "חוזרים באיטיות למעלה"]}, {"n": "פלאנק (Plank)", "sets": 2, "reps": "30 שנ׳", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["abs"], "cues": ["קו ישר מהראש עד העקבים", "בטן וישבן מכווצים, אין שקיעה באגן", "מסתכלים מעט קדימה, לא למטה לחלוטין", "נושמים באופן קבוע — לא עוצרים נשימה"]}], "tile": "מכשירים ומשקולות · כל הגוף"}, {"id": "home", "label": "אימון ביתי", "short": "ביתי", "sub": "כל הגוף", "icon": "🏠", "hex": "#2FE6A7", "type": "strength", "title": "אימון ביתי · כל הגוף", "ex": [{"n": "סקוואט (Bodyweight Squat)", "sets": 3, "reps": 15, "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["quads"], "cues": ["רגליים ברוחב כתפיים, בהונות מעט כלפי חוץ", "יורדים כאילו יושבים על כיסא, ברכיים בקו עם הבהונות", "גב ישר, מבט קדימה", "דוחפים דרך העקבים לחזרה למעלה"]}, {"n": "שכיבות סמיכה (Push-ups)", "sets": 3, "reps": 10, "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["chest"], "cues": ["ידיים קצת רחבות מהכתפיים", "גוף בקו ישר מהראש עד העקבים לאורך כל התנועה", "יורדים עד שהחזה כמעט נוגע ברצפה", "אם קשה — אפשר לרדת על הברכיים"]}, {"n": "גשר ישבן (Glute Bridge)", "sets": 3, "reps": 15, "w": false, "inc": 0, "equip": "bodyweight", "view": "back", "hl": ["glutes"], "cues": ["כפות רגליים קרובות לישבן, ברוחב כתפיים", "דוחפים דרך העקבים ומרימים את האגן למעלה", "למעלה — כיווץ חזק של הישבן, בלי לקשת יתר בגב", "ירידה מבוקרת, לא נופלים"]}, {"n": "לאנג׳ (Lunge)", "sets": 2, "reps": "10 לרגל", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["quads"], "cues": ["צעד מספיק גדול לשמור על יציבות", "ברך קדמית לא נופלת פנימה ולא עוברת הרבה את הבהונות", "ברך אחורית יורדת בשליטה, כמעט נוגעת ברצפה", "גו זקוף לאורך כל התנועה"]}, {"n": "סופרמן (Superman)", "sets": 2, "reps": 12, "w": false, "inc": 0, "equip": "bodyweight", "view": "back", "hl": ["lowerBack"], "cues": ["שוכבים על הבטן, ידיים ורגליים ישרות", "מרימים בו־זמנית ידיים, חזה ורגליים מהרצפה", "עוצרים רגע למעלה, כיווץ בגב התחתון ובישבן", "ירידה מבוקרת, לא נופלים בבת אחת"]}, {"n": "שכיבות סמיכה צרות (Diamond Push-ups)", "sets": 2, "reps": 8, "w": false, "inc": 0, "equip": "bodyweight", "view": "back", "hl": ["triceps"], "cues": ["ידיים קרובות זו לזו מתחת לחזה, אצבעות יוצרות משולש", "מרפקים נשארים קרובים לגוף לאורך התנועה", "יורדים עד שהחזה כמעט נוגע בידיים", "אם קשה — אפשר לרדת על הברכיים"]}, {"n": "פלאנק (Plank)", "sets": 2, "reps": "30 שנ׳", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["abs"], "cues": ["קו ישר מהראש עד העקבים", "בטן וישבן מכווצים, אין שקיעה באגן", "מסתכלים מעט קדימה, לא למטה לחלוטין", "נושמים באופן קבוע — לא עוצרים נשימה"]}, {"n": "בטן אלכסונית — Russian Twist", "sets": 2, "reps": "15 לצד", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["obliques"], "cues": ["גב ישר בהטיה, לא מתעגל", "תנועה מבוקרת מהליבה, לא מהידיים", "כפות רגליים יכולות להישאר על הרצפה למתחילים", "נושמים באופן קבוע לאורך התרגיל"]}], "tile": "בלי ציוד · כל הגוף"}, {"id": "cardio", "label": "אירובי", "short": "אירובי", "sub": "ריצה / אופניים", "icon": "🏃", "hex": "#3DA9FC", "type": "cardio", "kinds": [{"id": "running", "label": "🏃 ריצה", "stages": [{"desc": "5 דק׳ הליכת חימום, ואז 6 סבבים של: ריצה קלה 1 דקה + הליכה 2 דקות", "pace": "קצב שיחה — יכולים לדבר בלי להתנשף"}, {"desc": "5 דק׳ הליכת חימום, ואז 6 סבבים של: ריצה קלה 1.5 דקות + הליכה 1.5 דקות", "pace": "קצב שיחה"}, {"desc": "5 דק׳ הליכת חימום, ואז 5 סבבים של: ריצה קלה 2 דקות + הליכה 1 דקה", "pace": "קצב שיחה, אפשר קצת מהר יותר"}, {"desc": "5 דק׳ הליכת חימום, ואז 4 סבבים של: ריצה קלה 3 דקות + הליכה 1.5 דקות", "pace": "קצב נוח-בינוני"}, {"desc": "5 דק׳ הליכת חימום, ואז 2 סבבים של: ריצה 8 דקות + הליכה 2 דקות", "pace": "קצב נוח-בינוני"}, {"desc": "5 דק׳ הליכת חימום, ואז ריצה רצופה של 20 דקות בקצב נוח", "pace": "קצב נוח שיודעים להחזיק לאורך זמן"}]}, {"id": "cycling", "label": "🚴 אופניים", "stages": [{"desc": "15 דקות רכיבה בקצב נוח וקבוע", "pace": "קצב שיחה"}, {"desc": "20 דקות רכיבה בקצב נוח", "pace": "קצב שיחה"}, {"desc": "25 דקות רכיבה, כולל 5 דקות בקצב קצת יותר מהיר באמצע", "pace": "רוב הזמן קצב שיחה"}, {"desc": "30 דקות רכיבה בקצב נוח-בינוני", "pace": "קצב נוח-בינוני"}, {"desc": "35 דקות רכיבה, כולל 2 סבבים של דקה מהירה יותר", "pace": "רוב הזמן קצב שיחה"}, {"desc": "40 דקות רכיבה רצופה בקצב נוח קבוע", "pace": "קצב נוח שיודעים להחזיק"}]}], "tile": "ריצה או אופניים, בשלבים"}]}, "itamar": {"id": "itamar", "name": "איתמר", "goal": "בניית שריר וכוח", "accent": "#FF7EB6", "weekGoal": 4, "logNote": "צעדים — כל יום שנרשם זה מעולה. משקל גוף — מספיק פעם בשבוע, באותו יום ובאותה שעה. המשקל משתנה מיום ליום בגלל מים ואוכל, וזה נורמלי; המגמה לאורך שבועות היא מה שמעניין.", "tips": [["חימום", "5 דקות קרדיו קל ומתיחות דינמיות לפני כל אימון כוח. סט ראשון קליל במשקל נמוך זה גם חלק מהחימום."], ["טכניקה קודם, משקל אחר כך", "מתחילים במשקל שאתה שולט בו לאורך כל טווח התנועה. משקל שגורם לך לזרוק את הגוף לא נחשב."], ["ככה האפליקציה מעלה אותך", "כשאתה משלים את כל הסטים במספר החזרות היעד בשני אימונים ברצף, מופיע לך בכרטיס התרגיל משקל חדש מוצע. לחיצה על \"קבע\" ממלאת אותו לכל הסטים."], ["תרשום גם כשלא הצליח", "סט שיצא 8 חזרות במקום 10 שווה לרשום בדיוק ככה. הגרף אמין רק אם המספרים אמיתיים, וסטגנציה של שבועיים היא מידע חשוב."], ["מנוחה בין סטים", "הטיימר נדלק לבד אחרי כל סט. לתרגילים גדולים כדאי 90 שניות, לתרגילים קטנים 60. פחות מזה, המשקל יירד בסטים הבאים."], ["שינה ואוכל", "השריר נבנה בין האימונים, לא בזמנם. שינה מספקת וארוחות סדירות עם חלבון משפיעות על הגרף בדיוק כמו האימון עצמו."], ["תזונה", "כדי לבנות שריר הגוף צריך חומר גלם: ארוחות סדירות עם חלבון בכל אחת, ולא לדלג על ארוחה אחרי אימון."]], "programs": [{"id": "A", "label": "עליון א׳", "short": "A", "sub": "עליון א׳", "icon": "🅐", "hex": "#FF4D6D", "type": "strength", "title": "עליון א׳", "ex": [{"n": "לחיצת חזה במכונה (Chest Press)", "sets": 3, "reps": 10, "w": true, "inc": 2.5, "equip": "machine", "view": "front", "hl": ["chest"], "cues": ["מכוונים גובה מושב כך שהידיות בגובה החזה", "דוחפים קדימה בשליטה, בלי לנעול מרפקים בסוף", "חוזרים לאט לנקודת ההתחלה", "גב צמוד למשענת לאורך כל התנועה"]}, {"n": "פולי עליון (Lat Pulldown)", "sets": 3, "reps": 10, "w": true, "inc": 2.5, "equip": "cable", "view": "back", "hl": ["lats"], "cues": ["אחיזה מעט רחבה מהכתפיים", "מושכים את המרפקים למטה ואחורה, החזה מוביל", "לא מתנופפים אחורה עם הגוף", "עוצרים רגע למטה ואז חוזרים בשליטה"]}, {"n": "חתירה בישיבה (Seated Row)", "sets": 3, "reps": 10, "w": true, "inc": 2.5, "equip": "cable", "view": "back", "hl": ["lats", "traps"], "cues": ["גב זקוף, לא מתכופפים קדימה עם המשיכה", "מושכים מרפקים אחורה, מקרבים שכמות", "לא מתנדנדים עם הגוף כדי לעזור למשקל", "עצירה קצרה כשהידיים קרובות לגוף"]}, {"n": "לחיצת כתפיים בישיבה (Shoulder Press)", "sets": 2, "reps": 10, "w": true, "inc": 2, "equip": "dumbbell", "view": "front", "hl": ["shoulders"], "cues": ["גב תחתון צמוד למשענת, בטן מכווצת קלות", "דוחפים למעלה בלי לקשת יתר בגב", "לא נועלים מרפקים בחוזקה למעלה", "מורידים עד שהמרפקים בערך בגובה הכתפיים"]}, {"n": "כפיפת מרפקים במשקולות (בייספס)", "sets": 2, "reps": 10, "w": true, "inc": 2, "equip": "dumbbell", "view": "front", "hl": ["biceps"], "cues": ["מרפקים צמודים לגוף לאורך כל התנועה", "אפשר להחליף ידיים לסירוגין או יחד", "עלייה בשליטה, ירידה איטית עוד יותר", "לא מתנדנדים עם הגוף כדי לעזור"]}, {"n": "טרייספס בפולי (Triceps Pushdown)", "sets": 2, "reps": 12, "w": true, "inc": 2.5, "equip": "cable", "view": "back", "hl": ["triceps"], "cues": ["מרפקים צמודים לגוף וקבועים במקום", "רק האמה זזה, לא הכתף", "פושטים עד הסוף בלי לנעול בחוזקה", "חוזרים באיטיות למעלה"]}, {"n": "בטן בכבל בכריעה (Cable Crunch)", "sets": 3, "reps": 15, "w": true, "inc": 2.5, "equip": "cable", "view": "front", "hl": ["abs"], "cues": ["כורעים מול הכבל, ידיים ליד הראש", "מכופפים מהבטן, לא מהידיים או מהגב התחתון", "האגן נשאר יציב, לא זז אחורה", "חזרה מבוקרת למעלה בלי לאבד מתח בבטן"]}, {"n": "פלאנק (Plank)", "sets": 2, "reps": "30 שנ׳", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["abs"], "cues": ["קו ישר מהראש עד העקבים", "בטן וישבן מכווצים, אין שקיעה באגן", "מסתכלים מעט קדימה, לא למטה לחלוטין", "נושמים באופן קבוע — לא עוצרים נשימה"]}], "tile": "חזה, גב, כתפיים, ידיים"}, {"id": "B", "label": "תחתון א׳", "short": "B", "sub": "תחתון א׳", "icon": "🅑", "hex": "#3DA9FC", "type": "strength", "title": "תחתון א׳", "ex": [{"n": "לחיצת רגליים (Leg Press)", "sets": 3, "reps": 10, "w": true, "inc": 5, "equip": "machine", "view": "front", "hl": ["quads"], "cues": ["כפות הרגליים ברוחב כתפיים על המשטח", "לא נועלים ברכיים בחוזקה בקצה העלייה", "לא מרימים את הישבן מהמושב בירידה", "שליטה מלאה בשני הכיוונים"]}, {"n": "דדליפט רומני (RDL)", "sets": 3, "reps": 8, "w": true, "inc": 2.5, "equip": "dumbbell", "view": "back", "hl": ["hamstrings", "glutes"], "cues": ["ברכיים כמעט ישרות עם כפיפה קלה בלבד", "מרימים את האגן אחורה, לא כופפים את הגב", "המשקולות נשארות קרובות לרגליים", "עוצרים כשמרגישים מתיחה בירך האחורית"]}, {"n": "יישור רגליים במכונה (Leg Extension)", "sets": 2, "reps": 12, "w": true, "inc": 2.5, "equip": "machine", "view": "front", "hl": ["quads"], "cues": ["גב צמוד למשענת, לא מתרומם", "תנועה חלקה עד כמעט יישור מלא", "עצירה קלה למעלה, לא בעיטה מהירה", "חזרה איטית יותר מהעלייה"]}, {"n": "כיפוף רגליים שוכב (Leg Curl)", "sets": 2, "reps": 12, "w": true, "inc": 2.5, "equip": "machine", "view": "back", "hl": ["hamstrings"], "cues": ["האגן צמוד למשטח לאורך כל התנועה", "כיפוף עד הסוף בלי לנתק את הירכיים", "חזרה איטית ומבוקרת למטה", "לא מסיימים בתנופה בתחתית התנועה"]}, {"n": "הרמות עקבים — עמידה (Calf Raise)", "sets": 3, "reps": 15, "w": true, "inc": 5, "equip": "machine", "view": "back", "hl": ["calves"], "cues": ["עולים על קצות האצבעות בשליטה, לא בקפיצה", "עצירה קלה למעלה", "יורדים עד מתיחה קלה בשוק", "אפשר להיעזר במשטח יציב לאיזון"]}, {"n": "Dead bug (תרגיל בטן)", "sets": 2, "reps": "10 לצד", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["abs"], "cues": ["גב תחתון צמוד לרצפה לאורך כל התרגיל", "פושטים יד ורגל נגדיות באיטיות", "נושמים כרגיל, לא עוצרים נשימה", "אם הגב מתרומם — מקטינים את הטווח"]}], "tile": "רגליים, ישבן, שוקיים"}, {"id": "C", "label": "עליון ב׳", "short": "C", "sub": "עליון ב׳", "icon": "🅒", "hex": "#FFD23F", "type": "strength", "title": "עליון ב׳", "ex": [{"n": "פרפר לחזה במכונה (Chest Fly)", "sets": 3, "reps": 12, "w": true, "inc": 2.5, "equip": "machine", "view": "front", "hl": ["chest"], "cues": ["כוונון מושב כך שהידיות בגובה הכתפיים", "מקרבים ידיים בתנועה מבוקרת, בלי לנעול מרפקים", "לא זורקים את המשקל בחזרה החוצה", "מרגישים מתיחה קלה בחזה בפתיחה, לא כאב"]}, {"n": "חתירה במכונה (Machine Row)", "sets": 3, "reps": 10, "w": true, "inc": 2.5, "equip": "machine", "view": "back", "hl": ["lats", "traps"], "cues": ["חזה צמוד לכרית התמיכה אם קיימת", "מושכים מרפקים אחורה, שכמות מתקרבות", "לא מרימים כתפיים לכיוון האוזניים", "חזרה איטית קדימה בשליטה"]}, {"n": "כפיפת מרפק פטיש", "sets": 2, "reps": 10, "w": true, "inc": 2, "equip": "dumbbell", "view": "front", "hl": ["biceps"], "cues": ["אחיזה ניטרלית, האגודלים כלפי מעלה", "מרפקים צמודים לגוף", "עלייה בשליטה, ירידה איטית עוד יותר", "לא מנענעים את הגוף כדי לעזור"]}, {"n": "טרייספס מעל הראש בכבל (Overhead Extension)", "sets": 2, "reps": 12, "w": true, "inc": 2.5, "equip": "cable", "view": "back", "hl": ["triceps"], "cues": ["מרפקים קרובים לראש וקבועים במקום", "מיישרים כמעט עד הסוף", "לא מרחיקים את המרפקים הצידה", "תנועה מבוקרת בשני הכיוונים"]}, {"n": "הרמות צד לכתפיים (Lateral Raise)", "sets": 2, "reps": 12, "w": true, "inc": 1, "equip": "dumbbell", "view": "front", "hl": ["shoulders"], "cues": ["מרפקים בכיפוף קל קבוע", "מרימים עד גובה הכתפיים בערך, לא יותר", "תנועה איטית, בלי תנופה מהגוף", "ירידה מבוקרת — לא נופל למטה"]}, {"n": "Russian Twist (תרגיל בטן)", "sets": 2, "reps": "15 לצד", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["obliques"], "cues": ["גב ישר בהטיה, לא מתעגל", "תנועה מבוקרת מהליבה, לא מהידיים", "כפות רגליים יכולות להישאר על הרצפה למתחילים", "נושמים באופן קבוע לאורך התרגיל"]}], "tile": "חזה, גב, ידיים, כתפיים"}, {"id": "D", "label": "תחתון ב׳", "short": "D", "sub": "תחתון ב׳", "icon": "🅓", "hex": "#2FE6A7", "type": "strength", "title": "תחתון ב׳", "ex": [{"n": "סקוואט עם משקולת (Goblet Squat)", "sets": 3, "reps": 10, "w": true, "inc": 2.5, "equip": "dumbbell", "view": "front", "hl": ["quads"], "cues": ["רגליים ברוחב כתפיים, בהונות מעט כלפי חוץ", "ברכיים בקו עם הבהונות, לא נופלות פנימה", "יורדים עד שהירכיים בערך מקבילות לרצפה", "משקל על כל כף הרגל, גב ישר לאורך התנועה"]}, {"n": "היפ תראסט (Hip Thrust)", "sets": 3, "reps": 10, "w": true, "inc": 5, "equip": "dumbbell", "view": "back", "hl": ["glutes"], "cues": ["כתפיים עליונות נשענות על ספסל יציב", "דוחפים דרך העקבים, לא דרך הבהונות", "למעלה — גוף בקו ישר מהברכיים לכתפיים", "ירידה מבוקרת, לא נופלים למטה"]}, {"n": "לאנג׳ הליכה (Walking Lunge)", "sets": 2, "reps": "10 לרגל", "w": true, "inc": 2, "equip": "dumbbell", "view": "front", "hl": ["quads"], "cues": ["צעד מספיק גדול לשמור על יציבות", "ברך קדמית לא נופלת פנימה ולא עוברת הרבה את הבהונות", "ברך אחורית יורדת בשליטה, כמעט נוגעת ברצפה", "גו זקוף לאורך כל התנועה"]}, {"n": "הרמות עקבים — ישיבה (Calf Raise)", "sets": 3, "reps": 15, "w": true, "inc": 2.5, "equip": "machine", "view": "back", "hl": ["calves"], "cues": ["עולים על קצות האצבעות בשליטה, לא בקפיצה", "עצירה קלה למעלה", "יורדים עד מתיחה קלה בשוק", "אפשר להיעזר במשטח יציב לאיזון"]}, {"n": "פלאנק צידי (Side Plank)", "sets": 2, "reps": "20 שנ׳ לצד", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["obliques"], "cues": ["קו ישר מהראש ועד כפות הרגליים בצד", "האגן לא שוקע ולא מתרומם יותר מדי", "המרפק בדיוק מתחת לכתף", "נושמים כרגיל, מתחלפים צד אחרי המנוחה"]}], "tile": "רגליים, ישבן, ליבה"}]}};
+const CATALOG = {"yonatan": {"id": "yonatan", "name": "יונתן", "goal": "ירידה בשומן + עלייה במסת שריר", "accent": "#5EE7FF", "weekGoal": 4, "logNote": "צעדים — כל יום שנרשם זה מעולה. משקל גוף — מספיק פעם בשבוע, באותו יום ובאותה שעה. המשקל משתנה מיום ליום בגלל מים ואוכל, וזה נורמלי; המגמה לאורך שבועות היא מה שמעניין.", "tips": [["חימום", "5 דקות קרדיו קל ומתיחות דינמיות לפני כל אימון כוח. סט ראשון קליל במשקל נמוך זה גם חלק מהחימום."], ["טכניקה קודם, משקל אחר כך", "מתחילים במשקל שאתה שולט בו לאורך כל טווח התנועה. משקל שגורם לך לזרוק את הגוף לא נחשב."], ["ככה האפליקציה מעלה אותך", "כשאתה משלים את כל הסטים במספר החזרות היעד בשני אימונים ברצף, מופיע לך בכרטיס התרגיל משקל חדש מוצע. לחיצה על \"קבע\" ממלאת אותו לכל הסטים."], ["אפשר לשנות סטים וחזרות", "לחיצה על ריבוע ה\"סטים × חזרות\" בכרטיס פותחת עורך. מה שתקבע נשמר לתרגיל הזה ונשאר גם בפעם הבאה."], ["תרגיל שלא אוהבים — מוחקים", "כפתור ה־✕ בכרטיס מוריד את התרגיל מהאימון לתמיד. הוא לא ייעלם מההיסטוריה, ותמיד אפשר להחזיר אותו מ\"עוד תרגילים\" בתחתית המסך."], ["תרשום גם כשלא הצליח", "סט שיצא 8 חזרות במקום 10 שווה לרשום בדיוק ככה. הגרף אמין רק אם המספרים אמיתיים, וסטגנציה של שבועיים היא מידע חשוב."], ["מנוחה בין סטים", "הטיימר נדלק לבד אחרי כל סט. לתרגילים גדולים כדאי 90 שניות, לתרגילים קטנים 60. פחות מזה, המשקל יירד בסטים הבאים."], ["שינה ואוכל", "השריר נבנה בין האימונים, לא בזמנם. שינה מספקת וארוחות סדירות עם חלבון משפיעות על הגרף בדיוק כמו האימון עצמו."], ["תזונה", "הגוף עדיין בונה ומתפתח, ולכן הדגש הוא לאכול מספיק ומגוון, עם חלבון בכל ארוחה — לא על לאכול פחות."]], "programs": [{"id": "upper", "label": "חדר כושר · עליון", "short": "עליון", "sub": "פלג גוף עליון", "icon": "🏋️", "hex": "#FF4D6D", "type": "strength", "title": "חדר כושר · פלג גוף עליון", "tile": "חזה · גב · כתפיים · ידיים", "ex": [{"k": "upper-01", "n": "לחיצת חזה במכונה (Chest Press Machine)", "sets": 3, "reps": 10, "w": true, "inc": 2.5, "equip": "machine", "view": "front", "hl": ["chest"], "hl2": ["triceps", "shoulders"], "cues": ["מכוונים גובה מושב כך שהידיות בגובה החזה", "דוחפים קדימה בשליטה, בלי לנעול מרפקים בסוף", "חוזרים לאט לנקודת ההתחלה — הירידה היא חצי מהתרגיל", "גב וכתפיים צמודים למשענת לאורך כל התנועה"]}, {"k": "upper-02", "n": "פולי עליון (Lat Pulldown)", "sets": 3, "reps": 10, "w": true, "inc": 2.5, "equip": "cable", "view": "back", "hl": ["lats"], "hl2": ["biceps", "traps"], "cues": ["אחיזה מעט רחבה מהכתפיים, אגודל סוגר על המוט", "מושכים את המרפקים למטה ואחורה, החזה מוביל כלפי מעלה", "לא מתנופפים אחורה עם הגוף כדי לעזור למשקל", "עוצרים רגע כשהמוט בגובה הסנטר, וחוזרים בשליטה מלאה"]}, {"k": "upper-03", "n": "חתירה בפולי בישיבה (Seated Cable Row)", "sets": 3, "reps": 10, "w": true, "inc": 2.5, "equip": "cable", "view": "back", "hl": ["lats", "traps"], "hl2": ["biceps"], "cues": ["גב זקוף וחזה פתוח, לא מתכופפים קדימה עם המשיכה", "מושכים את המרפקים אחורה וסוגרים שכמות", "לא מתנדנדים עם הגוף — רק הידיים והגב עובדים", "עצירה קצרה כשהידית קרובה לבטן, ואז חזרה איטית"]}, {"k": "upper-04", "n": "פרפר לחזה במכונה (Chest Fly Machine)", "sets": 3, "reps": 12, "w": true, "inc": 2.5, "equip": "machine", "view": "front", "hl": ["chest"], "hl2": [], "cues": ["כוונון מושב כך שהידיות בגובה הכתפיים", "מקרבים ידיים בקשת רחבה, מרפקים בכיפוף קל וקבוע", "לא זורקים את המשקל בחזרה החוצה", "בפתיחה מרגישים מתיחה נעימה בחזה — לא כאב בכתף"]}, {"k": "upper-05", "n": "לחיצת כתפיים בישיבה (Shoulder Press)", "sets": 3, "reps": 10, "w": true, "inc": 2, "equip": "dumbbell", "view": "front", "hl": ["shoulders"], "hl2": ["triceps"], "cues": ["גב תחתון צמוד למשענת, בטן מכווצת קלות", "דוחפים למעלה בלי לקשת יתר בגב התחתון", "לא נועלים מרפקים בחוזקה בקצה העלייה", "מורידים עד שהמרפקים בערך בגובה הכתפיים"]}, {"k": "upper-06", "n": "כפיפת מרפקים במוט בישיבה (Seated Barbell Curl)", "sets": 3, "reps": 10, "w": true, "inc": 2.5, "equip": "barbell", "view": "front", "hl": ["biceps"], "hl2": ["forearms"], "cues": ["ישיבה זקופה על ספסל, גב תחתון ניטרלי", "הישיבה מנטרלת תנופה — אם הגוף זז, המשקל כבד מדי", "מרפקים לא זזים קדימה בזמן העלייה", "ירידה איטית עד יישור כמעט מלא"]}, {"k": "upper-07", "n": "טרייספס בפולי (Cable Triceps Pushdown)", "sets": 3, "reps": 12, "w": true, "inc": 2.5, "equip": "cable", "view": "back", "hl": ["triceps"], "hl2": [], "cues": ["מרפקים צמודים לגוף וקבועים במקום", "רק האמה זזה — הכתף לא יורדת ולא עולה", "פושטים עד הסוף בלי לנעול בחוזקה", "חוזרים באיטיות למעלה, בלי לתת למשקל למשוך"]}], "pool": [{"k": "upper-p1", "n": "חתירה במכונה (Machine Row)", "sets": 3, "reps": 10, "w": true, "inc": 2.5, "equip": "machine", "view": "back", "hl": ["lats", "traps"], "hl2": ["biceps"], "cues": ["חזה צמוד לכרית התמיכה לאורך כל התנועה", "מושכים מרפקים אחורה, שכמות מתקרבות זו לזו", "לא מרימים כתפיים לכיוון האוזניים", "חזרה איטית קדימה, בלי לשחרר את המשקל בבת אחת"]}, {"k": "upper-p2", "n": "כפיפת מרפקים במוט בעמידה (Barbell Curl)", "sets": 3, "reps": 10, "w": true, "inc": 2.5, "equip": "barbell", "view": "front", "hl": ["biceps"], "hl2": ["forearms"], "cues": ["אחיזה ברוחב כתפיים בערך, כפות ידיים למעלה", "מרפקים צמודים לצדי הגוף וקבועים במקום", "עולים בשליטה — בלי תנופת גב או ברכיים", "ירידה איטית עד יישור כמעט מלא, כאן קורה רוב הבנייה"]}, {"k": "upper-p3", "n": "הרמות צד לכתפיים (Lateral Raise)", "sets": 3, "reps": 12, "w": true, "inc": 1, "equip": "dumbbell", "view": "front", "hl": ["shoulders"], "hl2": [], "cues": ["מרפקים בכיפוף קל קבוע לאורך התנועה", "מרימים עד גובה הכתפיים בערך — לא יותר", "תנועה איטית, בלי תנופה מהגוף", "ירידה מבוקרת, המשקל לא נופל למטה"]}, {"k": "upper-p4", "n": "כפיפת מרפק פטיש (Hammer Curl)", "sets": 3, "reps": 10, "w": true, "inc": 2, "equip": "dumbbell", "view": "front", "hl": ["biceps", "forearms"], "hl2": [], "cues": ["אחיזה ניטרלית — האגודלים כלפי מעלה כל הזמן", "מרפקים צמודים לגוף וקבועים", "עלייה בשליטה, ירידה איטית עוד יותר", "לא מנענעים את הגוף כדי לעזור"]}, {"k": "upper-p5", "n": "טרייספס מעל הראש בכבל (Overhead Extension)", "sets": 3, "reps": 12, "w": true, "inc": 2.5, "equip": "cable", "view": "back", "hl": ["triceps"], "hl2": [], "cues": ["מרפקים קרובים לראש וקבועים במקום", "מיישרים כמעט עד הסוף מעל הראש", "לא מרחיקים את המרפקים הצידה", "תנועה מבוקרת בשני הכיוונים, בלי קשת בגב"]}, {"k": "upper-p6", "n": "לחיצת חזה בשיפוע עם משקולות (Incline DB Press)", "sets": 3, "reps": 10, "w": true, "inc": 2, "equip": "dumbbell", "view": "front", "hl": ["chest"], "hl2": ["shoulders", "triceps"], "cues": ["ספסל בשיפוע 30 מעלות בערך, לא תלול יותר", "מרפקים בזווית 45 מעלות מהגוף, לא פתוחים לגמרי", "דוחפים למעלה ומעט פנימה, המשקולות מתקרבות", "ירידה מבוקרת עד מתיחה נעימה בחזה"]}, {"k": "upper-p7", "n": "Face Pull בכבל", "sets": 3, "reps": 15, "w": true, "inc": 2.5, "equip": "cable", "view": "back", "hl": ["traps", "shoulders"], "hl2": [], "cues": ["מושכים את החבל לגובה הפנים, מרפקים גבוהים", "פותחים את הידיים החוצה בסוף המשיכה", "משקל קל — זה תרגיל יציבה, לא תרגיל כוח", "חזרה איטית עם שליטה מלאה"]}, {"k": "upper-p8", "n": "חתירה עם משקולת יד אחת (One-Arm DB Row)", "sets": 3, "reps": 10, "w": true, "inc": 2, "equip": "dumbbell", "view": "back", "hl": ["lats"], "hl2": ["biceps", "traps"], "cues": ["יד וברך על ספסל, גב ישר ומקביל לרצפה", "מושכים את המשקולת לכיוון האגן, לא לכיוון הכתף", "המרפק נשאר קרוב לגוף", "לא מסובבים את הגו כדי להרים גבוה יותר"]}, {"k": "upper-p9", "n": "מקבילים על ספסל (Bench Dips)", "sets": 3, "reps": 12, "w": false, "inc": 0, "equip": "bodyweight", "view": "back", "hl": ["triceps"], "hl2": ["chest"], "cues": ["ידיים על ספסל יציב מאחורי הגוף, אצבעות קדימה", "יורדים עד שהמרפק בערך ב־90 מעלות", "הכתפיים לא נדחפות לכיוון האוזניים", "אם קשה — מקרבים את הרגליים לגוף"]}, {"k": "upper-p10", "n": "מתח בעזרה (Assisted Pull-up)", "sets": 3, "reps": 8, "w": false, "inc": 0, "equip": "bodyweight", "view": "back", "hl": ["lats"], "hl2": ["biceps"], "cues": ["אחיזה ברוחב כתפיים ומעט יותר", "מתחילים מכתפיים 'נעולות' למטה, לא רפויות", "מושכים עד שהסנטר עובר את המוט", "אפשר להיעזר בגומייה או במכונת עזר"]}]}, {"id": "lower", "label": "חדר כושר · תחתון", "short": "תחתון", "sub": "פלג גוף תחתון", "icon": "🦵", "hex": "#3DA9FC", "type": "strength", "title": "חדר כושר · פלג גוף תחתון", "tile": "רגליים · ישבן · שוקיים", "ex": [{"k": "lower-01", "n": "לחיצת רגליים (Leg Press)", "sets": 3, "reps": 10, "w": true, "inc": 5, "equip": "machine", "view": "front", "hl": ["quads"], "hl2": ["glutes", "hamstrings"], "cues": ["כפות הרגליים ברוחב כתפיים באמצע המשטח", "לא נועלים ברכיים בחוזקה בקצה העלייה", "לא מרימים את הישבן מהמושב בירידה", "יורדים עד כמה שהגב התחתון נשאר צמוד"]}, {"k": "lower-02", "n": "יישור רגליים במכונה (Leg Extension Machine)", "sets": 3, "reps": 12, "w": true, "inc": 2.5, "equip": "machine", "view": "front", "hl": ["quads"], "hl2": [], "cues": ["גב צמוד למשענת, אוחזים בידיות", "תנועה חלקה עד כמעט יישור מלא", "עצירה קלה למעלה — לא בעיטה מהירה", "החזרה למטה איטית יותר מהעלייה"]}, {"k": "lower-03", "n": "כיפוף רגליים במכונה (Leg Curl)", "sets": 3, "reps": 12, "w": true, "inc": 2.5, "equip": "machine", "view": "back", "hl": ["hamstrings"], "hl2": ["calves"], "cues": ["האגן צמוד למשטח לאורך כל התנועה", "כיפוף עד הסוף בלי לנתק את הירכיים", "חזרה איטית ומבוקרת למטה", "לא מסיימים בתנופה בתחתית התנועה"]}, {"k": "lower-04", "n": "דדליפט רומני עם משקולות (RDL)", "sets": 3, "reps": 10, "w": true, "inc": 2.5, "equip": "dumbbell", "view": "back", "hl": ["hamstrings", "glutes"], "hl2": ["lowerBack"], "cues": ["ברכיים כמעט ישרות, כיפוף קל בלבד", "שולחים את האגן אחורה — הגב נשאר ישר", "המשקולות נשארות צמודות לרגליים לאורך הירידה", "עוצרים כשמרגישים מתיחה בירך האחורית, לא נמוך יותר"]}, {"k": "lower-05", "n": "היפ תראסט (Hip Thrust)", "sets": 3, "reps": 12, "w": true, "inc": 5, "equip": "dumbbell", "view": "back", "hl": ["glutes"], "hl2": ["hamstrings"], "cues": ["כתפיים עליונות נשענות על ספסל יציב", "דוחפים דרך העקבים, לא דרך הבהונות", "למעלה — גוף בקו ישר מהברכיים לכתפיים", "כיווץ חזק של הישבן בסוף, בלי לקשת בגב"]}, {"k": "lower-06", "n": "הרמות עקבים בעמידה (Calf Raise)", "sets": 3, "reps": 15, "w": true, "inc": 5, "equip": "machine", "view": "back", "hl": ["calves"], "hl2": [], "cues": ["עולים על קצות האצבעות בשליטה, לא בקפיצה", "עצירה של שנייה למעלה — כאן השוק עובד", "יורדים עד מתיחה קלה בשוק", "נשענים על משטח יציב לשמירת איזון"]}], "pool": [{"k": "lower-p1", "n": "סקוואט עם משקולת (Goblet Squat)", "sets": 3, "reps": 10, "w": true, "inc": 2.5, "equip": "dumbbell", "view": "front", "hl": ["quads"], "hl2": ["glutes", "abs"], "cues": ["מחזיקים משקולת אחת צמוד לחזה", "רגליים ברוחב כתפיים, בהונות מעט כלפי חוץ", "יורדים עד שהירכיים בערך מקבילות לרצפה", "ברכיים בקו עם הבהונות, גב ישר לאורך התנועה"]}, {"k": "lower-p2", "n": "לאנג׳ הליכה (Walking Lunge)", "sets": 3, "reps": "10 לרגל", "w": true, "inc": 2, "equip": "dumbbell", "view": "front", "hl": ["quads"], "hl2": ["glutes"], "cues": ["צעד גדול מספיק כדי לשמור על יציבות", "ברך קדמית לא נופלת פנימה", "ברך אחורית יורדת בשליטה, כמעט נוגעת ברצפה", "גו זקוף לאורך כל התנועה"]}, {"k": "lower-p3", "n": "סקוואט בולגרי (Bulgarian Split Squat)", "sets": 3, "reps": "8 לרגל", "w": true, "inc": 2, "equip": "dumbbell", "view": "front", "hl": ["quads"], "hl2": ["glutes"], "cues": ["רגל אחורית על ספסל, רגל קדמית צעד גדול קדימה", "יורדים ישר למטה, לא קדימה", "רוב המשקל על העקב של הרגל הקדמית", "מתחילים בלי משקל עד שהאיזון יציב"]}, {"k": "lower-p4", "n": "הרמות עקבים בישיבה (Seated Calf Raise)", "sets": 3, "reps": 15, "w": true, "inc": 2.5, "equip": "machine", "view": "back", "hl": ["calves"], "hl2": [], "cues": ["עולים על קצות האצבעות בשליטה, לא בקפיצה", "עצירה של שנייה למעלה — כאן השוק עובד", "יורדים עד מתיחה קלה בשוק", "נשענים על משטח יציב לשמירת איזון"]}, {"k": "lower-p5", "n": "פתיחת ירכיים במכונה (Hip Abduction)", "sets": 3, "reps": 15, "w": true, "inc": 2.5, "equip": "machine", "view": "back", "hl": ["glutes"], "hl2": [], "cues": ["ישיבה זקופה, גב צמוד למשענת", "פותחים את הברכיים החוצה בשליטה", "עצירה קצרה בסוף הפתיחה", "סגירה איטית — לא נותנים למשקל לחזור לבד"]}, {"k": "lower-p6", "n": "יישור גב (Back Extension)", "sets": 3, "reps": 12, "w": false, "inc": 0, "equip": "bodyweight", "view": "back", "hl": ["lowerBack"], "hl2": ["glutes", "hamstrings"], "cues": ["הירכיים נשענות על הכרית, הגב מתחיל ישר", "יורדים עד מתיחה בירך האחורית", "עולים עד קו ישר בלבד — לא מעבר לזה", "המבט קדימה־למטה, לא כלפי מעלה"]}, {"k": "lower-p7", "n": "עלייה על מדרגה (Step-up)", "sets": 3, "reps": "10 לרגל", "w": true, "inc": 2, "equip": "dumbbell", "view": "front", "hl": ["quads"], "hl2": ["glutes"], "cues": ["מדרגה או ספסל בגובה ברך בערך", "דוחפים דרך העקב של הרגל שעל המדרגה", "לא נעזרים בקפיצה מהרגל התחתונה", "ירידה איטית ומבוקרת"]}, {"k": "lower-p8", "n": "גשר ישבן על רגל אחת", "sets": 3, "reps": "12 לרגל", "w": false, "inc": 0, "equip": "bodyweight", "view": "back", "hl": ["glutes"], "hl2": ["hamstrings"], "cues": ["רגל אחת באוויר, השנייה עם כף רגל על הרצפה", "מרימים את האגן דרך העקב של הרגל התומכת", "האגן נשאר ישר — לא נופל לצד", "עצירה למעלה ואז ירידה איטית"]}]}, {"id": "core", "label": "בטן וליבה", "short": "בטן", "sub": "ליבה", "icon": "🔥", "hex": "#FFD23F", "type": "strength", "title": "בטן וליבה", "tile": "בטן · אלכסונית · גב תחתון", "ex": [{"k": "core-01", "n": "פלאנק (Plank)", "sets": 3, "reps": "40 שנ׳", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["abs"], "hl2": ["obliques", "lowerBack"], "cues": ["קו ישר מהראש עד העקבים", "בטן וישבן מכווצים, אין שקיעה באגן", "המרפקים בדיוק מתחת לכתפיים", "נושמים באופן קבוע — לא עוצרים נשימה"]}, {"k": "core-02", "n": "Dead Bug", "sets": 3, "reps": "10 לצד", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["abs"], "hl2": [], "cues": ["גב תחתון צמוד לרצפה לאורך כל התרגיל", "פושטים יד ורגל נגדיות באיטיות", "נושמים כרגיל, לא עוצרים נשימה", "אם הגב מתרומם — מקטינים את הטווח"]}, {"k": "core-03", "n": "הרמות רגליים בשכיבה (Leg Raise)", "sets": 3, "reps": 12, "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["abs"], "hl2": ["quads"], "cues": ["גב תחתון צמוד לרצפה, ידיים מתחת לישבן", "מרימים רגליים ישרות עד 90 מעלות", "מורידים לאט בלי לגעת ברצפה", "אם הגב מתרומם — מכופפים מעט ברכיים"]}, {"k": "core-04", "n": "בטן אלכסונית (Russian Twist)", "sets": 3, "reps": "15 לצד", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["obliques"], "hl2": ["abs"], "cues": ["גב ישר בהטיה, לא מתעגל", "התנועה מגיעה מהליבה, לא מהידיים", "אפשר להשאיר כפות רגליים על הרצפה בהתחלה", "נושמים באופן קבוע לאורך התרגיל"]}, {"k": "core-05", "n": "פלאנק צידי (Side Plank)", "sets": 3, "reps": "25 שנ׳ לצד", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["obliques"], "hl2": ["abs"], "cues": ["קו ישר מהראש ועד כפות הרגליים בצד", "האגן לא שוקע ולא מתרומם יותר מדי", "המרפק בדיוק מתחת לכתף", "מתחלפים צד אחרי המנוחה"]}], "pool": [{"k": "core-p1", "n": "בטן בכבל בכריעה (Cable Crunch)", "sets": 3, "reps": 15, "w": true, "inc": 2.5, "equip": "cable", "view": "front", "hl": ["abs"], "hl2": [], "cues": ["כורעים מול הכבל, ידיים ליד הראש", "מכופפים מהבטן — לא מהידיים ולא מהגב התחתון", "האגן נשאר יציב במקום", "חזרה מבוקרת למעלה בלי לאבד מתח בבטן"]}, {"k": "core-p2", "n": "הרמות ברכיים בתלייה (Hanging Knee Raise)", "sets": 3, "reps": 12, "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["abs"], "hl2": ["forearms"], "cues": ["תלייה במוט, כתפיים פעילות ולא רפויות", "מרימים ברכיים לכיוון החזה בשליטה", "בלי נדנוד של הגוף בין החזרות", "מורידים לאט — כאן הבטן עובדת הכי הרבה"]}, {"k": "core-p3", "n": "אופניים (Bicycle Crunch)", "sets": 3, "reps": "15 לצד", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["obliques"], "hl2": ["abs"], "cues": ["מרפק נוגע בברך הנגדית בסיבוב מהליבה", "הגב התחתון נשאר צמוד לרצפה", "תנועה איטית — לא מרוץ", "לא מושכים את הצוואר עם הידיים"]}, {"k": "core-p4", "n": "Hollow Hold", "sets": 3, "reps": "25 שנ׳", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["abs"], "hl2": [], "cues": ["גב תחתון לחוץ לרצפה לאורך כל האחיזה", "ידיים ורגליים ישרות ומורמות מעט", "ככל שהידיים והרגליים קרובות לגוף — קל יותר", "נושמים קצר ורציף, לא עוצרים נשימה"]}, {"k": "core-p5", "n": "Bird Dog", "sets": 3, "reps": "10 לצד", "w": false, "inc": 0, "equip": "bodyweight", "view": "back", "hl": ["lowerBack"], "hl2": ["abs", "glutes"], "cues": ["ארבע נקודות, גב ישר ומקביל לרצפה", "פושטים יד ורגל נגדיות עד קו ישר", "האגן לא מסתובב הצידה", "עצירה של שנייה־שתיים בכל חזרה"]}, {"k": "core-p6", "n": "מטפסי הרים (Mountain Climbers)", "sets": 3, "reps": "30 שנ׳", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["abs"], "hl2": ["quads"], "cues": ["תנוחת שכיבת סמיכה, ידיים מתחת לכתפיים", "מביאים ברך לכיוון החזה לסירוגין", "האגן לא עולה ולא שוקע", "קצב קבוע ונשימה רציפה"]}, {"k": "core-p7", "n": "סופרמן (Superman)", "sets": 3, "reps": 12, "w": false, "inc": 0, "equip": "bodyweight", "view": "back", "hl": ["lowerBack"], "hl2": ["glutes"], "cues": ["שוכבים על הבטן, ידיים ורגליים ישרות", "מרימים בו־זמנית ידיים, חזה ורגליים", "עוצרים רגע למעלה — כיווץ בגב התחתון ובישבן", "ירידה מבוקרת, לא נופלים בבת אחת"]}]}, {"id": "home", "label": "אימון ביתי", "short": "ביתי", "sub": "בלי ציוד", "icon": "🏠", "hex": "#2FE6A7", "type": "strength", "title": "אימון ביתי · כל הגוף", "tile": "בלי ציוד · כל הגוף", "ex": [{"k": "home-01", "n": "סקוואט משקל גוף (Bodyweight Squat)", "sets": 3, "reps": 15, "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["quads"], "hl2": ["glutes"], "cues": ["רגליים ברוחב כתפיים, בהונות מעט כלפי חוץ", "יורדים כאילו יושבים על כיסא", "גב ישר, מבט קדימה", "דוחפים דרך העקבים לחזרה למעלה"]}, {"k": "home-02", "n": "שכיבות סמיכה (Push-ups)", "sets": 3, "reps": 12, "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["chest"], "hl2": ["triceps", "shoulders"], "cues": ["ידיים קצת רחבות מהכתפיים", "גוף בקו ישר מהראש עד העקבים", "יורדים עד שהחזה כמעט נוגע ברצפה", "אם קשה — אפשר לרדת על הברכיים"]}, {"k": "home-03", "n": "גשר ישבן (Glute Bridge)", "sets": 3, "reps": 15, "w": false, "inc": 0, "equip": "bodyweight", "view": "back", "hl": ["glutes"], "hl2": ["hamstrings"], "cues": ["כפות רגליים קרובות לישבן, ברוחב כתפיים", "דוחפים דרך העקבים ומרימים את האגן", "כיווץ חזק של הישבן למעלה, בלי לקשת בגב", "ירידה מבוקרת, לא נופלים"]}, {"k": "home-04", "n": "לאנג׳ (Lunge)", "sets": 3, "reps": "10 לרגל", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["quads"], "hl2": ["glutes"], "cues": ["צעד גדול מספיק כדי לשמור על יציבות", "ברך קדמית לא נופלת פנימה", "ברך אחורית יורדת בשליטה, כמעט נוגעת ברצפה", "גו זקוף לאורך כל התנועה"]}, {"k": "home-05", "n": "סופרמן (Superman)", "sets": 3, "reps": 12, "w": false, "inc": 0, "equip": "bodyweight", "view": "back", "hl": ["lowerBack"], "hl2": ["glutes"], "cues": ["שוכבים על הבטן, ידיים ורגליים ישרות", "מרימים בו־זמנית ידיים, חזה ורגליים", "עוצרים רגע למעלה — כיווץ בגב התחתון ובישבן", "ירידה מבוקרת, לא נופלים בבת אחת"]}, {"k": "home-06", "n": "שכיבות סמיכה צרות (Diamond Push-ups)", "sets": 3, "reps": 10, "w": false, "inc": 0, "equip": "bodyweight", "view": "back", "hl": ["triceps"], "hl2": ["chest"], "cues": ["ידיים קרובות מתחת לחזה, אצבעות יוצרות משולש", "מרפקים נשארים קרובים לגוף", "יורדים עד שהחזה כמעט נוגע בידיים", "אם קשה — אפשר לרדת על הברכיים"]}, {"k": "home-07", "n": "פלאנק (Plank)", "sets": 3, "reps": "40 שנ׳", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["abs"], "hl2": ["obliques", "lowerBack"], "cues": ["קו ישר מהראש עד העקבים", "בטן וישבן מכווצים, אין שקיעה באגן", "המרפקים בדיוק מתחת לכתפיים", "נושמים באופן קבוע — לא עוצרים נשימה"]}], "pool": [{"k": "home-p1", "n": "שכיבות סמיכה פייק (Pike Push-ups)", "sets": 3, "reps": 10, "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["shoulders"], "hl2": ["triceps"], "cues": ["ישבן גבוה, הגוף יוצר צורת V הפוכה", "יורדים עם הראש לכיוון הרצפה בין הידיים", "המרפקים נשארים קרובים, לא מתפרשים החוצה", "ככל שהרגליים גבוהות יותר — קשה יותר"]}, {"k": "home-p2", "n": "מקבילים על כיסא (Bench Dips)", "sets": 3, "reps": 12, "w": false, "inc": 0, "equip": "bodyweight", "view": "back", "hl": ["triceps"], "hl2": ["chest"], "cues": ["ידיים על ספסל יציב מאחורי הגוף, אצבעות קדימה", "יורדים עד שהמרפק בערך ב־90 מעלות", "הכתפיים לא נדחפות לכיוון האוזניים", "אם קשה — מקרבים את הרגליים לגוף"]}, {"k": "home-p3", "n": "ישיבת קיר (Wall Sit)", "sets": 3, "reps": "45 שנ׳", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["quads"], "hl2": ["glutes"], "cues": ["גב צמוד לקיר, ברכיים בזווית 90 מעלות", "המשקל על העקבים, לא על הבהונות", "לא נשענים עם הידיים על הירכיים", "נושמים רגיל — הזמן עובר לאט יותר בלי אוויר"]}, {"k": "home-p4", "n": "גשר ישבן על רגל אחת", "sets": 3, "reps": "12 לרגל", "w": false, "inc": 0, "equip": "bodyweight", "view": "back", "hl": ["glutes"], "hl2": ["hamstrings"], "cues": ["רגל אחת באוויר, השנייה עם כף רגל על הרצפה", "מרימים את האגן דרך העקב של הרגל התומכת", "האגן נשאר ישר — לא נופל לצד", "עצירה למעלה ואז ירידה איטית"]}, {"k": "home-p5", "n": "בורפי (Burpee)", "sets": 3, "reps": 10, "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["quads"], "hl2": ["chest", "abs"], "cues": ["מתחילים בעמידה, יורדים לשכיבת סמיכה", "הגב לא מתעגל בזמן הירידה", "קמים ומסיימים בקפיצה קלה", "אפשר לוותר על הקפיצה ולעשות צעד במקום"]}, {"k": "home-p6", "n": "קפיצות פישוק (Jumping Jacks)", "sets": 3, "reps": "40 שנ׳", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["calves"], "hl2": ["shoulders"], "cues": ["קפיצה קלה, נחיתה רכה על כרית כף הרגל", "ידיים עולות עד מעל הראש", "קצב קבוע לאורך כל הסט", "אם הברכיים רגישות — עושים גרסת צעד במקום קפיצה"]}, {"k": "home-p7", "n": "פלאנק צידי (Side Plank)", "sets": 3, "reps": "25 שנ׳ לצד", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["obliques"], "hl2": ["abs"], "cues": ["קו ישר מהראש ועד כפות הרגליים בצד", "האגן לא שוקע ולא מתרומם יותר מדי", "המרפק בדיוק מתחת לכתף", "מתחלפים צד אחרי המנוחה"]}, {"k": "home-p8", "n": "בטן אלכסונית (Russian Twist)", "sets": 3, "reps": "15 לצד", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["obliques"], "hl2": ["abs"], "cues": ["גב ישר בהטיה, לא מתעגל", "התנועה מגיעה מהליבה, לא מהידיים", "אפשר להשאיר כפות רגליים על הרצפה בהתחלה", "נושמים באופן קבוע לאורך התרגיל"]}]}]}, "itamar": {"id": "itamar", "name": "איתמר", "goal": "בניית שריר וכוח", "accent": "#FF7EB6", "weekGoal": 4, "logNote": "צעדים — כל יום שנרשם זה מעולה. משקל גוף — מספיק פעם בשבוע, באותו יום ובאותה שעה. המשקל משתנה מיום ליום בגלל מים ואוכל, וזה נורמלי; המגמה לאורך שבועות היא מה שמעניין.", "tips": [["חימום", "5 דקות קרדיו קל ומתיחות דינמיות לפני כל אימון כוח. סט ראשון קליל במשקל נמוך זה גם חלק מהחימום."], ["טכניקה קודם, משקל אחר כך", "מתחילים במשקל שאתה שולט בו לאורך כל טווח התנועה. משקל שגורם לך לזרוק את הגוף לא נחשב."], ["ככה האפליקציה מעלה אותך", "כשאתה משלים את כל הסטים במספר החזרות היעד בשני אימונים ברצף, מופיע לך בכרטיס התרגיל משקל חדש מוצע. לחיצה על \"קבע\" ממלאת אותו לכל הסטים."], ["אפשר לשנות סטים וחזרות", "לחיצה על ריבוע ה\"סטים × חזרות\" בכרטיס פותחת עורך. מה שתקבע נשמר לתרגיל הזה ונשאר גם בפעם הבאה."], ["תרגיל שלא אוהבים — מוחקים", "כפתור ה־✕ בכרטיס מוריד את התרגיל מהאימון לתמיד. הוא לא ייעלם מההיסטוריה, ותמיד אפשר להחזיר אותו מ\"עוד תרגילים\" בתחתית המסך."], ["תרשום גם כשלא הצליח", "סט שיצא 8 חזרות במקום 10 שווה לרשום בדיוק ככה. הגרף אמין רק אם המספרים אמיתיים, וסטגנציה של שבועיים היא מידע חשוב."], ["מנוחה בין סטים", "הטיימר נדלק לבד אחרי כל סט. לתרגילים גדולים כדאי 90 שניות, לתרגילים קטנים 60. פחות מזה, המשקל יירד בסטים הבאים."], ["שינה ואוכל", "השריר נבנה בין האימונים, לא בזמנם. שינה מספקת וארוחות סדירות עם חלבון משפיעות על הגרף בדיוק כמו האימון עצמו."], ["תזונה", "כדי לבנות שריר הגוף צריך חומר גלם: ארוחות סדירות עם חלבון בכל אחת, ולא לדלג על ארוחה אחרי אימון."]], "programs": [{"id": "upper", "label": "חדר כושר · עליון", "short": "עליון", "sub": "פלג גוף עליון", "icon": "🏋️", "hex": "#FF4D6D", "type": "strength", "title": "חדר כושר · פלג גוף עליון", "tile": "חזה · גב · כתפיים · ידיים", "ex": [{"k": "upper-01", "n": "לחיצת חזה במכונה (Chest Press Machine)", "sets": 4, "reps": 8, "w": true, "inc": 2.5, "equip": "machine", "view": "front", "hl": ["chest"], "hl2": ["triceps", "shoulders"], "cues": ["מכוונים גובה מושב כך שהידיות בגובה החזה", "דוחפים קדימה בשליטה, בלי לנעול מרפקים בסוף", "חוזרים לאט לנקודת ההתחלה — הירידה היא חצי מהתרגיל", "גב וכתפיים צמודים למשענת לאורך כל התנועה"]}, {"k": "upper-02", "n": "פולי עליון (Lat Pulldown)", "sets": 4, "reps": 10, "w": true, "inc": 2.5, "equip": "cable", "view": "back", "hl": ["lats"], "hl2": ["biceps", "traps"], "cues": ["אחיזה מעט רחבה מהכתפיים, אגודל סוגר על המוט", "מושכים את המרפקים למטה ואחורה, החזה מוביל כלפי מעלה", "לא מתנופפים אחורה עם הגוף כדי לעזור למשקל", "עוצרים רגע כשהמוט בגובה הסנטר, וחוזרים בשליטה מלאה"]}, {"k": "upper-03", "n": "חתירה במכונה (Machine Row)", "sets": 3, "reps": 10, "w": true, "inc": 2.5, "equip": "machine", "view": "back", "hl": ["lats", "traps"], "hl2": ["biceps"], "cues": ["חזה צמוד לכרית התמיכה לאורך כל התנועה", "מושכים מרפקים אחורה, שכמות מתקרבות זו לזו", "לא מרימים כתפיים לכיוון האוזניים", "חזרה איטית קדימה, בלי לשחרר את המשקל בבת אחת"]}, {"k": "upper-04", "n": "חתירה בפולי בישיבה (Seated Cable Row)", "sets": 3, "reps": 10, "w": true, "inc": 2.5, "equip": "cable", "view": "back", "hl": ["lats", "traps"], "hl2": ["biceps"], "cues": ["גב זקוף וחזה פתוח, לא מתכופפים קדימה עם המשיכה", "מושכים את המרפקים אחורה וסוגרים שכמות", "לא מתנדנדים עם הגוף — רק הידיים והגב עובדים", "עצירה קצרה כשהידית קרובה לבטן, ואז חזרה איטית"]}, {"k": "upper-05", "n": "פרפר לחזה במכונה (Chest Fly Machine)", "sets": 3, "reps": 12, "w": true, "inc": 2.5, "equip": "machine", "view": "front", "hl": ["chest"], "hl2": [], "cues": ["כוונון מושב כך שהידיות בגובה הכתפיים", "מקרבים ידיים בקשת רחבה, מרפקים בכיפוף קל וקבוע", "לא זורקים את המשקל בחזרה החוצה", "בפתיחה מרגישים מתיחה נעימה בחזה — לא כאב בכתף"]}, {"k": "upper-06", "n": "לחיצת כתפיים בישיבה (Shoulder Press)", "sets": 3, "reps": 10, "w": true, "inc": 2, "equip": "dumbbell", "view": "front", "hl": ["shoulders"], "hl2": ["triceps"], "cues": ["גב תחתון צמוד למשענת, בטן מכווצת קלות", "דוחפים למעלה בלי לקשת יתר בגב התחתון", "לא נועלים מרפקים בחוזקה בקצה העלייה", "מורידים עד שהמרפקים בערך בגובה הכתפיים"]}, {"k": "upper-07", "n": "כפיפת מרפקים עם שתי משקולות בעמידה (Standing DB Curl)", "sets": 3, "reps": 10, "w": true, "inc": 2, "equip": "dumbbell", "view": "front", "hl": ["biceps"], "hl2": ["forearms"], "cues": ["עמידה זקופה, שתי משקולות, רגליים ברוחב אגן", "מרפקים צמודים לגוף — רק האמה זזה", "אפשר שתי ידיים יחד או לסירוגין", "בלי נדנוד של הגו — הגב לא אמור להשתתף"]}, {"k": "upper-08", "n": "טרייספס בפולי (Cable Triceps Pushdown)", "sets": 3, "reps": 12, "w": true, "inc": 2.5, "equip": "cable", "view": "back", "hl": ["triceps"], "hl2": [], "cues": ["מרפקים צמודים לגוף וקבועים במקום", "רק האמה זזה — הכתף לא יורדת ולא עולה", "פושטים עד הסוף בלי לנעול בחוזקה", "חוזרים באיטיות למעלה, בלי לתת למשקל למשוך"]}], "pool": [{"k": "upper-p3", "n": "הרמות צד לכתפיים (Lateral Raise)", "sets": 3, "reps": 12, "w": true, "inc": 1, "equip": "dumbbell", "view": "front", "hl": ["shoulders"], "hl2": [], "cues": ["מרפקים בכיפוף קל קבוע לאורך התנועה", "מרימים עד גובה הכתפיים בערך — לא יותר", "תנועה איטית, בלי תנופה מהגוף", "ירידה מבוקרת, המשקל לא נופל למטה"]}, {"k": "upper-p4", "n": "כפיפת מרפק פטיש בעמידה (Hammer Curl)", "sets": 3, "reps": 10, "w": true, "inc": 2, "equip": "dumbbell", "view": "front", "hl": ["biceps", "forearms"], "hl2": [], "cues": ["אחיזה ניטרלית — האגודלים כלפי מעלה כל הזמן", "מרפקים צמודים לגוף וקבועים", "עלייה בשליטה, ירידה איטית עוד יותר", "לא מנענעים את הגוף כדי לעזור"]}, {"k": "upper-p5", "n": "טרייספס מעל הראש בכבל (Overhead Extension)", "sets": 3, "reps": 12, "w": true, "inc": 2.5, "equip": "cable", "view": "back", "hl": ["triceps"], "hl2": [], "cues": ["מרפקים קרובים לראש וקבועים במקום", "מיישרים כמעט עד הסוף מעל הראש", "לא מרחיקים את המרפקים הצידה", "תנועה מבוקרת בשני הכיוונים, בלי קשת בגב"]}, {"k": "upper-p6", "n": "לחיצת חזה בשיפוע עם משקולות (Incline DB Press)", "sets": 3, "reps": 10, "w": true, "inc": 2, "equip": "dumbbell", "view": "front", "hl": ["chest"], "hl2": ["shoulders", "triceps"], "cues": ["ספסל בשיפוע 30 מעלות בערך, לא תלול יותר", "מרפקים בזווית 45 מעלות מהגוף, לא פתוחים לגמרי", "דוחפים למעלה ומעט פנימה, המשקולות מתקרבות", "ירידה מבוקרת עד מתיחה נעימה בחזה"]}, {"k": "upper-p7", "n": "Face Pull בכבל", "sets": 3, "reps": 15, "w": true, "inc": 2.5, "equip": "cable", "view": "back", "hl": ["traps", "shoulders"], "hl2": [], "cues": ["מושכים את החבל לגובה הפנים, מרפקים גבוהים", "פותחים את הידיים החוצה בסוף המשיכה", "משקל קל — זה תרגיל יציבה, לא תרגיל כוח", "חזרה איטית עם שליטה מלאה"]}, {"k": "upper-p8", "n": "חתירה עם משקולת יד אחת (One-Arm DB Row)", "sets": 3, "reps": 10, "w": true, "inc": 2, "equip": "dumbbell", "view": "back", "hl": ["lats"], "hl2": ["biceps", "traps"], "cues": ["יד וברך על ספסל, גב ישר ומקביל לרצפה", "מושכים את המשקולת לכיוון האגן, לא לכיוון הכתף", "המרפק נשאר קרוב לגוף", "לא מסובבים את הגו כדי להרים גבוה יותר"]}, {"k": "upper-p9", "n": "מקבילים על ספסל (Bench Dips)", "sets": 3, "reps": 12, "w": false, "inc": 0, "equip": "bodyweight", "view": "back", "hl": ["triceps"], "hl2": ["chest"], "cues": ["ידיים על ספסל יציב מאחורי הגוף, אצבעות קדימה", "יורדים עד שהמרפק בערך ב־90 מעלות", "הכתפיים לא נדחפות לכיוון האוזניים", "אם קשה — מקרבים את הרגליים לגוף"]}, {"k": "upper-p10", "n": "מתח בעזרה (Assisted Pull-up)", "sets": 3, "reps": 8, "w": false, "inc": 0, "equip": "bodyweight", "view": "back", "hl": ["lats"], "hl2": ["biceps"], "cues": ["אחיזה ברוחב כתפיים ומעט יותר", "מתחילים מכתפיים 'נעולות' למטה, לא רפויות", "מושכים עד שהסנטר עובר את המוט", "אפשר להיעזר בגומייה או במכונת עזר"]}, {"k": "upper-p11", "n": "כפיפת מרפקים בכבל בעמידה (Cable Curl)", "sets": 3, "reps": 12, "w": true, "inc": 2.5, "equip": "cable", "view": "front", "hl": ["biceps"], "hl2": ["forearms"], "cues": ["עמידה זקופה, שתי משקולות, רגליים ברוחב אגן", "מרפקים צמודים לגוף — רק האמה זזה", "אפשר שתי ידיים יחד או לסירוגין", "בלי נדנוד של הגו — הגב לא אמור להשתתף"]}]}, {"id": "lower", "label": "חדר כושר · תחתון", "short": "תחתון", "sub": "פלג גוף תחתון", "icon": "🦵", "hex": "#3DA9FC", "type": "strength", "title": "חדר כושר · פלג גוף תחתון", "tile": "רגליים · ישבן · שוקיים", "ex": [{"k": "lower-01", "n": "לחיצת רגליים (Leg Press)", "sets": 4, "reps": 10, "w": true, "inc": 5, "equip": "machine", "view": "front", "hl": ["quads"], "hl2": ["glutes", "hamstrings"], "cues": ["כפות הרגליים ברוחב כתפיים באמצע המשטח", "לא נועלים ברכיים בחוזקה בקצה העלייה", "לא מרימים את הישבן מהמושב בירידה", "יורדים עד כמה שהגב התחתון נשאר צמוד"]}, {"k": "lower-02", "n": "יישור רגליים במכונה (Leg Extension Machine)", "sets": 3, "reps": 12, "w": true, "inc": 2.5, "equip": "machine", "view": "front", "hl": ["quads"], "hl2": [], "cues": ["גב צמוד למשענת, אוחזים בידיות", "תנועה חלקה עד כמעט יישור מלא", "עצירה קלה למעלה — לא בעיטה מהירה", "החזרה למטה איטית יותר מהעלייה"]}, {"k": "lower-03", "n": "כיפוף רגליים במכונה (Leg Curl)", "sets": 3, "reps": 12, "w": true, "inc": 2.5, "equip": "machine", "view": "back", "hl": ["hamstrings"], "hl2": ["calves"], "cues": ["האגן צמוד למשטח לאורך כל התנועה", "כיפוף עד הסוף בלי לנתק את הירכיים", "חזרה איטית ומבוקרת למטה", "לא מסיימים בתנופה בתחתית התנועה"]}, {"k": "lower-04", "n": "דדליפט רומני עם משקולות (RDL)", "sets": 3, "reps": 8, "w": true, "inc": 2.5, "equip": "dumbbell", "view": "back", "hl": ["hamstrings", "glutes"], "hl2": ["lowerBack"], "cues": ["ברכיים כמעט ישרות, כיפוף קל בלבד", "שולחים את האגן אחורה — הגב נשאר ישר", "המשקולות נשארות צמודות לרגליים לאורך הירידה", "עוצרים כשמרגישים מתיחה בירך האחורית, לא נמוך יותר"]}, {"k": "lower-05", "n": "סקוואט עם משקולת (Goblet Squat)", "sets": 3, "reps": 10, "w": true, "inc": 2.5, "equip": "dumbbell", "view": "front", "hl": ["quads"], "hl2": ["glutes", "abs"], "cues": ["מחזיקים משקולת אחת צמוד לחזה", "רגליים ברוחב כתפיים, בהונות מעט כלפי חוץ", "יורדים עד שהירכיים בערך מקבילות לרצפה", "ברכיים בקו עם הבהונות, גב ישר לאורך התנועה"]}, {"k": "lower-06", "n": "הרמות עקבים בעמידה (Calf Raise)", "sets": 4, "reps": 15, "w": true, "inc": 5, "equip": "machine", "view": "back", "hl": ["calves"], "hl2": [], "cues": ["עולים על קצות האצבעות בשליטה, לא בקפיצה", "עצירה של שנייה למעלה — כאן השוק עובד", "יורדים עד מתיחה קלה בשוק", "נשענים על משטח יציב לשמירת איזון"]}], "pool": [{"k": "lower-p1", "n": "סקוואט עם משקולת (Goblet Squat)", "sets": 3, "reps": 10, "w": true, "inc": 2.5, "equip": "dumbbell", "view": "front", "hl": ["quads"], "hl2": ["glutes", "abs"], "cues": ["מחזיקים משקולת אחת צמוד לחזה", "רגליים ברוחב כתפיים, בהונות מעט כלפי חוץ", "יורדים עד שהירכיים בערך מקבילות לרצפה", "ברכיים בקו עם הבהונות, גב ישר לאורך התנועה"]}, {"k": "lower-p2", "n": "לאנג׳ הליכה (Walking Lunge)", "sets": 3, "reps": "10 לרגל", "w": true, "inc": 2, "equip": "dumbbell", "view": "front", "hl": ["quads"], "hl2": ["glutes"], "cues": ["צעד גדול מספיק כדי לשמור על יציבות", "ברך קדמית לא נופלת פנימה", "ברך אחורית יורדת בשליטה, כמעט נוגעת ברצפה", "גו זקוף לאורך כל התנועה"]}, {"k": "lower-p3", "n": "סקוואט בולגרי (Bulgarian Split Squat)", "sets": 3, "reps": "8 לרגל", "w": true, "inc": 2, "equip": "dumbbell", "view": "front", "hl": ["quads"], "hl2": ["glutes"], "cues": ["רגל אחורית על ספסל, רגל קדמית צעד גדול קדימה", "יורדים ישר למטה, לא קדימה", "רוב המשקל על העקב של הרגל הקדמית", "מתחילים בלי משקל עד שהאיזון יציב"]}, {"k": "lower-p4", "n": "הרמות עקבים בישיבה (Seated Calf Raise)", "sets": 3, "reps": 15, "w": true, "inc": 2.5, "equip": "machine", "view": "back", "hl": ["calves"], "hl2": [], "cues": ["עולים על קצות האצבעות בשליטה, לא בקפיצה", "עצירה של שנייה למעלה — כאן השוק עובד", "יורדים עד מתיחה קלה בשוק", "נשענים על משטח יציב לשמירת איזון"]}, {"k": "lower-p5", "n": "פתיחת ירכיים במכונה (Hip Abduction)", "sets": 3, "reps": 15, "w": true, "inc": 2.5, "equip": "machine", "view": "back", "hl": ["glutes"], "hl2": [], "cues": ["ישיבה זקופה, גב צמוד למשענת", "פותחים את הברכיים החוצה בשליטה", "עצירה קצרה בסוף הפתיחה", "סגירה איטית — לא נותנים למשקל לחזור לבד"]}, {"k": "lower-p6", "n": "יישור גב (Back Extension)", "sets": 3, "reps": 12, "w": false, "inc": 0, "equip": "bodyweight", "view": "back", "hl": ["lowerBack"], "hl2": ["glutes", "hamstrings"], "cues": ["הירכיים נשענות על הכרית, הגב מתחיל ישר", "יורדים עד מתיחה בירך האחורית", "עולים עד קו ישר בלבד — לא מעבר לזה", "המבט קדימה־למטה, לא כלפי מעלה"]}, {"k": "lower-p7", "n": "עלייה על מדרגה (Step-up)", "sets": 3, "reps": "10 לרגל", "w": true, "inc": 2, "equip": "dumbbell", "view": "front", "hl": ["quads"], "hl2": ["glutes"], "cues": ["מדרגה או ספסל בגובה ברך בערך", "דוחפים דרך העקב של הרגל שעל המדרגה", "לא נעזרים בקפיצה מהרגל התחתונה", "ירידה איטית ומבוקרת"]}, {"k": "lower-p8", "n": "גשר ישבן על רגל אחת", "sets": 3, "reps": "12 לרגל", "w": false, "inc": 0, "equip": "bodyweight", "view": "back", "hl": ["glutes"], "hl2": ["hamstrings"], "cues": ["רגל אחת באוויר, השנייה עם כף רגל על הרצפה", "מרימים את האגן דרך העקב של הרגל התומכת", "האגן נשאר ישר — לא נופל לצד", "עצירה למעלה ואז ירידה איטית"]}]}, {"id": "core", "label": "בטן וליבה", "short": "בטן", "sub": "ליבה", "icon": "🔥", "hex": "#FFD23F", "type": "strength", "title": "בטן וליבה", "tile": "בטן · אלכסונית · גב תחתון", "ex": [{"k": "core-01", "n": "בטן בכבל בכריעה (Cable Crunch)", "sets": 3, "reps": 15, "w": true, "inc": 2.5, "equip": "cable", "view": "front", "hl": ["abs"], "hl2": [], "cues": ["כורעים מול הכבל, ידיים ליד הראש", "מכופפים מהבטן — לא מהידיים ולא מהגב התחתון", "האגן נשאר יציב במקום", "חזרה מבוקרת למעלה בלי לאבד מתח בבטן"]}, {"k": "core-02", "n": "הרמות ברכיים בתלייה (Hanging Knee Raise)", "sets": 3, "reps": 12, "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["abs"], "hl2": ["forearms"], "cues": ["תלייה במוט, כתפיים פעילות ולא רפויות", "מרימים ברכיים לכיוון החזה בשליטה", "בלי נדנוד של הגוף בין החזרות", "מורידים לאט — כאן הבטן עובדת הכי הרבה"]}, {"k": "core-03", "n": "פלאנק (Plank)", "sets": 3, "reps": "45 שנ׳", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["abs"], "hl2": ["obliques", "lowerBack"], "cues": ["קו ישר מהראש עד העקבים", "בטן וישבן מכווצים, אין שקיעה באגן", "המרפקים בדיוק מתחת לכתפיים", "נושמים באופן קבוע — לא עוצרים נשימה"]}, {"k": "core-04", "n": "בטן אלכסונית (Russian Twist)", "sets": 3, "reps": "15 לצד", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["obliques"], "hl2": ["abs"], "cues": ["גב ישר בהטיה, לא מתעגל", "התנועה מגיעה מהליבה, לא מהידיים", "אפשר להשאיר כפות רגליים על הרצפה בהתחלה", "נושמים באופן קבוע לאורך התרגיל"]}, {"k": "core-05", "n": "פלאנק צידי (Side Plank)", "sets": 3, "reps": "30 שנ׳ לצד", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["obliques"], "hl2": ["abs"], "cues": ["קו ישר מהראש ועד כפות הרגליים בצד", "האגן לא שוקע ולא מתרומם יותר מדי", "המרפק בדיוק מתחת לכתף", "מתחלפים צד אחרי המנוחה"]}], "pool": [{"k": "core-p2", "n": "הרמות ברכיים בתלייה (Hanging Knee Raise)", "sets": 3, "reps": 12, "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["abs"], "hl2": ["forearms"], "cues": ["תלייה במוט, כתפיים פעילות ולא רפויות", "מרימים ברכיים לכיוון החזה בשליטה", "בלי נדנוד של הגוף בין החזרות", "מורידים לאט — כאן הבטן עובדת הכי הרבה"]}, {"k": "core-p3", "n": "אופניים (Bicycle Crunch)", "sets": 3, "reps": "15 לצד", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["obliques"], "hl2": ["abs"], "cues": ["מרפק נוגע בברך הנגדית בסיבוב מהליבה", "הגב התחתון נשאר צמוד לרצפה", "תנועה איטית — לא מרוץ", "לא מושכים את הצוואר עם הידיים"]}, {"k": "core-p4", "n": "Hollow Hold", "sets": 3, "reps": "25 שנ׳", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["abs"], "hl2": [], "cues": ["גב תחתון לחוץ לרצפה לאורך כל האחיזה", "ידיים ורגליים ישרות ומורמות מעט", "ככל שהידיים והרגליים קרובות לגוף — קל יותר", "נושמים קצר ורציף, לא עוצרים נשימה"]}, {"k": "core-p5", "n": "Bird Dog", "sets": 3, "reps": "10 לצד", "w": false, "inc": 0, "equip": "bodyweight", "view": "back", "hl": ["lowerBack"], "hl2": ["abs", "glutes"], "cues": ["ארבע נקודות, גב ישר ומקביל לרצפה", "פושטים יד ורגל נגדיות עד קו ישר", "האגן לא מסתובב הצידה", "עצירה של שנייה־שתיים בכל חזרה"]}, {"k": "core-p6", "n": "מטפסי הרים (Mountain Climbers)", "sets": 3, "reps": "30 שנ׳", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["abs"], "hl2": ["quads"], "cues": ["תנוחת שכיבת סמיכה, ידיים מתחת לכתפיים", "מביאים ברך לכיוון החזה לסירוגין", "האגן לא עולה ולא שוקע", "קצב קבוע ונשימה רציפה"]}, {"k": "core-p7", "n": "סופרמן (Superman)", "sets": 3, "reps": 12, "w": false, "inc": 0, "equip": "bodyweight", "view": "back", "hl": ["lowerBack"], "hl2": ["glutes"], "cues": ["שוכבים על הבטן, ידיים ורגליים ישרות", "מרימים בו־זמנית ידיים, חזה ורגליים", "עוצרים רגע למעלה — כיווץ בגב התחתון ובישבן", "ירידה מבוקרת, לא נופלים בבת אחת"]}]}, {"id": "home", "label": "אימון ביתי", "short": "ביתי", "sub": "בלי ציוד", "icon": "🏠", "hex": "#2FE6A7", "type": "strength", "title": "אימון ביתי · כל הגוף", "tile": "בלי ציוד · כל הגוף", "ex": [{"k": "home-01", "n": "סקוואט משקל גוף (Bodyweight Squat)", "sets": 3, "reps": 15, "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["quads"], "hl2": ["glutes"], "cues": ["רגליים ברוחב כתפיים, בהונות מעט כלפי חוץ", "יורדים כאילו יושבים על כיסא", "גב ישר, מבט קדימה", "דוחפים דרך העקבים לחזרה למעלה"]}, {"k": "home-02", "n": "שכיבות סמיכה (Push-ups)", "sets": 3, "reps": 12, "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["chest"], "hl2": ["triceps", "shoulders"], "cues": ["ידיים קצת רחבות מהכתפיים", "גוף בקו ישר מהראש עד העקבים", "יורדים עד שהחזה כמעט נוגע ברצפה", "אם קשה — אפשר לרדת על הברכיים"]}, {"k": "home-03", "n": "גשר ישבן (Glute Bridge)", "sets": 3, "reps": 15, "w": false, "inc": 0, "equip": "bodyweight", "view": "back", "hl": ["glutes"], "hl2": ["hamstrings"], "cues": ["כפות רגליים קרובות לישבן, ברוחב כתפיים", "דוחפים דרך העקבים ומרימים את האגן", "כיווץ חזק של הישבן למעלה, בלי לקשת בגב", "ירידה מבוקרת, לא נופלים"]}, {"k": "home-04", "n": "לאנג׳ (Lunge)", "sets": 3, "reps": "10 לרגל", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["quads"], "hl2": ["glutes"], "cues": ["צעד גדול מספיק כדי לשמור על יציבות", "ברך קדמית לא נופלת פנימה", "ברך אחורית יורדת בשליטה, כמעט נוגעת ברצפה", "גו זקוף לאורך כל התנועה"]}, {"k": "home-05", "n": "סופרמן (Superman)", "sets": 3, "reps": 12, "w": false, "inc": 0, "equip": "bodyweight", "view": "back", "hl": ["lowerBack"], "hl2": ["glutes"], "cues": ["שוכבים על הבטן, ידיים ורגליים ישרות", "מרימים בו־זמנית ידיים, חזה ורגליים", "עוצרים רגע למעלה — כיווץ בגב התחתון ובישבן", "ירידה מבוקרת, לא נופלים בבת אחת"]}, {"k": "home-06", "n": "שכיבות סמיכה צרות (Diamond Push-ups)", "sets": 3, "reps": 10, "w": false, "inc": 0, "equip": "bodyweight", "view": "back", "hl": ["triceps"], "hl2": ["chest"], "cues": ["ידיים קרובות מתחת לחזה, אצבעות יוצרות משולש", "מרפקים נשארים קרובים לגוף", "יורדים עד שהחזה כמעט נוגע בידיים", "אם קשה — אפשר לרדת על הברכיים"]}, {"k": "home-07", "n": "פלאנק (Plank)", "sets": 3, "reps": "40 שנ׳", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["abs"], "hl2": ["obliques", "lowerBack"], "cues": ["קו ישר מהראש עד העקבים", "בטן וישבן מכווצים, אין שקיעה באגן", "המרפקים בדיוק מתחת לכתפיים", "נושמים באופן קבוע — לא עוצרים נשימה"]}], "pool": [{"k": "home-p1", "n": "שכיבות סמיכה פייק (Pike Push-ups)", "sets": 3, "reps": 10, "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["shoulders"], "hl2": ["triceps"], "cues": ["ישבן גבוה, הגוף יוצר צורת V הפוכה", "יורדים עם הראש לכיוון הרצפה בין הידיים", "המרפקים נשארים קרובים, לא מתפרשים החוצה", "ככל שהרגליים גבוהות יותר — קשה יותר"]}, {"k": "home-p2", "n": "מקבילים על כיסא (Bench Dips)", "sets": 3, "reps": 12, "w": false, "inc": 0, "equip": "bodyweight", "view": "back", "hl": ["triceps"], "hl2": ["chest"], "cues": ["ידיים על ספסל יציב מאחורי הגוף, אצבעות קדימה", "יורדים עד שהמרפק בערך ב־90 מעלות", "הכתפיים לא נדחפות לכיוון האוזניים", "אם קשה — מקרבים את הרגליים לגוף"]}, {"k": "home-p3", "n": "ישיבת קיר (Wall Sit)", "sets": 3, "reps": "45 שנ׳", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["quads"], "hl2": ["glutes"], "cues": ["גב צמוד לקיר, ברכיים בזווית 90 מעלות", "המשקל על העקבים, לא על הבהונות", "לא נשענים עם הידיים על הירכיים", "נושמים רגיל — הזמן עובר לאט יותר בלי אוויר"]}, {"k": "home-p4", "n": "גשר ישבן על רגל אחת", "sets": 3, "reps": "12 לרגל", "w": false, "inc": 0, "equip": "bodyweight", "view": "back", "hl": ["glutes"], "hl2": ["hamstrings"], "cues": ["רגל אחת באוויר, השנייה עם כף רגל על הרצפה", "מרימים את האגן דרך העקב של הרגל התומכת", "האגן נשאר ישר — לא נופל לצד", "עצירה למעלה ואז ירידה איטית"]}, {"k": "home-p5", "n": "בורפי (Burpee)", "sets": 3, "reps": 10, "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["quads"], "hl2": ["chest", "abs"], "cues": ["מתחילים בעמידה, יורדים לשכיבת סמיכה", "הגב לא מתעגל בזמן הירידה", "קמים ומסיימים בקפיצה קלה", "אפשר לוותר על הקפיצה ולעשות צעד במקום"]}, {"k": "home-p6", "n": "קפיצות פישוק (Jumping Jacks)", "sets": 3, "reps": "40 שנ׳", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["calves"], "hl2": ["shoulders"], "cues": ["קפיצה קלה, נחיתה רכה על כרית כף הרגל", "ידיים עולות עד מעל הראש", "קצב קבוע לאורך כל הסט", "אם הברכיים רגישות — עושים גרסת צעד במקום קפיצה"]}, {"k": "home-p7", "n": "פלאנק צידי (Side Plank)", "sets": 3, "reps": "25 שנ׳ לצד", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["obliques"], "hl2": ["abs"], "cues": ["קו ישר מהראש ועד כפות הרגליים בצד", "האגן לא שוקע ולא מתרומם יותר מדי", "המרפק בדיוק מתחת לכתף", "מתחלפים צד אחרי המנוחה"]}, {"k": "home-p8", "n": "בטן אלכסונית (Russian Twist)", "sets": 3, "reps": "15 לצד", "w": false, "inc": 0, "equip": "bodyweight", "view": "front", "hl": ["obliques"], "hl2": ["abs"], "cues": ["גב ישר בהטיה, לא מתעגל", "התנועה מגיעה מהליבה, לא מהידיים", "אפשר להשאיר כפות רגליים על הרצפה בהתחלה", "נושמים באופן קבוע לאורך התרגיל"]}]}]}};
 
 /* ================= tiny helpers ================= */
 const app = document.getElementById('app');
@@ -369,12 +502,59 @@ const esc = s => String(s==null?'':s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':
 const num = n => Number(n||0).toLocaleString('he-IL');
 const WEEKDAY_HE = ['א','ב','ג','ד','ה','ו','ש'];
 const MONTH_HE = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+
+/* ================= daily motivation ================= */
+const QUOTES = [
+  'שריר לא נבנה במכון — הוא נבנה כשאתה חוזר אליו שוב.',
+  'האימון שהכי לא בא לך לעשות הוא בדרך כלל זה שהכי משנה.',
+  'אל תחכה ליום המושלם. תחפש את הסט הבא.',
+  'המשקל לא יודע איך ישנת אתמול. פשוט תרים אותו.',
+  'התקדמות היא לא לזרוק יותר — היא לשלוט ביותר.',
+  'אתה לא מתחרה באף אחד חוץ מהגרסה שלך משבוע שעבר.',
+  'עשר דקות של אימון עדיפות על שעה של תכנון.',
+  'המספרים לא משקרים. תרשום גם את מה שלא הצליח.',
+  'חזרה אחת שספרת נכון שווה יותר משתיים שרימית בהן.',
+  'עייפות היא לא סיבה לוותר — היא סימן שהתחלת.',
+  'כוח נבנה לאט. בדיוק בגלל זה הוא נשאר.',
+  'אין קיצורי דרך. יש רק ימים שבהם הגעת.',
+  'טכניקה נקייה היום = משקל כבד יותר בעוד חודש.',
+  'המנוחה בין הסטים היא חלק מהאימון, לא הפסקה ממנו.',
+  'שינה היא האימון השני שלך היום.',
+  'לא צריך מוטיבציה כל יום. צריך הרגל.',
+  'הסט הכי חשוב הוא האחרון — זה שכבר קשה בו.',
+  'הגוף משתנה בשקט, שבוע אחרי שבוע. תן לו זמן.',
+  'אכלת חלבון היום? זו חצי מהעבודה.',
+  'אתה לא צריך להיות הכי טוב. אתה צריך להיות עקבי.',
+  'חמש דקות חימום חוסכות חמישה שבועות פציעה.',
+  'אם הסט האחרון היה קל — כנראה הגיע הזמן להעלות.',
+  'מי שסופר ימים לא מתקדם. מי שממלא אותם — כן.',
+  'התחלה קטנה עדיפה על תוכנית מושלמת שלא התחילה.',
+  'הגרף עולה כשהמשמעת קבועה, לא כשמצב הרוח טוב.',
+  'כל אימון הוא הפקדה. בעוד שנה תראה את הריבית.',
+  'לא כל יום תשבור שיא. כמעט כל יום אפשר להופיע.',
+  'המראה משקרת מדי יום. ההיסטוריה כאן לא.',
+  'תרים בשליטה, תוריד לאט. שם נמצא השריר.',
+  'היום זה יום אימון. מחר יהיה קל יותר להגיד את זה שוב.'
+];
+const QUOTE_ICONS = ['💪','🔥','⚡','🎯','🚀','🧠','🏆','📈','🌱','⛰️'];
+function dayIndex(){
+  const n=new Date(), s=new Date(n.getFullYear(),0,0);
+  return Math.floor((n-s)/86400000);
+}
+function quoteIdx(){
+  return (dayIndex() + (+LS('icon4me_qoff')||0)) % QUOTES.length;
+}
+
+/* ================= cardio ================= */
 const CARDIO_KINDS = [
   {id:'running',   label:'ריצה',    icon:'🏃', km:true,  tip:'חימום 5 דקות הליכה, ואז לרוץ בקצב שאפשר לדבר בו. עדיף להאריך זמן לפני שמגבירים קצב.'},
   {id:'cycling',   label:'אופניים', icon:'🚴', km:true,  tip:'קצב נוח וקבוע. עליות זה בונוס — לא חייבים בכל רכיבה.'},
   {id:'football',  label:'כדורגל',  icon:'⚽', km:false, tip:'משחק נחשב אימון לכל דבר. תרשום את הזמן נטו על המגרש.'},
   {id:'basketball',label:'כדורסל',  icon:'🏀', km:false, tip:'משחק נחשב אימון לכל דבר. תרשום את הזמן נטו על המגרש.'},
-  {id:'tennis',    label:'טניס',    icon:'🎾', km:false, tip:'משחק נחשב אימון לכל דבר. תרשום את הזמן נטו על המגרש.'}
+  {id:'tennis',    label:'טניס',    icon:'🎾', km:false, tip:'משחק נחשב אימון לכל דבר. תרשום את הזמן נטו על המגרש.'},
+  {id:'swimming',  label:'שחייה',   icon:'🏊', km:false, tip:'אימון מצוין לכל הגוף ועדין על המפרקים. תרשום את הזמן במים.'},
+  {id:'walking',   label:'הליכה',   icon:'🚶', km:true,  tip:'הליכה מהירה נחשבת. אם היא מעל 20 דקות רצוף — היא אימון.'},
+  {id:'jumprope',  label:'קפיצה בחבל', icon:'🪢', km:false, tip:'מתחילים בסבבים של 30 שניות עם הפסקה. הכל בכפות רגליים, לא בעקבים.'}
 ];
 Object.keys(CATALOG).forEach(function(pid){
   const p = CATALOG[pid];
@@ -382,13 +562,24 @@ Object.keys(CATALOG).forEach(function(pid){
   if(!cp){ cp={id:'cardio',type:'cardio',hex:'#3DA9FC'}; p.programs.push(cp); }
   cp.kinds = CARDIO_KINDS.map(function(k){ return Object.assign({},k); });
   cp.label='אירובי וספורט'; cp.short='אירובי'; cp.sub='זמן בלבד'; cp.icon='🏃';
-  cp.tile='ריצה · אופניים · כדורגל · כדורסל · טניס';
+  cp.tile='ריצה · אופניים · כדורגל · שחייה ועוד';
+  cp.ex=[]; cp.pool=[];
 });
+
+/* legacy programs, so old history keeps a readable name */
+const LEGACY_PROGRAMS = {
+  gym:{id:'gym',label:'חדר כושר (תוכנית ישנה)',hex:'#8A87A8',type:'strength',ex:[],pool:[]},
+  A:{id:'A',label:'עליון א׳ (ישן)',hex:'#8A87A8',type:'strength',ex:[],pool:[]},
+  B:{id:'B',label:'תחתון א׳ (ישן)',hex:'#8A87A8',type:'strength',ex:[],pool:[]},
+  C:{id:'C',label:'עליון ב׳ (ישן)',hex:'#8A87A8',type:'strength',ex:[],pool:[]},
+  D:{id:'D',label:'תחתון ב׳ (ישן)',hex:'#8A87A8',type:'strength',ex:[],pool:[]}
+};
+
 const MUSCLE_HE = {chest:'חזה',lats:'גב רחב',traps:'טרפזים',shoulders:'כתפיים',biceps:'בייספס',triceps:'טרייספס',
   forearms:'אמות',abs:'בטן',obliques:'בטן אלכסונית',lowerBack:'גב תחתון',quads:'ירך קדמית',hamstrings:'ירך אחורית',glutes:'ישבן',calves:'שוקיים'};
+const ALL_MUSCLES = ['chest','lats','traps','shoulders','biceps','triceps','forearms','abs','obliques','lowerBack','glutes','quads','hamstrings','calves'];
 const KEY_MUSCLES = ['chest','lats','shoulders','biceps','triceps','abs','quads','hamstrings','glutes'];
 const startOfWeek = d => { const x=new Date(d); x.setHours(0,0,0,0); x.setDate(x.getDate()-x.getDay()); return x; };
-const exKey = (programId, i) => programId+'-'+pad2(i+1);
 
 function LS(k, v){
   try{
@@ -397,18 +588,39 @@ function LS(k, v){
   }catch(e){ return null; }
 }
 
+/* ================= theme ================= */
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme', t);
+  const m=document.querySelector('meta[name=theme-color]');
+  if(m) m.setAttribute('content', t==='light' ? '#F1F2FA' : '#1F1D2B');
+  LS('icon4me_theme', t);
+}
+function currentTheme(){ return document.documentElement.getAttribute('data-theme')||'dark'; }
+function toggleTheme(){
+  const t = currentTheme()==='light' ? 'dark' : 'light';
+  applyTheme(t);
+  toast(t==='light' ? '☀️ ערכת נושא בהירה' : '🌙 ערכת נושא כהה');
+}
+function themeBtn(){
+  return '<button class="theme-btn" data-act="theme" aria-label="החלפת ערכת נושא">'
+    + (currentTheme()==='light' ? '🌙' : '☀️') + '</button>';
+}
+applyTheme(LS('icon4me_theme')==='light' ? 'light' : 'dark');
+
 /* ================= state ================= */
-const emptyData = () => ({weights:{}, sessions:{}, daily:{}, cardio:{}});
+const emptyPrefs = () => ({hidden:{}, added:{}, plan:{}});
+const emptyData = () => ({weights:{}, sessions:{}, daily:{}, cardio:{}, prefs:emptyPrefs()});
 const N = new Date();
 let CFG = null, PROFILE = null;
 let state = {
   screen:'pick',           // pick | home | workout | cardio | progress | log
-  modal:null,
-  day:null, kind:null, rpe:null,
+  modal:null,              // {type:'body'|'pool'|'plan', ex:key}
+  day:null, kind:null,
   chartEx:0, calY:N.getFullYear(), calM:N.getMonth(), calSel:null,
-  data: emptyData(), open:{}, sync:'local', loading:true
+  data: emptyData(), open:{}, sync:'local', loading:true, celebrated:{}
 };
 let restInt=null, restLeft=0, restTotal=0, audioCtx=null, saveTimer=null;
+let swInt=null, swSec=0, swOn=false;
 
 /* ================= storage ================= */
 const SB = (function(){
@@ -441,6 +653,18 @@ function saveLocal(){ LS(cacheKey(PROFILE), JSON.stringify(state.data)); }
 function normalize(d){
   const out = Object.assign(emptyData(), d||{});
   ['weights','sessions','daily','cardio'].forEach(k=>{ if(!out[k] || typeof out[k]!=='object') out[k]={}; });
+  out.prefs = Object.assign(emptyPrefs(), out.prefs||{});
+  ['hidden','added','plan'].forEach(k=>{ if(!out.prefs[k] || typeof out.prefs[k]!=='object') out.prefs[k]={}; });
+
+  /* sets used to be an array indexed by position; they are now keyed by ex_key */
+  Object.values(out.sessions).forEach(s=>{
+    if(Array.isArray(s.sets)){
+      const o={};
+      s.sets.forEach((arr,i)=>{ if(arr && arr.length) o[s.day+'-'+pad2(i+1)] = arr; });
+      s.sets = o;
+    } else if(!s.sets || typeof s.sets!=='object') s.sets = {};
+  });
+
   (CFG.programs||[]).filter(p=>p.type==='cardio').forEach(p=>p.kinds.forEach(k=>{
     const c = out.cardio[k.id];
     out.cardio[k.id] = {stage:(c&&+c.stage)||0, log:(c&&Array.isArray(c.log))?c.log:[]};
@@ -451,13 +675,14 @@ function normalize(d){
 async function pullRemote(){
   if(!SB) return null;
   const p = PROFILE;
-  const [w, ws, wk, cl, cs, dl] = await Promise.all([
+  const [w, ws, wk, cl, cs, dl, st] = await Promise.all([
     SB.from('exercise_state').select('ex_key,current_weight').eq('profile_id',p),
     SB.from('workout_sets').select('date,program_id,ex_key,set_index,weight,reps,done').eq('profile_id',p),
     SB.from('workouts').select('date,program_id,note').eq('profile_id',p),
-    SB.from('cardio_log').select('kind,date,minutes,km,rpe').eq('profile_id',p),
+    SB.from('cardio_log').select('kind,date,minutes,km').eq('profile_id',p),
     SB.from('cardio_state').select('kind,stage').eq('profile_id',p),
-    SB.from('daily_log').select('date,steps,body_weight').eq('profile_id',p)
+    SB.from('daily_log').select('date,steps,body_weight').eq('profile_id',p),
+    SB.from('app_settings').select('k,v').eq('profile_id',p)
   ]);
   const err = [w,ws,wk,cl,cs,dl].find(r=>r.error);
   if(err) throw err.error;
@@ -465,39 +690,33 @@ async function pullRemote(){
   const d = emptyData();
   (w.data||[]).forEach(r=>{ if(r.current_weight!=null) d.weights[r.ex_key]=Number(r.current_weight); });
   (wk.data||[]).forEach(r=>{
-    const key = r.date+'_'+r.program_id;
-    d.sessions[key] = {day:r.program_id, date:r.date, note:r.note||'', sets:blankSets(r.program_id)};
+    d.sessions[r.date+'_'+r.program_id] = {day:r.program_id, date:r.date, note:r.note||'', sets:{}};
   });
   (ws.data||[]).forEach(r=>{
     const key = r.date+'_'+r.program_id;
-    if(!d.sessions[key]) d.sessions[key] = {day:r.program_id, date:r.date, note:'', sets:blankSets(r.program_id)};
-    const ex = exOf(r.program_id);
-    const i = ex.findIndex((_,ix)=>exKey(r.program_id,ix)===r.ex_key);
-    if(i<0) return;
-    if(!d.sessions[key].sets[i]) d.sessions[key].sets[i]=[];
-    d.sessions[key].sets[i][r.set_index] = {d:!!r.done, w:r.weight==null?null:Number(r.weight), r:r.reps==null?null:Number(r.reps)};
+    if(!d.sessions[key]) d.sessions[key] = {day:r.program_id, date:r.date, note:'', sets:{}};
+    const S = d.sessions[key].sets;
+    if(!S[r.ex_key]) S[r.ex_key]=[];
+    S[r.ex_key][r.set_index] = {d:!!r.done, w:r.weight==null?null:Number(r.weight), r:r.reps==null?null:Number(r.reps)};
   });
   (cs.data||[]).forEach(r=>{ d.cardio[r.kind]=Object.assign(d.cardio[r.kind]||{log:[]},{stage:r.stage||0}); });
   (cl.data||[]).forEach(r=>{
     if(!d.cardio[r.kind]) d.cardio[r.kind]={stage:0,log:[]};
-    d.cardio[r.kind].log.push({date:r.date, min:Number(r.minutes), km:r.km==null?null:Number(r.km), rpe:r.rpe||'ok'});
+    d.cardio[r.kind].log.push({date:r.date, min:Number(r.minutes), km:r.km==null?null:Number(r.km)});
   });
   Object.values(d.cardio).forEach(c=>c.log.sort((a,b)=>a.date<b.date?-1:1));
   (dl.data||[]).forEach(r=>{ d.daily[r.date]={steps:r.steps, weight:r.body_weight==null?null:Number(r.body_weight)}; });
+  if(st && !st.error) (st.data||[]).forEach(r=>{ if(r.k==='prefs' && r.v) d.prefs = Object.assign(emptyPrefs(), r.v); });
   return d;
 }
-
-function blankSets(programId){ return exOf(programId).map(e=>Array.from({length:e.sets},()=>({d:false,w:null,r:null}))); }
 
 async function pushSession(sess){
   if(!SB) return;
   const rows = [];
-  const ex = exOf(sess.day);
-  (sess.sets||[]).forEach((arr,i)=>{
-    if(!ex[i]) return;
-    arr.forEach((c,j)=>{
+  Object.keys(sess.sets||{}).forEach(k=>{
+    (sess.sets[k]||[]).forEach((c,j)=>{
       if(!c) return;
-      rows.push({profile_id:PROFILE, date:sess.date, program_id:sess.day, ex_key:exKey(sess.day,i),
+      rows.push({profile_id:PROFILE, date:sess.date, program_id:sess.day, ex_key:k,
                  set_index:j, weight:c.w, reps:c.r, done:!!c.d});
     });
   });
@@ -518,15 +737,21 @@ async function pushDaily(date){
 }
 async function pushCardio(kind, entry){
   if(!SB) return;
-  await SB.from('cardio_log').insert({profile_id:PROFILE, kind, date:entry.date, minutes:entry.min, km:entry.km, rpe:entry.rpe});
-  await SB.from('cardio_state').upsert({profile_id:PROFILE, kind, stage:state.data.cardio[kind].stage},
+  await SB.from('cardio_log').insert({profile_id:PROFILE, kind, date:entry.date, minutes:entry.min, km:entry.km});
+  await SB.from('cardio_state').upsert({profile_id:PROFILE, kind, stage:state.data.cardio[kind].stage||0},
     {onConflict:'profile_id,kind'});
+}
+async function pushPrefs(){
+  if(!SB) return;
+  await SB.from('app_settings').upsert({profile_id:PROFILE, k:'prefs', v:state.data.prefs, updated_at:new Date().toISOString()},
+    {onConflict:'profile_id,k'});
 }
 async function pushAll(){
   if(!SB) return;
   for(const s of Object.values(state.data.sessions)) await pushSession(s);
   for(const k of Object.keys(state.data.weights)) await pushWeight(k, state.data.weights[k]);
   for(const d of Object.keys(state.data.daily)) await pushDaily(d);
+  await pushPrefs();
 }
 
 /* queue of remote writes so the UI never blocks on the network */
@@ -562,38 +787,71 @@ function persist(){
   clearTimeout(saveTimer);
   saveTimer = setTimeout(()=>toast('נשמר ✓'), 400);
 }
+function persistPrefs(){ persist(); enqueue(pushPrefs); }
 
-/* ================= program access ================= */
-const progOf = id => (CFG.programs.find(p=>p.id===id) || CFG.programs[0]);
-const exOf = id => { const p = CFG.programs.find(x=>x.id===id); return (p && p.ex) || []; };
+/* ================= program & exercise access ================= */
+function progOf(id){
+  return (CFG.programs.find(p=>p.id===id)) || LEGACY_PROGRAMS[id] || CFG.programs[0];
+}
+const rawEx = id => { const p=CFG.programs.find(x=>x.id===id); return (p && p.ex) || []; };
+const poolOf = id => { const p=CFG.programs.find(x=>x.id===id); return (p && p.pool) || []; };
+const prefs = () => (state.data && state.data.prefs) || emptyPrefs();
+
+function withPlan(e){
+  const pl = prefs().plan[e.k];
+  if(!pl) return e;
+  const o = Object.assign({}, e);
+  if(pl.s) o.sets = pl.s;
+  if(pl.r!=null) o.reps = pl.r;
+  o.custom = true;
+  return o;
+}
+/* the live list for a program: base minus deleted, plus whatever was added */
+function exOf(id){
+  const base = rawEx(id), pool = poolOf(id);
+  if(!base.length && !pool.length) return [];
+  const hid = prefs().hidden, added = prefs().added[id] || [];
+  const list = base.filter(e=>!hid[e.k])
+    .concat(added.map(k=>pool.filter(e=>e.k===k)[0]).filter(Boolean).filter(e=>!hid[e.k])
+      .map(e=>Object.assign({}, e, {added:true})));
+  return list.map(withPlan);
+}
+function exByKey(id, k){ return exOf(id).filter(e=>e.k===k)[0] || null; }
+function anyExByKey(k){
+  for(const p of CFG.programs){
+    const f = (p.ex||[]).concat(p.pool||[]).filter(e=>e.k===k)[0];
+    if(f) return withPlan(f);
+  }
+  return null;
+}
 const isTime = reps => typeof reps==='string' && /שנ|דק/.test(reps);
 const timeSecs = reps => { const m=String(reps).match(/(\d+)/); const n=m?+m[1]:0; return /דק/.test(reps)? n*60 : n; };
 
 function getSession(dayId, create){
   const date = todayISO(), key = date+'_'+dayId;
-  if(!state.data.sessions[key]){
-    const blank = {day:dayId, date, sets:blankSets(dayId), note:''};
-    if(!create) return blank;
-    state.data.sessions[key] = blank;
+  let s = state.data.sessions[key];
+  if(!s){
+    s = {day:dayId, date, sets:{}, note:''};
+    if(create) state.data.sessions[key] = s;
   }
-  const s = state.data.sessions[key];
-  exOf(dayId).forEach((e,i)=>{
-    if(!s.sets[i]) s.sets[i] = Array.from({length:e.sets},()=>({d:false,w:null,r:null}));
-    for(let j=0;j<e.sets;j++) if(!s.sets[i][j]) s.sets[i][j]={d:false,w:null,r:null};
-  });
+  ensureSets(s);
   return s;
 }
-function historyFor(dayId, excludeDate){
+function ensureSets(s){
+  if(!s.sets || typeof s.sets!=='object' || Array.isArray(s.sets)) s.sets={};
+  exOf(s.day).forEach(e=>{
+    if(!Array.isArray(s.sets[e.k])) s.sets[e.k]=[];
+    for(let j=0;j<e.sets;j++) if(!s.sets[e.k][j]) s.sets[e.k][j]={d:false,w:null,r:null};
+  });
+}
+/* every session that recorded a completed set of this exercise, newest first */
+function exHistory(k, excludeDate){
   return Object.values(state.data.sessions)
-    .filter(s=>s.day===dayId && s.date!==excludeDate && (s.sets||[]).some(a=>a && a.some(x=>x&&x.d)))
+    .filter(s=>s.date!==excludeDate && s.sets && s.sets[k] && s.sets[k].some(x=>x&&x.d))
     .sort((a,b)=> a.date<b.date?1:-1);
 }
-function workingWeight(dayId, i){
-  const k = exKey(dayId,i);
-  return state.data.weights[k]!=null ? state.data.weights[k] : null;
-}
-function setWorkingWeight(dayId, i, val){
-  const k = exKey(dayId,i);
+function workingWeight(k){ return state.data.weights[k]!=null ? state.data.weights[k] : null; }
+function setWorkingWeight(k, val){
   if(val==null || val==='' || isNaN(val)) delete state.data.weights[k];
   else state.data.weights[k] = Number(val);
   persist();
@@ -602,36 +860,41 @@ function setWorkingWeight(dayId, i, val){
 
 /* ================= math ================= */
 const e1rm = (w,r) => (w>0 && r>0) ? w*(1+r/30) : 0;
-const setsDone = s => (s.sets||[]).reduce((a,arr)=>a+(arr||[]).filter(x=>x&&x.d).length,0);
+const setsDone = s => Object.values(s.sets||{}).reduce((a,arr)=>a+(arr||[]).filter(x=>x&&x.d).length,0);
 const setsTotal = dayId => exOf(dayId).reduce((a,e)=>a+e.sets,0);
-const volumeOf = s => (s.sets||[]).reduce((a,arr)=>a+(arr||[]).reduce((b,x)=>b+(x&&x.d?(x.w||0)*(x.r||0):0),0),0);
-function sessionPct(s){ const t=setsTotal(s.day); return t?Math.round(setsDone(s)/t*100):0; }
+const volumeOf = s => Object.values(s.sets||{}).reduce((a,arr)=>a+(arr||[]).reduce((b,x)=>b+(x&&x.d?(x.w||0)*(x.r||0):0),0),0);
+/* total that also respects sets recorded for exercises that were since removed */
+function sessionTotal(s){
+  const active = exOf(s.day); let t=0; const seen={};
+  active.forEach(e=>{ seen[e.k]=1; t += Math.max(e.sets, ((s.sets||{})[e.k]||[]).length); });
+  Object.keys(s.sets||{}).forEach(k=>{ if(!seen[k]) t += (s.sets[k]||[]).filter(x=>x&&x.d).length; });
+  return t;
+}
+function sessionPct(s){ const t=sessionTotal(s); return t?Math.min(100,Math.round(setsDone(s)/t*100)):0; }
 const sessionDone = s => sessionPct(s)>=80;
 
-function bestE1RM(dayId, exIdx, beforeDate){
+function bestE1RM(k, beforeDate){
   let best=0, bw=0;
   Object.values(state.data.sessions).forEach(s=>{
-    if(s.day!==dayId) return;
     if(beforeDate && s.date>=beforeDate) return;
-    ((s.sets||[])[exIdx]||[]).forEach(x=>{ if(x&&x.d){ const e=e1rm(x.w,x.r); if(e>best){best=e;bw=x.w;} } });
+    ((s.sets||{})[k]||[]).forEach(x=>{ if(x&&x.d){ const e=e1rm(x.w,x.r); if(e>best){best=e;bw=x.w;} } });
   });
   return {e:best, w:bw};
 }
-function lastRepsFor(dayId, exIdx, setIdx){
-  for(const s of historyFor(dayId, todayISO())){
-    const arr=(s.sets||[])[exIdx]||[];
+function lastRepsFor(k, setIdx){
+  for(const s of exHistory(k, todayISO())){
+    const arr=(s.sets||{})[k]||[];
     if(arr[setIdx] && arr[setIdx].d && arr[setIdx].r!=null) return arr[setIdx].r;
     const any=arr.filter(x=>x&&x.d&&x.r!=null);
     if(any.length) return any[any.length-1].r;
   }
   return null;
 }
-function coachFor(dayId, exIdx){
-  const exo = exOf(dayId)[exIdx];
+function coachFor(exo){
   if(!exo) return null;
   const target = typeof exo.reps==='number' ? exo.reps : null;
-  const hist = historyFor(dayId, todayISO()).slice(0,2)
-    .map(s=>((s.sets||[])[exIdx]||[]).filter(x=>x&&x.d)).filter(a=>a.length);
+  const hist = exHistory(exo.k, todayISO()).slice(0,2)
+    .map(s=>((s.sets||{})[exo.k]||[]).filter(x=>x&&x.d)).filter(a=>a.length);
   if(!hist.length) return {type:'first'};
   const ok = arr => arr.length>=exo.sets && (!target || arr.every(x=>(x.r||0)>=target));
   const topW = arr => Math.max(0, ...arr.map(x=>x.w||0));
@@ -683,92 +946,98 @@ function heatMap(){
   const days=last7(), m={};
   Object.values(state.data.sessions).forEach(s=>{
     if(days.indexOf(s.date)<0) return;
-    const ex=exOf(s.day);
-    (s.sets||[]).forEach((arr,i)=>{
-      const n=(arr||[]).filter(x=>x&&x.d).length;
-      if(!n||!ex[i]) return;
-      (ex[i].hl||[]).forEach(k=>m[k]=(m[k]||0)+n);
+    Object.keys(s.sets||{}).forEach(k=>{
+      const n=(s.sets[k]||[]).filter(x=>x&&x.d).length;
+      if(!n) return;
+      const e = anyExByKey(k); if(!e) return;
+      (e.hl||[]).forEach(x=>m[x]=(m[x]||0)+n);
+      (e.hl2||[]).forEach(x=>m[x]=(m[x]||0)+n*0.5);
     });
   });
   return m;
 }
-function weeklyVolume(n){
-  const out=[]; let ws=startOfWeek(new Date());
-  for(let i=0;i<n;i++){
-    const s=dISO(ws), e=dISO(addDays(ws,6));
-    const v=Object.values(state.data.sessions).filter(x=>x.date>=s&&x.date<=e).reduce((a,x)=>a+volumeOf(x),0);
-    out.unshift({x:s, y:Math.round(v), label:pad2(ws.getDate())+'/'+pad2(ws.getMonth()+1)});
-    ws=addDays(ws,-7);
-  }
-  return out;
-}
-function e1rmSeries(dayId, exIdx){
-  return historyFor(dayId,null).slice().reverse().map(s=>{
-    const arr=((s.sets||[])[exIdx]||[]).filter(x=>x&&x.d);
+function e1rmSeries(k){
+  return exHistory(k,null).slice().reverse().map(s=>{
+    const arr=((s.sets||{})[k]||[]).filter(x=>x&&x.d);
     const b=Math.max(0,...arr.map(x=>e1rm(x.w,x.r)));
     return b>0?{x:s.date, y:Math.round(b*10)/10, label:s.date.slice(5).replace('-','/')}:null;
   }).filter(Boolean);
 }
 
-/* ================= svg ================= */
+/* ================= body map ================= */
 function attr(o){ return Object.entries(o).map(([k,v])=>k+'="'+v+'"').join(' '); }
 function heatStyle(c){
-  if(c===0) return 'fill="var(--muscle)" opacity=".14"';
-  if(c<=3) return 'fill="var(--pc)" opacity=".34"';
-  if(c<=7) return 'fill="var(--pc)" opacity=".64"';
-  return 'fill="var(--pc)" opacity="1"';
+  if(!c) return 'fill="var(--muscle)" opacity=".13"';
+  if(c<=3) return 'fill="var(--pc)" opacity=".32"';
+  if(c<=7) return 'fill="var(--pc)" opacity=".62"';
+  if(c<=13) return 'fill="var(--pc)" opacity=".85"';
+  return 'fill="var(--green)" opacity="1"';
 }
-/* ================= anatomical body map ================= */
-/* One left half on a 200x412 canvas, mirrored for the right side, so
-   both sides always light up together and the figure stays symmetric. */
+/* One left half on a 200x412 canvas, mirrored, so both sides light up together. */
 const BODY_SIL = [
-  ['path',{d:'M100 8 C86 8 78 19 78 32 C78 45 86 55 100 55 Z'}],
-  ['path',{d:'M100 53 C93 53 90 57 89 63 C88 67 86 70 83 72 L100 76 Z'}],
-  ['path',{d:'M100 60 C86 60 71 66 61 75 C54 82 51 94 53 108 C55 124 62 140 70 152 C75 160 77 166 77 172 C74 180 70 186 68 196 L100 196 Z'}],
-  ['path',{d:'M63 73 C52 80 46 94 45 112 C44 130 44 148 46 162 L60 158 C58 142 57 122 59 104 C60 90 63 80 67 75 Z'}],
-  ['path',{d:'M46 166 C43 182 41 200 41 216 C41 224 42 230 43 234 L55 231 C54 218 54 200 56 182 C57 174 58 168 59 163 Z'}],
-  ['path',{d:'M43 236 C39 244 38 254 41 260 C46 264 52 262 54 256 C56 248 56 240 55 234 Z'}],
-  ['path',{d:'M68 196 C63 214 61 240 63 264 C64 278 67 288 71 294 L96 294 C97 276 98 250 98 226 C98 210 99 202 99 196 Z'}],
-  ['path',{d:'M72 298 C68 316 67 338 70 360 C72 374 74 382 76 388 L94 388 C95 374 95 352 95 330 C95 314 94 304 95 298 Z'}],
-  ['path',{d:'M76 390 C73 396 72 404 76 406 L95 406 C96 400 95 394 93 390 Z'}]
+  'M100 8 C86 8 78 19 78 32 C78 45 86 55 100 55 Z',
+  'M100 53 C93 53 90 57 89 63 C88 67 86 70 83 72 L100 76 Z',
+  'M100 60 C86 60 71 66 61 75 C54 82 51 94 53 108 C55 124 62 140 70 152 C75 160 77 166 77 172 C74 180 70 186 68 196 L100 196 Z',
+  'M63 73 C52 80 46 94 45 112 C44 130 44 148 46 162 L60 158 C58 142 57 122 59 104 C60 90 63 80 67 75 Z',
+  'M46 166 C43 182 41 200 41 216 C41 224 42 230 43 234 L55 231 C54 218 54 200 56 182 C57 174 58 168 59 163 Z',
+  'M43 236 C39 244 38 254 41 260 C46 264 52 262 54 256 C56 248 56 240 55 234 Z',
+  'M68 196 C63 214 61 240 63 264 C64 278 67 288 71 294 L96 294 C97 276 98 250 98 226 C98 210 99 202 99 196 Z',
+  'M72 298 C68 316 67 338 70 360 C72 374 74 382 76 388 L94 388 C95 374 95 352 95 330 C95 314 94 304 95 298 Z',
+  'M76 390 C73 396 72 404 76 406 L95 406 C96 400 95 394 93 390 Z'
 ];
 const MUSCLES = {
   front:[
     ['traps',    'M98 62 C88 63 76 68 66 75 C76 74 88 73 98 73 Z'],
     ['shoulders','M63 73 C52 80 46 95 46 114 C57 112 66 101 70 88 C72 81 69 74 63 73 Z'],
-    ['chest',    'M98 74 C86 74 74 78 67 86 C63 94 64 104 70 111 C78 118 90 118 98 112 Z'],
+    ['shoulders','M66 76 C60 82 57 90 57 98 C63 96 68 90 70 84 C71 80 69 76 66 76 Z'],
+    ['chest',    'M98 75 C87 75 76 79 69 86 C66 91 66 97 69 102 L98 96 Z'],
+    ['chest',    'M98 98 C89 99 79 102 71 105 C77 115 88 119 98 113 Z'],
     ['biceps',   'M46 118 C44 134 45 150 48 161 L59 157 C57 144 56 128 58 116 C55 113 49 113 46 118 Z'],
+    ['biceps',   'M50 120 C49 133 50 145 52 154 L57 152 C55 141 55 129 56 119 Z'],
     ['forearms', 'M47 170 C44 186 42 202 42 218 C46 222 52 220 54 214 C55 198 57 182 58 170 Z'],
     ['obliques', 'M76 122 C72 136 71 152 74 166 C79 172 84 172 86 167 C84 152 84 136 85 122 Z'],
+    ['obliques', 'M79 112 L86 110 L85 119 L78 121 Z'],
     ['abs','M87 118 L98 118 L98 130 L87 130 Z'],
     ['abs','M87 133 L98 133 L98 145 L87 145 Z'],
     ['abs','M87 148 L98 148 L98 160 L87 160 Z'],
     ['abs','M87 163 C87 172 90 178 94 181 L98 181 L98 163 Z'],
-    ['quads',    'M70 200 C64 220 62 244 64 266 C66 278 69 284 73 288 C80 283 85 266 88 244 C90 226 90 210 90 200 Z']
+    ['quads',    'M70 200 C64 220 62 244 64 266 C66 278 69 284 73 288 C79 283 84 267 87 246 C89 228 89 211 89 200 Z'],
+    ['quads',    'M89 205 C89 224 91 244 93 258 C96 254 97 240 97 222 C97 212 97 206 97 202 Z'],
+    ['calves',   'M74 302 C70 318 69 336 72 352 C77 358 83 356 85 350 C88 334 88 316 87 304 Z']
   ],
   back:[
     ['traps',     'M98 62 C86 64 73 70 64 78 C76 83 89 92 97 104 C99 90 99 72 98 62 Z'],
     ['shoulders', 'M63 73 C52 80 46 95 46 114 C57 112 66 101 70 88 C72 81 69 74 63 73 Z'],
+    ['shoulders', 'M50 92 C47 99 46 107 46 114 C51 113 55 108 57 102 Z'],
     ['lats',      'M97 106 C85 106 72 114 66 126 C64 137 68 149 76 158 C84 162 92 160 97 154 Z'],
+    ['lats',      'M78 120 C74 128 73 138 76 146 C80 149 85 148 87 144 C85 136 84 128 85 120 Z'],
     ['triceps',   'M46 118 C44 134 45 150 48 161 L59 157 C57 144 56 128 58 116 C55 113 49 113 46 118 Z'],
+    ['triceps',   'M50 122 C49 134 50 146 52 154 L56 152 C54 142 54 130 55 121 Z'],
     ['forearms',  'M47 170 C44 186 42 202 42 218 C46 222 52 220 54 214 C55 198 57 182 58 170 Z'],
     ['lowerBack', 'M87 158 C83 168 82 180 84 192 L98 192 L98 158 Z'],
     ['glutes',    'M78 194 C69 198 64 208 66 219 C71 228 82 232 92 227 C98 223 100 212 99 201 C94 195 86 193 78 194 Z'],
     ['hamstrings','M70 230 C66 248 64 266 65 280 C66 288 69 292 73 293 C79 289 84 274 87 254 C89 240 89 234 89 228 Z'],
-    ['calves',    'M73 302 C68 318 67 338 70 354 C75 362 82 361 85 354 C89 338 90 320 89 304 Z']
+    ['hamstrings','M89 232 C89 248 90 264 92 276 C95 271 96 258 96 242 C96 236 96 233 96 230 Z'],
+    ['calves',    'M73 302 C68 318 67 338 70 354 C75 362 82 361 85 354 C89 338 90 320 89 304 Z'],
+    ['calves',    'M85 306 C86 320 86 336 85 348 C88 342 89 328 89 314 C89 310 89 308 89 306 Z']
   ]
 };
 function MUSCLE_LIST(hl){
   return (hl||[]).map(function(k){return MUSCLE_HE[k]||k;}).join(' · ') || 'כל הגוף';
 }
-function bodySVG(view, hl, heat, big){
-  const dim = heat ? 'fill="var(--muscle)" opacity=".14"' : 'class="muscle-base"';
-  const half = BODY_SIL.map(s=>'<'+s[0]+' '+dim+' '+attr(s[1])+'/>').join('')
-    + (MUSCLES[view==='back'?'back':'front']).map(m=>{
-        const on = heat ? heatStyle(heat[m[0]]||0)
-                        : 'class="'+(((hl||[]).indexOf(m[0])>=0)?'muscle-hl':'muscle-base')+'"';
-        return '<path '+on+' d="'+m[1]+'"/>';
-      }).join('');
+function bodySVG(view, hl, hl2, heat, big){
+  const dim = heat ? 'fill="var(--muscle)" opacity=".13"' : 'class="muscle-base"';
+  const sil = BODY_SIL.map(d=>'<path '+dim+' d="'+d+'"/>').join('')
+            + BODY_SIL.map(d=>'<path class="body-outline" d="'+d+'"/>').join('');
+  const mus = (MUSCLES[view==='back'?'back':'front']).map(m=>{
+    let cls;
+    if(heat) cls = heatStyle(heat[m[0]]||0);
+    else if((hl||[]).indexOf(m[0])>=0) cls = 'class="muscle-hl"';
+    else if((hl2||[]).indexOf(m[0])>=0) cls = 'class="muscle-sec"';
+    else cls = 'class="muscle-base"';
+    return '<path '+cls+' d="'+m[1]+'"/>';
+  }).join('');
+  const half = sil + mus;
   return '<svg viewBox="0 0 200 412" xmlns="http://www.w3.org/2000/svg"'+(big?' class="body-big"':'')+'>'
     + '<g>'+half+'</g><g transform="translate(200,0) scale(-1,1)">'+half+'</g></svg>';
 }
@@ -780,6 +1049,7 @@ function equipIcon(eq,hex){
   if(eq==='machine') return '<svg viewBox="0 0 16 16" width="13" height="13"><rect x="0.5" y="0.5" width="15" height="15" rx="3" fill="none" stroke="'+hex+'" stroke-width="1.5"/><line x1="3" y1="5.3" x2="13" y2="5.3" stroke="'+hex+'" stroke-width="1.3"/><line x1="3" y1="10.7" x2="13" y2="10.7" stroke="'+hex+'" stroke-width="1.3"/></svg>';
   return '';
 }
+const EQUIP_HE = {barbell:'מוט',dumbbell:'משקולות',cable:'כבל',machine:'מכונה',bodyweight:'משקל גוף'};
 
 /* ================= charts ================= */
 function lineChart(pts,o){
@@ -793,33 +1063,23 @@ function lineChart(pts,o){
   const line=pts.map((p,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(p.y).toFixed(1)).join(' ');
   const area=line+' L '+X(pts.length-1).toFixed(1)+' '+(H-B)+' L '+X(0).toFixed(1)+' '+(H-B)+' Z';
   const c=o.color||'var(--pc)', gid='g'+Math.random().toString(36).slice(2,7);
-  const dots=pts.map((p,i)=>'<circle cx="'+X(i).toFixed(1)+'" cy="'+Y(p.y).toFixed(1)+'" r="'+(i===pts.length-1?3.4:2)+'" fill="'+c+'"/>').join('');
+  const len=(W-L-R)*1.4;
+  const dots=pts.map((p,i)=>'<circle cx="'+X(i).toFixed(1)+'" cy="'+Y(p.y).toFixed(1)+'" r="'+(i===pts.length-1?3.6:2)+'" fill="'+c+'"/>').join('');
   const fmt=o.fmt||(v=>Math.round(v));
   return '<div class="chart-wrap"><svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">'
-    +'<defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+c+'" stop-opacity=".28"/><stop offset="1" stop-color="'+c+'" stop-opacity="0"/></linearGradient></defs>'
+    +'<defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+c+'" stop-opacity=".3"/><stop offset="1" stop-color="'+c+'" stop-opacity="0"/></linearGradient></defs>'
     +'<line x1="'+L+'" y1="'+T+'" x2="'+(W-R)+'" y2="'+T+'" stroke="var(--line)" stroke-dasharray="2 4"/>'
     +'<line x1="'+L+'" y1="'+(H-B)+'" x2="'+(W-R)+'" y2="'+(H-B)+'" stroke="var(--line)"/>'
     +'<text x="'+(L-5)+'" y="'+(T+4)+'" fill="var(--text-dim)" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="end">'+fmt(max)+'</text>'
     +'<text x="'+(L-5)+'" y="'+(H-B)+'" fill="var(--text-dim)" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="end">'+fmt(min)+'</text>'
-    +'<path d="'+area+'" fill="url(#'+gid+')"/><path d="'+line+'" fill="none" stroke="'+c+'" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>'
+    +'<path d="'+area+'" fill="url(#'+gid+')"><animate attributeName="opacity" from="0" to="1" dur=".5s" fill="freeze"/></path>'
+    +'<path d="'+line+'" fill="none" stroke="'+c+'" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" '
+    +'stroke-dasharray="'+len.toFixed(0)+'" stroke-dashoffset="'+len.toFixed(0)+'">'
+    +'<animate attributeName="stroke-dashoffset" from="'+len.toFixed(0)+'" to="0" dur=".85s" fill="freeze"/></path>'
     +dots
     +'<text x="'+X(0).toFixed(1)+'" y="'+(H-6)+'" fill="var(--text-dim)" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="start">'+esc(pts[0].label||'')+'</text>'
     +'<text x="'+X(pts.length-1).toFixed(1)+'" y="'+(H-6)+'" fill="var(--text-dim)" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="end">'+esc(pts[pts.length-1].label||'')+'</text>'
     +'</svg></div>';
-}
-function barChart(pts,o){
-  o=o||{};
-  const W=320,H=o.h||110,L=34,R=8,T=12,B=22;
-  const max=Math.max(1,...pts.map(p=>p.y)), bw=(W-L-R)/pts.length, c=o.color||'var(--pc)';
-  const bars=pts.map((p,i)=>{
-    const h=(p.y/max)*(H-T-B), x=L+i*bw+bw*0.18, y=H-B-h;
-    return '<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+(bw*0.64).toFixed(1)+'" height="'+Math.max(1,h).toFixed(1)+'" rx="3" fill="'+c+'" opacity="'+(i===pts.length-1?1:.55)+'"/>'
-      +'<text x="'+(x+bw*0.32).toFixed(1)+'" y="'+(H-7)+'" fill="var(--text-dim)" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">'+esc(p.label)+'</text>';
-  }).join('');
-  return '<div class="chart-wrap"><svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">'
-    +'<line x1="'+L+'" y1="'+(H-B)+'" x2="'+(W-R)+'" y2="'+(H-B)+'" stroke="var(--line)"/>'
-    +'<text x="'+(L-5)+'" y="'+(T+4)+'" fill="var(--text-dim)" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="end">'+num(Math.round(max))+'</text>'
-    +bars+'</svg></div>';
 }
 function sparkline(pts,c){
   if(pts.length<2) return '';
@@ -830,10 +1090,10 @@ function sparkline(pts,c){
   const d=pts.map((p,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(p.y).toFixed(1)).join(' ');
   const up=pts[pts.length-1].y>=pts[0].y;
   return '<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'"><path d="'+d+'" fill="none" stroke="'+c+'" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" opacity=".8"/>'
-    +'<circle cx="'+X(pts.length-1).toFixed(1)+'" cy="'+Y(pts[pts.length-1].y).toFixed(1)+'" r="2.6" fill="'+(up?'var(--green)':c)+'"/></svg>';
+    +'<circle cx="'+X(pts.length-1).toFixed(1)+'" cy="'+Y(pts[pts.length-1].y).toFixed(1)+'" r="2.6" fill="'+(up?'var(--green)':c)+'"><animate attributeName="r" values="2.6;4;2.6" dur="2s" repeatCount="indefinite"/></circle></svg>';
 }
 
-/* ================= rest timer & toast ================= */
+/* ================= timer, toast, celebration ================= */
 function beep(){
   try{
     if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
@@ -849,26 +1109,70 @@ function beep(){
   }catch(e){}
 }
 function paintRest(){
+  const bar=document.getElementById('restBar');
   document.getElementById('restTime').textContent = Math.floor(restLeft/60)+':'+pad2(restLeft%60);
-  const ring=document.getElementById('restRing'), C=2*Math.PI*16;
-  ring.setAttribute('stroke-dasharray',C);
+  const ring=document.getElementById('restRing'), C=2*Math.PI*45;
+  ring.setAttribute('stroke-dasharray',C.toFixed(1));
   ring.setAttribute('stroke-dashoffset',(C*(1-restLeft/Math.max(1,restTotal))).toFixed(1));
+  bar.classList.toggle('low', restLeft<=5);
 }
-function stopRest(){ clearInterval(restInt); restInt=null; document.getElementById('restBar').classList.remove('show'); }
-function startRest(sec){
+function stopRest(){
+  clearInterval(restInt); restInt=null;
+  const b=document.getElementById('restBar');
+  b.classList.remove('show'); b.classList.remove('low');
+}
+function startRest(sec, cap, exName){
   clearInterval(restInt); restLeft=sec; restTotal=sec;
-  document.getElementById('restBar').classList.add('show'); paintRest();
+  const bar=document.getElementById('restBar');
+  document.getElementById('restCap').textContent = cap||'מנוחה בין סטים';
+  document.getElementById('restEx').textContent = exName||'';
+  if(state.day){ const p=progOf(state.day); bar.style.setProperty('--dc', p.hex||'var(--pc)'); }
+  bar.classList.add('show'); paintRest();
   restInt=setInterval(()=>{
     restLeft--;
-    if(restLeft<=0){ stopRest(); if(navigator.vibrate) navigator.vibrate([120,60,120]); beep(); return; }
+    if(restLeft<=0){ paintRest(); stopRest(); if(navigator.vibrate) navigator.vibrate([120,60,120]); beep(); return; }
     paintRest();
   },1000);
 }
-const restSecs = exo => isTime(exo.reps)?45:(exo.sets>=3?90:60);
+function restSecs(exo){
+  if(isTime(exo.reps)) return 45;
+  if(!exo.w) return 60;
+  return exo.sets>=3 ? 90 : 60;
+}
 function toast(msg){
   const el=document.getElementById('toast');
   el.textContent=msg; el.classList.add('show');
-  clearTimeout(toast._t); toast._t=setTimeout(()=>el.classList.remove('show'),1600);
+  clearTimeout(toast._t); toast._t=setTimeout(()=>el.classList.remove('show'),1800);
+}
+function celebrate(){
+  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const box=document.createElement('div'); box.className='confetti';
+  const cols=['#FF4D6D','#3DA9FC','#FFD23F','#2FE6A7','#5EE7FF','#FF7EB6'];
+  for(let i=0;i<44;i++){
+    const s=document.createElement('i');
+    s.style.left=(Math.random()*100)+'vw';
+    s.style.background=cols[i%cols.length];
+    s.style.animationDuration=(1.6+Math.random()*1.4)+'s';
+    s.style.animationDelay=(Math.random()*.5)+'s';
+    s.style.transform='rotate('+(Math.random()*360)+'deg)';
+    box.appendChild(s);
+  }
+  document.body.appendChild(box);
+  setTimeout(()=>box.remove(),3600);
+  if(navigator.vibrate) navigator.vibrate([40,60,40,60,120]);
+}
+function countUp(){
+  if(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  app.querySelectorAll('[data-count]').forEach(el=>{
+    const to=+el.dataset.count, suf=el.dataset.suf||'';
+    if(!isFinite(to) || to<=0) return;
+    const t0=performance.now(), dur=650;
+    (function step(t){
+      const k=Math.min(1,(t-t0)/dur), e=1-Math.pow(1-k,3);
+      el.textContent = Math.round(to*e)+suf;
+      if(k<1) requestAnimationFrame(step);
+    })(t0);
+  });
 }
 
 /* ================= actions ================= */
@@ -876,42 +1180,101 @@ function suggestDay(){
   const st = CFG.programs.filter(p=>p.type==='strength');
   if(st.length<2) return st.length?st[0].id:CFG.programs[0].id;
   const today=todayISO();
-  const done = st.find(p=>{ const s=state.data.sessions[today+'_'+p.id]; return s&&setsDone(s)>0; });
+  const done = st.filter(p=>{ const s=state.data.sessions[today+'_'+p.id]; return s&&setsDone(s)>0; })[0];
   if(done) return done.id;
   const last = Object.values(state.data.sessions).filter(s=>setsDone(s)>0).sort((a,b)=>a.date<b.date?1:-1)[0];
   if(!last) return st[0].id;
   const i = st.findIndex(p=>p.id===last.day);
   return i<0 ? st[0].id : st[(i+1)%st.length].id;
 }
-function toggleSet(exIdx,setIdx){
-  const s=getSession(state.day,true), exo=exOf(state.day)[exIdx], cell=s.sets[exIdx][setIdx];
+function toggleSet(k, setIdx){
+  const s=getSession(state.day,true), exo=exByKey(state.day,k);
+  if(!exo || !s.sets[k]) return;
+  const cell=s.sets[k][setIdx]; if(!cell) return;
+  const before=sessionPct(s);
   if(cell.d){ cell.d=false; }
   else{
-    if(cell.w==null && exo.w) cell.w = workingWeight(state.day,exIdx);
-    if(cell.r==null) cell.r = lastRepsFor(state.day,exIdx,setIdx) != null
-      ? lastRepsFor(state.day,exIdx,setIdx)
-      : (typeof exo.reps==='number'?exo.reps:null);
-    const before=bestE1RM(state.day,exIdx,todayISO());
+    if(cell.w==null && exo.w) cell.w = workingWeight(k);
+    if(cell.r==null){
+      const lr = lastRepsFor(k,setIdx);
+      cell.r = lr!=null ? lr : (typeof exo.reps==='number'?exo.reps:null);
+    }
+    const best=bestE1RM(k,todayISO());
     cell.d=true;
-    if(exo.w && before.e>0 && e1rm(cell.w,cell.r)>before.e*1.005) toast('🏆 שיא אישי ב'+exo.n.split('(')[0].trim());
-    const rs=restSecs(exo); if(rs) startRest(rs);
+    if(exo.w && best.e>0 && e1rm(cell.w,cell.r)>best.e*1.005) toast('🏆 שיא אישי ב'+exo.n.split('(')[0].trim());
+    const rs=restSecs(exo); if(rs) startRest(rs, 'מנוחה בין סטים', exo.n);
   }
-  persist(); enqueue(()=>pushSession(s)); render();
+  persist(); enqueue(()=>pushSession(s));
+  const after=sessionPct(s), ck=s.date+'_'+s.day;
+  if(before<100 && after>=100 && !state.celebrated[ck]){ state.celebrated[ck]=1; celebrate(); toast('🎉 סיימת את כל הסטים!'); }
+  render();
 }
-function bumpWeight(exIdx,delta){
-  const exo=exOf(state.day)[exIdx];
-  const cur=workingWeight(state.day,exIdx);
-  const step=delta*(exo.inc||2.5);
-  const next=Math.max(0, r05((cur==null?0:cur)+step));
-  applyWeight(exIdx,next);
+function bumpWeight(k, delta){
+  const exo=exByKey(state.day,k); if(!exo) return;
+  const cur=workingWeight(k);
+  const next=Math.max(0, r05((cur==null?0:cur) + delta*(exo.inc||2.5)));
+  applyWeight(k,next);
 }
-function applyWeight(exIdx,val){
-  setWorkingWeight(state.day,exIdx,val);
+function applyWeight(k,val){
+  setWorkingWeight(k,val);
   const s=getSession(state.day,true);
-  s.sets[exIdx].forEach(c=>{ if(!c.d) c.w = (val===''||val==null)?null:Number(val); });
+  (s.sets[k]||[]).forEach(c=>{ if(!c.d) c.w = (val===''||val==null)?null:Number(val); });
   enqueue(()=>pushSession(s));
   render();
 }
+function removeExercise(k){
+  const exo = exByKey(state.day,k) || anyExByKey(k);
+  const nm = exo ? exo.n.split('(')[0].trim() : 'התרגיל';
+  if(!confirm('להוריד את "'+nm+'" מהאימון?\n\nההיסטוריה נשמרת, ואפשר להחזיר אותו בכל רגע מ"עוד תרגילים" בתחתית המסך.')) return;
+  prefs().hidden[k] = true;
+  const added = prefs().added[state.day];
+  if(added){ const i=added.indexOf(k); if(i>=0) added.splice(i,1); }
+  persistPrefs(); render(); toast('הוסר ✓');
+}
+function addExercise(k){
+  delete prefs().hidden[k];
+  const pool = poolOf(state.day);
+  if(pool.some(e=>e.k===k)){
+    if(!prefs().added[state.day]) prefs().added[state.day]=[];
+    if(prefs().added[state.day].indexOf(k)<0) prefs().added[state.day].push(k);
+  }
+  persistPrefs();
+  const s=state.data.sessions[todayISO()+'_'+state.day];
+  if(s) ensureSets(s);
+  render(); toast('נוסף לאימון ✓');
+}
+function changePlan(k, field, delta){
+  const base = (rawEx(state.day).concat(poolOf(state.day))).filter(e=>e.k===k)[0];
+  if(!base) return;
+  const cur = prefs().plan[k] || {};
+  const nowSets = cur.s || base.sets;
+  const nowReps = cur.r!=null ? cur.r : base.reps;
+  let s=nowSets, r=nowReps;
+  if(field==='s') s = Math.max(1, Math.min(10, nowSets + delta));
+  else{
+    if(isTime(base.reps)){
+      const unit = /לצד/.test(String(nowReps)) ? ' שנ׳ לצד' : ' שנ׳';
+      const sec = Math.max(10, Math.min(300, timeSecs(nowReps) + delta*5));
+      r = sec + unit;
+    } else if(typeof nowReps==='string'){
+      const m=String(nowReps).match(/(\d+)/);
+      const n=Math.max(1, Math.min(50, (m?+m[1]:8) + delta));
+      r = String(nowReps).replace(/\d+/, String(n));
+    } else {
+      r = Math.max(1, Math.min(50, (+nowReps||8) + delta));
+    }
+  }
+  prefs().plan[k] = {s:s, r:r};
+  /* keep today's card in sync with the new number of sets */
+  const sess=state.data.sessions[todayISO()+'_'+state.day];
+  if(sess && Array.isArray(sess.sets[k])){
+    while(sess.sets[k].length > s && !sess.sets[k][sess.sets[k].length-1].d) sess.sets[k].pop();
+    ensureSets(sess);
+  }
+  persistPrefs(); render();
+}
+function resetPlan(k){ delete prefs().plan[k]; persistPrefs(); render(); toast('חזר לברירת המחדל'); }
+
 function saveCardio(){
   const kind=state.kind;
   const minEl=document.getElementById('cMin'), kmEl=document.getElementById('cKm');
@@ -919,22 +1282,44 @@ function saveCardio(){
   if(!min||min<=0){ minEl.focus(); toast('כמה דקות עשית?'); return; }
   if(!state.data.cardio[kind]) state.data.cardio[kind]={stage:0,log:[]};
   const c=state.data.cardio[kind];
-  const entry={date:todayISO(), min, km:(kmEl&&kmEl.value)?Number(kmEl.value):null, rpe:'ok'};
+  const entry={date:todayISO(), min, km:(kmEl&&kmEl.value)?Number(kmEl.value):null};
   c.log.push(entry);
-  toast('נרשם ✓');
+  stopWatch('reset');
+  toast('נרשם ✓'); celebrate();
   persist(); enqueue(()=>pushCardio(kind,entry)); render();
+}
+function stopWatch(cmd){
+  if(cmd==='toggle'){
+    swOn=!swOn;
+    if(swOn){ swInt=setInterval(()=>{ swSec++; paintSW(); },1000); }
+    else clearInterval(swInt);
+  } else if(cmd==='reset'){ clearInterval(swInt); swOn=false; swSec=0; }
+  else if(cmd==='use'){
+    const el=document.getElementById('cMin');
+    if(el){ el.value = Math.max(1, Math.round(swSec/60)); toast('הזמן הועתק לשדה'); }
+    return;
+  }
+  render();
+}
+function paintSW(){
+  const el=document.getElementById('swT');
+  if(el) el.textContent = pad2(Math.floor(swSec/3600))+':'+pad2(Math.floor(swSec/60)%60)+':'+pad2(swSec%60);
 }
 function updateDaily(date,field,val){
   if(!state.data.daily[date]) state.data.daily[date]={};
   state.data.daily[date][field]= val===''?null:Number(val);
   persist(); enqueue(()=>pushDaily(date));
 }
+
+/* ================= navigation ================= */
+let modalPushed=false;
 function navSnap(){
   return {screen:state.screen, day:state.day, kind:state.kind, calY:state.calY, calM:state.calM,
           calSel:state.calSel, modal:state.modal};
 }
 function go(screen,opts,replace){
   Object.assign(state,{screen}, opts||{});
+  modalPushed=false;
   try{
     if(replace) history.replaceState(navSnap(),'');
     else history.pushState(navSnap(),'');
@@ -944,32 +1329,45 @@ function go(screen,opts,replace){
 }
 function goBack(){
   if(state.modal){
-    if(history.state && history.state.modal){ history.back(); }
-    else { state.modal=null; render(); }
+    const pushed = modalPushed;
+    state.modal=null; modalPushed=false; render();
+    if(pushed){ try{ history.back(); }catch(e){} }
     return;
   }
   stopRest();
   if(history.state && history.state.screen && history.state.screen!=='home'){ history.back(); return; }
   if(state.screen!=='home'){ go('home',null,true); }
 }
+function closeModal(){
+  state.modal=null; modalPushed=false;
+  try{ history.replaceState(navSnap(),''); }catch(e){}
+}
+function openModal(m){
+  state.modal=m;
+  try{ history.pushState(navSnap(),''); modalPushed=true; }catch(e){ modalPushed=false; }
+  render();
+}
 window.addEventListener('popstate', function(e){
   const s=e.state;
   if(s && s.screen){
+    const moved = (s.screen !== state.screen);
     if(!s.modal) stopRest();
     state.modal = s.modal || null;
+    modalPushed = !!s.modal;
     Object.assign(state,s);
     render();
-    if(!s.modal) window.scrollTo(0,0);
-  } else if(PROFILE){ state.modal=null; state.screen='home'; render(); }
+    if(!s.modal && moved) window.scrollTo(0,0);
+  } else if(PROFILE){ state.modal=null; modalPushed=false; state.screen='home'; render(); }
 });
 
 /* ================= screen: profile picker ================= */
 function screenPick(){
-  const cards = Object.keys(CATALOG).map(id=>{
+  const cards = Object.keys(CATALOG).map((id,i)=>{
     const c=CATALOG[id];
-    return '<button class="pick-card" data-act="pick" data-v="'+id+'" style="border-color:'+c.accent+'40">'
+    return '<button class="pick-card anim" style="--i:'+(i+1)+';border-color:'+c.accent+'40" data-act="pick" data-v="'+id+'">'
       +'<span class="av" style="background:'+c.accent+'">'+esc(c.name.charAt(0))+'</span>'
-      +'<span><span class="nm">'+esc(c.name)+'</span><span class="sb">'+esc(c.programs.filter(p=>p.type==='strength').length)+' אימוני כוח בשבוע · '+esc(c.goal)+'</span></span>'
+      +'<span><span class="nm">'+esc(c.name)+'</span><span class="sb">'
+      +esc(String(c.programs.filter(p=>p.type==='strength').length))+' סוגי אימון · '+esc(c.goal)+'</span></span>'
       +'<span class="go">‹</span></button>';
   }).join('');
   return '<div class="pick"><div class="pick-mark"><span class="badge">💪</span>icon4me</div>'
@@ -985,8 +1383,9 @@ function screenHome(){
   const last=lastActiveDate();
   const gap = last? Math.round((parseISO(today)-parseISO(last))/86400000) : null;
   const gapTxt = gap===null?'עוד לא נרשם אימון':(gap===0?'התאמנת היום 💪':(gap===1?'האימון האחרון היה אתמול':'עברו '+gap+' ימים מהאימון האחרון'));
+  const qi = quoteIdx();
 
-  const tiles = CFG.programs.map(p=>{
+  const tiles = CFG.programs.map((p,i)=>{
     const s=state.data.sessions[today+'_'+p.id];
     const doneToday = p.type==='cardio'
       ? p.kinds.some(k=>((state.data.cardio[k.id]||{log:[]}).log||[]).some(l=>l.date===today))
@@ -996,22 +1395,27 @@ function screenHome(){
     if(doneToday && (p.type==='cardio'||pct>=80)) flag='<span class="flag">היום ✓</span>';
     else if(doneToday) flag='<span class="flag">'+pct+'%</span>';
     else if(p.id===sug && p.type==='strength') flag='<span class="flag">התור שלו</span>';
-    return '<button class="tile'+(doneToday?' done':'')+'" style="--tc:'+p.hex+'" data-act="open" data-v="'+p.id+'">'
+    return '<button class="tile anim'+(doneToday?' done':'')+'" style="--tc:'+p.hex+';--i:'+(i+3)+'" data-act="open" data-v="'+p.id+'">'
       +flag+'<span class="ic">'+p.icon+'</span><span class="t">'+esc(p.label)+'</span><span class="s">'+esc(p.tile||p.sub||'')+'</span></button>';
   }).join('');
+  const n=CFG.programs.length;
 
-  return '<div class="wrap"><div class="hero">'
-    +'<div class="hello">'+greet+',<br><span>'+esc(CFG.name)+'</span> 👋</div>'
+  return '<div class="wrap screen-in"><div class="hero">'
+    +'<div class="hero-row"><div class="hello">'+greet+',<br><span>'+esc(CFG.name)+'</span> 👋</div>'+themeBtn()+'</div>'
     +'<div class="hero-sub">'+gapTxt+'</div><div class="rainbow-bar"></div>'
-    +'<div class="hero-stats">'
-    +'<div class="hstat" style="--sc:var(--pc)"><div class="n">'+weekCount()+'/'+CFG.weekGoal+'</div><div class="l">אימונים השבוע</div></div>'
-    +'<div class="hstat" style="--sc:var(--green)"><div class="n">'+weekStreak()+'</div><div class="l">רצף שבועות</div></div>'
-    +'<div class="hstat" style="--sc:var(--yellow)"><div class="n">'+totalWorkouts()+'</div><div class="l">סה״כ אימונים</div></div>'
+    +'<div class="quote anim" style="--i:1" data-act="quote">'
+      +'<span class="qi">'+QUOTE_ICONS[qi%QUOTE_ICONS.length]+'</span>'
+      +'<span class="qt">'+esc(QUOTES[qi])+'<span class="qn">משפט היום · '+(qi+1)+'/'+QUOTES.length+' · לחיצה למשפט הבא</span></span>'
+    +'</div>'
+    +'<div class="hero-stats anim" style="--i:2">'
+    +'<div class="hstat" style="--sc:var(--pc)"><div class="n" data-count="'+weekCount()+'" data-suf="/'+CFG.weekGoal+'">0/'+CFG.weekGoal+'</div><div class="l">אימונים השבוע</div></div>'
+    +'<div class="hstat" style="--sc:var(--green)"><div class="n" data-count="'+weekStreak()+'">0</div><div class="l">רצף שבועות</div></div>'
+    +'<div class="hstat" style="--sc:var(--yellow)"><div class="n" data-count="'+totalWorkouts()+'">0</div><div class="l">סה״כ אימונים</div></div>'
     +'</div></div>'
     +'<div class="tiles">'+tiles
-    +'<button class="tile" style="--tc:var(--pc)" data-act="open" data-v="__progress"><span class="ic">📈</span>'
+    +'<button class="tile anim" style="--tc:var(--pc);--i:'+(n+3)+'" data-act="open" data-v="__progress"><span class="ic">📈</span>'
     +'<span class="t">התקדמות</span><span class="s">לוח חודשי, גרפים ושיאים</span></button>'
-    +'<button class="tile" style="--tc:#A9A6C4" data-act="open" data-v="__log"><span class="ic">📓</span>'
+    +'<button class="tile anim" style="--tc:#A9A6C4;--i:'+(n+4)+'" data-act="open" data-v="__log"><span class="ic">📓</span>'
     +'<span class="t">יומן</span><span class="s">צעדים, משקל וגיבוי</span></button>'
     +'</div>'
     +'<div class="sync '+state.sync+'" id="syncDot"><i></i><span>'+syncText(state.sync)+'</span></div>'
@@ -1023,75 +1427,167 @@ function screenHome(){
 function topbar(title,sub,pill){
   return '<div class="topbar"><button class="back" data-act="back" aria-label="חזרה">›</button>'
     +'<h1>'+esc(title)+(sub?'<span class="sub">'+esc(sub)+'</span>':'')+'</h1>'
-    +(pill?'<span class="pill">'+esc(pill)+'</span>':'')+'</div>';
+    +(pill?'<span class="pill">'+esc(pill)+'</span>':'')+themeBtn()+'</div>';
 }
 function screenWorkout(){
-  const prog=progOf(state.day), ex=prog.ex, s=getSession(state.day,false);
-  const total=setsTotal(state.day), done=setsDone(s), pct=total?Math.round(done/total*100):0;
+  const prog=progOf(state.day), ex=exOf(state.day), s=getSession(state.day,false);
+  const total=sessionTotal(s), done=setsDone(s), pct=sessionPct(s);
   const vol=Math.round(volumeOf(s));
 
   const cards=ex.map((exo,i)=>{
-    const arr=s.sets[i]||[], allDone=arr.length&&arr.every(x=>x.d);
-    const ww=workingWeight(state.day,i);
-    const c=coachFor(state.day,i);
+    const k=exo.k, arr=s.sets[k]||[], allDone=arr.length&&arr.every(x=>x.d);
+    const ww=workingWeight(k);
+    const c=coachFor(exo);
     let coachHTML='';
-    if(c&&c.type==='up'&&!c.bw) coachHTML='<div class="coach up">📈 עברת פעמיים ברצף — <b>תעלה ל־'+c.to+' ק״ג</b><button class="apply" data-act="coach" data-ex="'+i+'" data-w="'+c.to+'">קבע</button></div>';
+    if(c&&c.type==='up'&&!c.bw) coachHTML='<div class="coach up">📈 עברת פעמיים ברצף — <b>תעלה ל־'+c.to+' ק״ג</b><button class="apply" data-act="coach" data-k="'+k+'" data-w="'+c.to+'">קבע</button></div>';
     else if(c&&c.type==='up'&&c.bw) coachHTML='<div class="coach up">📈 קל לך — <b>נסה '+c.reps+' חזרות בסט</b></div>';
     else if(c&&c.type==='almost') coachHTML='<div class="coach">🔸 אימון מוצלח אחד ב־<b>'+c.from+' ק״ג</b>. עוד אחד כזה ואפשר להעלות.</div>';
     else if(c&&c.type==='hold'&&c.from) coachHTML='<div class="coach">🔹 בפעם שעברה <b>'+c.from+' ק״ג</b> — תשלים את כל הסטים לפני שמעלים.</div>';
     else if(c&&c.type==='first') coachHTML='<div class="coach">✨ פעם ראשונה — תתחיל קל, בטכניקה נקייה. מה שתרשום היום נשמר כמשקל ההתחלה לפעם הבאה.</div>';
 
     const wwRow = '<div class="ex-target">'
-      +'<div class="target-box"><span class="big">'+exo.sets+'×'+esc(String(exo.reps))+'</span>'
-      +'<span class="cap">'+(isTime(exo.reps)?'סטים':'סטים × חזרות')+'</span></div>'
+      +'<button class="target-box'+(exo.custom?' custom':'')+'" data-act="plan" data-k="'+k+'" aria-label="שינוי סטים וחזרות">'
+      +'<span class="big">'+exo.sets+'×'+esc(String(exo.reps))+'</span>'
+      +'<span class="cap">'+(isTime(exo.reps)?'סטים':'סטים × חזרות')+'</span><span class="pen">✎</span></button>'
       +(exo.w
         ? '<div class="wbox">'
-          +'<button class="step" data-act="ww" data-ex="'+i+'" data-d="-1" aria-label="הורד משקל">−</button>'
-          +'<input type="number" inputmode="decimal" step="0.5" min="0" data-k="ww-'+i+'" value="'+(ww==null?'':ww)+'" placeholder="—" aria-label="משקל">'
+          +'<button class="step" data-act="ww" data-k="'+k+'" data-d="-1" aria-label="הורד משקל">−</button>'
+          +'<input type="number" inputmode="decimal" step="0.5" min="0" data-k="ww-'+k+'" value="'+(ww==null?'':ww)+'" placeholder="—" aria-label="משקל">'
           +'<span class="unit">ק״ג</span>'
-          +'<button class="step" data-act="ww" data-ex="'+i+'" data-d="1" aria-label="העלה משקל">+</button></div>'
+          +'<button class="step" data-act="ww" data-k="'+k+'" data-d="1" aria-label="העלה משקל">+</button></div>'
         : '<span class="bw-tag">משקל גוף</span>')
       +'</div>';
 
     const dots = '<div class="dots">'+arr.map((cell,j)=>
-        '<button class="dot'+(cell.d?' on':'')+'" data-act="ck" data-ex="'+i+'" data-set="'+j+'" '
+        '<button class="dot'+(cell.d?' on':'')+'" data-act="ck" data-k="'+k+'" data-set="'+j+'" '
         +'aria-pressed="'+cell.d+'" aria-label="סט '+(j+1)+'">'+(cell.d?'✓':(j+1))+'</button>').join('')
       +'<span class="dots-hint">'+(allDone?'הושלם ✓':'לחיצה = סט שסיימת')+'</span></div>';
 
-    const hold=isTime(exo.reps)?'<button class="btn" style="margin-top:9px;width:100%" data-act="hold" data-sec="'+timeSecs(exo.reps)+'">▶︎ טיימר '+esc(String(exo.reps))+'</button>':'';
-    const ok='c'+state.day+'-'+i;
-    return '<div class="ex-card'+(allDone?' complete':'')+'" style="--dc:'+prog.hex+'">'
-      +'<div class="ex-top"><div class="pictogram" data-act="body" data-ex="'+i+'" role="button" tabindex="0" aria-label="הגדל הדמיית שרירים">'
-      +bodySVG(exo.view,exo.hl)
+    const hold=isTime(exo.reps)
+      ? '<button class="btn" style="margin-top:9px;width:100%" data-act="hold" data-sec="'+timeSecs(exo.reps)+'" data-nm="'+esc(exo.n)+'">▶︎ טיימר '+esc(String(exo.reps))+'</button>' : '';
+    const ok='c'+state.day+'-'+k;
+    return '<div class="ex-card anim'+(allDone?' complete':'')+'" style="--dc:'+prog.hex+';--i:'+i+'">'
+      +'<button class="ex-kill" data-act="kill" data-k="'+k+'" aria-label="הסרת התרגיל">✕</button>'
+      +'<div class="ex-top"><div class="pictogram" data-act="body" data-k="'+k+'" role="button" tabindex="0" aria-label="הגדל הדמיית שרירים">'
+      +bodySVG(exo.view,exo.hl,exo.hl2)
       +'<span class="view-tag">'+(exo.view==='back'?'מאחור':'מלפנים')+'</span>'
       +'<span class="zoom-tag">⤢</span>'
       +(exo.equip&&exo.equip!=='bodyweight'?'<div class="equip-badge">'+equipIcon(exo.equip,prog.hex)+'</div>':'')+'</div>'
-      +'<div class="ex-head"><div class="ex-name">'+esc(exo.n)+'</div>'
-      +'<div class="ex-meta">'+esc(MUSCLE_LIST(exo.hl))+'</div>'
-      +(exo.w?'<div class="ex-spark">'+sparkline(e1rmSeries(state.day,i),prog.hex)+'</div>':'')
+      +'<div class="ex-head"><div class="ex-name">'+esc(exo.n)+(exo.added?'<span class="added-tag">נוסף</span>':'')+'</div>'
+      +'<div class="ex-meta">'+esc(MUSCLE_LIST(exo.hl))
+      +((exo.hl2&&exo.hl2.length)?' <small>+ '+esc(MUSCLE_LIST(exo.hl2))+'</small>':'')+'</div>'
+      +(exo.w?'<div class="ex-spark">'+sparkline(e1rmSeries(k),prog.hex)+'</div>':'')
       +'</div></div>'+wwRow+coachHTML+dots+hold
       +'<details class="cues" data-okey="'+ok+'"'+(state.open[ok]?' open':'')+'><summary>דגשי טכניקה</summary><ul>'
       +(exo.cues||[]).map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul></details></div>';
   }).join('');
 
+  const avail = availablePool(state.day).length;
+  const moreBtn = '<button class="more-btn" style="--dc:'+prog.hex+'" data-act="pool">'
+    +'<span>➕ עוד תרגילים</span>'+(avail?'<span class="cnt">'+avail+' זמינים</span>':'')+'</button>';
+
   let summary='';
   if(pct>=80){
-    const prev=historyFor(state.day,todayISO())[0];
+    const prev=Object.values(state.data.sessions).filter(x=>x.day===state.day && x.date!==todayISO() && setsDone(x)>0)
+      .sort((a,b)=>a.date<b.date?1:-1)[0];
     const pv=prev?Math.round(volumeOf(prev)):0;
     const diff=pv?Math.round((vol-pv)/pv*100):null;
-    summary='<div class="card" style="margin-top:14px;border-color:'+prog.hex+'">'
+    summary='<div class="card anim" style="margin-top:14px;border-color:'+prog.hex+'">'
       +'<div class="sec-title" style="margin-bottom:6px">✅ סיימת את '+esc(prog.label)+'</div>'
       +'<div class="kpis"><div class="kpi"><div class="n">'+num(vol)+'</div><div class="l">ק״ג הורמו</div></div>'
       +'<div class="kpi"><div class="n">'+done+'</div><div class="l">סטים</div></div>'
       +'<div class="kpi"><div class="n" style="color:'+(diff!=null&&diff>=0?'var(--green)':'var(--text)')+'">'+(diff!=null?(diff>0?'+':'')+diff+'%':'—')+'</div><div class="l">מול הפעם הקודמת</div></div></div></div>';
   }
 
-  return '<div class="wrap">'+topbar(prog.label, prog.sub||'', s.date)
+  const empty = ex.length ? '' :
+    '<div class="card" style="margin-top:14px;text-align:center;color:var(--text-dim);line-height:1.7">'
+    +'האימון הזה ריק כרגע.<br>אפשר להוסיף תרגילים מהכפתור למטה.</div>';
+
+  return '<div class="wrap screen-in">'+topbar(prog.label, prog.sub||'', s.date)
     +'<div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%;background:'+prog.hex+'"></div></div>'
     +'<div class="progress-label"><span>'+done+' / '+total+' סטים</span><span>'+(vol?num(vol)+' ק״ג נפח':'')+'</span></div>'
-    +'<div class="ex-list">'+cards+'</div>'
-    +'<div class="note-row"><input type="text" data-k="note" value="'+esc(s.note||'')+'" placeholder="הערה לאימון של היום"></div>'
+    +'<div class="ex-list">'+cards+'</div>'+empty+moreBtn
+    +'<div class="note-row" style="margin-top:12px"><input type="text" data-k="note" value="'+esc(s.note||'')+'" placeholder="הערה לאימון של היום" style="width:100%;background:transparent;border:none;border-bottom:1px dashed var(--line);color:var(--text);font-size:14px;padding:7px 2px"></div>'
     +summary+'</div>';
+}
+
+/* pool = exercises not currently in the workout (spare pool + deleted base) */
+function availablePool(dayId){
+  const active = exOf(dayId).map(e=>e.k);
+  const hid = prefs().hidden;
+  const out = [];
+  rawEx(dayId).forEach(e=>{ if(hid[e.k]) out.push(Object.assign({},e,{restore:true})); });
+  poolOf(dayId).forEach(e=>{ if(active.indexOf(e.k)<0) out.push(Object.assign({},e,{restore:!!hid[e.k]})); });
+  return out;
+}
+function poolModal(){
+  const prog=progOf(state.day);
+  const avail=availablePool(state.day);
+  const inWorkout=exOf(state.day).filter(e=>e.added);
+
+  const item=(e,i,mode)=>'<div class="pool-item" style="--i:'+i+'">'
+    +'<div class="pool-fig">'+bodySVG(e.view,e.hl,e.hl2)+'</div>'
+    +'<div class="pool-mid"><div class="pool-nm">'+esc(e.n)+'</div>'
+    +'<div class="pool-mt">'+e.sets+'×'+esc(String(e.reps))+' · '+esc(MUSCLE_LIST(e.hl))+' · '+esc(EQUIP_HE[e.equip]||'')+'</div></div>'
+    +(mode==='add'
+      ? '<button class="pool-add" data-act="addex" data-k="'+e.k+'">'+(e.restore?'החזר':'הוסף')+'</button>'
+      : '<button class="pool-add off" data-act="kill" data-k="'+e.k+'">הסר</button>')
+    +'</div>';
+
+  const listAdd = avail.length
+    ? avail.map((e,i)=>item(e,i,'add')).join('')
+    : '<div class="pool-empty">כל התרגילים של האימון הזה כבר בפנים 👌</div>';
+
+  return '<div class="modal"><div class="modal-box" style="--dc:'+prog.hex+'">'
+    +'<div class="modal-title">➕ עוד תרגילים · '+esc(prog.label)+'</div>'
+    +'<div class="modal-sub">מבחר תרגילים נוספים לאימון הזה. מה שתוסיף נשמר ויופיע גם בפעמים הבאות — ואפשר להוריד בכל רגע.</div>'
+    +'<div class="pool-group"><div class="pool-h">אפשר להוסיף</div>'+listAdd+'</div>'
+    +(inWorkout.length?'<div class="pool-group"><div class="pool-h">נוספו על ידך</div>'
+        +inWorkout.map((e,i)=>item(e,i,'rm')).join('')+'</div>':'')
+    +'<button class="modal-close" data-act="closemodal">סגור</button></div></div>';
+}
+
+function planModal(){
+  const k=state.modal.ex;
+  const exo=exByKey(state.day,k) || anyExByKey(k); if(!exo) return '';
+  const base=(rawEx(state.day).concat(poolOf(state.day))).filter(e=>e.k===k)[0] || exo;
+  const prog=progOf(state.day);
+  const custom = !!prefs().plan[k];
+  const isT = isTime(base.reps);
+  return '<div class="modal"><div class="modal-box" style="--dc:'+prog.hex+'">'
+    +'<div class="modal-title">✎ '+esc(exo.n)+'</div>'
+    +'<div class="modal-sub">כמה סטים וחזרות אתה עושה בתרגיל הזה. מה שתקבע נשמר ויחזור גם באימון הבא.</div>'
+    +'<div class="plan-row"><div class="plan-lbl">סטים<small>ברירת מחדל: '+base.sets+'</small></div>'
+      +'<div class="plan-ctl"><button data-act="plan-" data-k="'+k+'" data-f="s">−</button>'
+      +'<span class="val">'+exo.sets+'</span>'
+      +'<button data-act="plan+" data-k="'+k+'" data-f="s">+</button></div></div>'
+    +'<div class="plan-row"><div class="plan-lbl">'+(isT?'זמן':'חזרות')+'<small>ברירת מחדל: '+esc(String(base.reps))+'</small></div>'
+      +'<div class="plan-ctl"><button data-act="plan-" data-k="'+k+'" data-f="r">−</button>'
+      +'<span class="val">'+esc(String(exo.reps))+'</span>'
+      +'<button data-act="plan+" data-k="'+k+'" data-f="r">+</button></div></div>'
+    +'<div class="btn-row">'
+    +(custom?'<button class="btn" data-act="planreset" data-k="'+k+'">חזרה לברירת המחדל</button>':'')
+    +'<button class="btn danger" data-act="kill" data-k="'+k+'">הסרת התרגיל</button></div>'
+    +'<button class="modal-close" data-act="closemodal">סיימתי</button></div></div>';
+}
+
+function bodyModal(){
+  const k=state.modal.ex;
+  const exo=exByKey(state.day,k) || anyExByKey(k); if(!exo) return '';
+  const hl=exo.hl||[], hl2=exo.hl2||[];
+  const tags=ALL_MUSCLES.map(m=>{
+    const cls = hl.indexOf(m)>=0 ? ' on' : (hl2.indexOf(m)>=0 ? ' sec' : '');
+    return '<span class="mtag'+cls+'">'+esc(MUSCLE_HE[m]||m)+'</span>';
+  }).join('');
+  return '<div class="modal"><div class="modal-box">'
+    +'<div class="modal-title">'+esc(exo.n)+'</div>'
+    +'<div class="modal-sub">באדום — השרירים המובילים בתרגיל. בצהוב — שרירי עזר שמשתתפים בתנועה.</div>'
+    +'<div class="modal-figs">'
+    +'<div class="modal-fig">'+bodySVG('front',hl,hl2,null,true)+'<div class="cap">מלפנים</div></div>'
+    +'<div class="modal-fig">'+bodySVG('back',hl,hl2,null,true)+'<div class="cap">מאחור</div></div>'
+    +'</div><div class="modal-tags">'+tags+'</div>'
+    +'<div class="log-note">ציוד: '+esc(EQUIP_HE[exo.equip]||'—')+' · יעד: '+exo.sets+'×'+esc(String(exo.reps))+'</div>'
+    +'<button class="modal-close" data-act="closemodal">סגור</button></div></div>';
 }
 
 /* ================= screen: cardio ================= */
@@ -1109,17 +1605,21 @@ function screenCardio(){
     '<button class="kind-btn'+(k.id===kind.id?' active':'')+'" data-act="kind" data-v="'+k.id+'" style="--dc:'+prog.hex+'">'
     +'<span class="ki">'+k.icon+'</span><span>'+esc(k.label)+'</span></button>').join('')+'</div>';
 
-  const rows=log.slice(-6).reverse().map(l=>
+  const rows=log.slice(-8).reverse().map(l=>
     '<div class="hist-row"><span class="hist-date">'+l.date.slice(5).replace('-','/')+'</span>'
     +'<div class="hist-mid"><div class="hist-name">'+l.min+' דקות'+(l.km?' · '+l.km+' ק"מ':'')+'</div></div>'
     +'<span class="hist-pct" style="color:'+prog.hex+'">'+(l.km?(l.km/(l.min/60)).toFixed(1)+' קמ"ש':'')+'</span></div>').join('');
 
-  return '<div class="wrap">'+topbar('אירובי וספורט','בוחרים פעילות ורושמים זמן',todayISO())
+  return '<div class="wrap screen-in">'+topbar('אירובי וספורט','בוחרים פעילות ורושמים זמן',todayISO())
     +picker
-    +'<div class="stage-card" style="--dc:'+prog.hex+'">'
+    +'<div class="stage-card anim" style="--dc:'+prog.hex+'">'
     +'<div class="stage-desc">'+kind.icon+' '+esc(kind.label)+'</div>'
     +'<div class="stage-pace">'+esc(kind.tip||'')+'</div>'
     +(last?'<div class="cardio-last">בפעם שעברה: '+last.min+' דק׳'+(last.km?' · '+last.km+' ק"מ':'')+(sp?' · <span class="cardio-speed">'+sp+' קמ"ש</span>':'')+'</div>':'')
+    +'<div class="stopwatch"><span class="sw-t" id="swT">'+pad2(Math.floor(swSec/3600))+':'+pad2(Math.floor(swSec/60)%60)+':'+pad2(swSec%60)+'</span>'
+    +'<button class="'+(swOn?'':'go')+'" data-act="sw" data-v="toggle">'+(swOn?'עצור':'▶︎ התחל')+'</button>'
+    +(swSec?'<button data-act="sw" data-v="use">שמור זמן</button><button data-act="sw" data-v="reset">איפוס</button>':'')
+    +'</div>'
     +'<div class="cardio-form">'
     +'<div class="cardio-field"><label>כמה זמן (דקות)</label><input type="number" id="cMin" inputmode="decimal" placeholder="0"></div>'
     +(kind.km?'<div class="cardio-field"><label>מרחק (ק"מ, לא חובה)</label><input type="number" id="cKm" inputmode="decimal" step="0.1" placeholder="0"></div>':'')
@@ -1131,6 +1631,9 @@ function screenCardio(){
     +'</div>'
     +(log.filter(l=>l.km).length>1?'<div class="sec"><div class="sec-title">קצב לאורך זמן<span class="hint">קמ״ש</span></div><div class="card">'
       +lineChart(log.filter(l=>l.km).map(l=>({x:l.date,y:Math.round(l.km/(l.min/60)*10)/10,label:l.date.slice(5).replace('-','/')})),{color:prog.hex,fmt:v=>v.toFixed(1)})
+      +'</div></div>':'')
+    +(log.length>1?'<div class="sec"><div class="sec-title">דקות לאורך זמן</div><div class="card">'
+      +lineChart(log.slice(-14).map(l=>({x:l.date,y:l.min,label:l.date.slice(5).replace('-','/')})),{color:'var(--green)'})
       +'</div></div>':'')
     +(rows?'<div class="sec"><div class="sec-title">אימונים אחרונים</div><div class="card"><div class="hist-list">'+rows+'</div></div></div>':'')
     +'</div>';
@@ -1149,23 +1652,24 @@ function monthCalendar(){
     const ds=y+'-'+pad2(m+1)+'-'+pad2(d);
     const ss=sessionsOn(ds), cc=cardioOn(ds);
     const dots=ss.map(s=>'<i style="background:'+progOf(s.day).hex+'"></i>').join('')
-      + cc.map(()=>'<i style="background:'+((CFG.programs.find(p=>p.type==='cardio')||{hex:'var(--blue)'}).hex)+'"></i>').join('');
+      + cc.map(()=>'<i style="background:'+((CFG.programs.filter(p=>p.type==='cardio')[0]||{hex:'#3DA9FC'}).hex)+'"></i>').join('');
     const has=ss.length||cc.length;
     if(has){ monthWorkouts++; monthVol+=ss.reduce((a,s)=>a+volumeOf(s),0); }
-    const bg = has ? 'background:color-mix(in srgb,'+(ss.length?progOf(ss[0].day).hex:'var(--blue)')+' 22%, var(--surface-2));' : '';
+    const bg = has ? 'background:color-mix(in srgb,'+(ss.length?progOf(ss[0].day).hex:'#3DA9FC')+' 22%, var(--surface-2));' : '';
     cells+='<div class="cal-cell'+(has?' has':'')+(ds===today?' today':'')+(state.calSel===ds?' sel':'')+'" '
-      +(has?'data-act="calday" data-v="'+ds+'"':'')+' style="'+bg+'">'+d
+      +(has?'data-act="calday" data-v="'+ds+'"':'')+' style="--i:'+d+';'+bg+'">'+d
       +(dots?'<span class="cal-dots">'+dots+'</span>':'')+'</div>';
   }
-  const legend = CFG.programs.map(p=>'<span><i style="background:'+p.hex+'"></i>'+esc(p.label)+'</span>').join('');
+  const legend = CFG.programs.map(p=>'<span><i style="background:'+p.hex+'"></i>'+esc(p.short||p.label)+'</span>').join('');
 
   let detail='';
   if(state.calSel){
     const ss=sessionsOn(state.calSel), cc=cardioOn(state.calSel);
+    const kindLbl = id => (CARDIO_KINDS.filter(k=>k.id===id)[0]||{label:id}).label;
     const lines = ss.map(s=>{
       const v=Math.round(volumeOf(s));
       return '<div>'+esc(progOf(s.day).label)+' — '+sessionPct(s)+'% · '+setsDone(s)+' סטים'+(v?' · '+num(v)+' ק״ג':'')+(s.note?' · '+esc(s.note):'')+'</div>';
-    }).concat(cc.map(l=>'<div>אירובי ('+(l.kind==='running'?'ריצה':'אופניים')+') — '+l.min+' דק׳'+(l.km?' · '+l.km+' ק"מ':'')+'</div>'));
+    }).concat(cc.map(l=>'<div>'+esc(kindLbl(l.kind))+' — '+l.min+' דק׳'+(l.km?' · '+l.km+' ק"מ':'')+'</div>'));
     const dt=parseISO(state.calSel);
     detail='<div class="cal-detail"><div class="d">יום '+WEEKDAY_HE[dt.getDay()]+', '+dt.getDate()+' ב'+MONTH_HE[dt.getMonth()]+'</div>'+(lines.join('')||'לא נרשם אימון')+'</div>';
   }
@@ -1182,20 +1686,45 @@ function monthCalendar(){
     +'<div class="cal-legend">'+legend+'</div>'
     +'<div class="log-note">כל ריבוע צבוע הוא יום שבו נרשם אימון. לחיצה על יום מראה מה נעשה בו.</div></div>';
 }
+function progressExercises(){
+  const out=[];
+  CFG.programs.filter(p=>p.type==='strength').forEach(p=>{
+    exOf(p.id).filter(e=>e.w).forEach(e=>out.push({k:e.k, n:e.n, p:p.label, hex:p.hex}));
+  });
+  return out;
+}
 function screenProgress(){
   const heat=heatMap();
   const missing=KEY_MUSCLES.filter(k=>!heat[k]).map(k=>MUSCLE_HE[k]);
   const bodyRows=Object.entries(state.data.daily).filter(([,v])=>v&&v.weight!=null)
     .sort((a,b)=>a[0]<b[0]?-1:1).slice(-20).map(([d,v])=>({x:d,y:v.weight,label:d.slice(5).replace('-','/')}));
 
-  return '<div class="wrap">'+topbar('התקדמות','כל מה שנרשם עד היום')
+  const list=progressExercises();
+  let exChart='';
+  if(list.length){
+    const idx=Math.min(state.chartEx, list.length-1);
+    const cur=list[idx];
+    const pts=e1rmSeries(cur.k);
+    const best=bestE1RM(cur.k,null);
+    exChart='<div class="sec"><div class="sec-title">התקדמות בתרגיל<span class="hint">1RM משוער</span></div><div class="card">'
+      +'<select class="ex-picker" data-act="chartex">'
+      +list.map((e,i)=>'<option value="'+i+'"'+(i===idx?' selected':'')+'>'+esc(e.n)+' — '+esc(e.p)+'</option>').join('')
+      +'</select>'
+      +lineChart(pts,{color:cur.hex,fmt:v=>v.toFixed(1),empty:'עוד אין מספיק נתונים לתרגיל הזה. אחרי שני אימונים יופיע כאן גרף.'})
+      +'<div class="kpis"><div class="kpi"><div class="n">'+(best.w?best.w+' ק״ג':'—')+'</div><div class="l">משקל שיא</div></div>'
+      +'<div class="kpi"><div class="n">'+(best.e?Math.round(best.e*10)/10:'—')+'</div><div class="l">1RM משוער</div></div>'
+      +'<div class="kpi"><div class="n">'+pts.length+'</div><div class="l">אימונים שנרשמו</div></div></div></div></div>';
+  }
+
+  return '<div class="wrap screen-in">'+topbar('התקדמות','כל מה שנרשם עד היום')
     +'<div class="sec"><div class="sec-title">לוח האימונים</div>'+monthCalendar()+'</div>'
     +'<div class="sec"><div class="sec-title">מה עבד השבוע<span class="hint">7 ימים אחרונים</span></div><div class="card">'
-    +'<div class="heat"><div class="heat-fig">'+bodySVG('front',[],heat)+'<div class="cap">מלפנים</div></div>'
-    +'<div class="heat-fig">'+bodySVG('back',[],heat)+'<div class="cap">מאחור</div></div></div>'
-    +'<div class="heat-legend"><span>מעט</span><i style="background:var(--pc);opacity:.34"></i><i style="background:var(--pc);opacity:.64"></i><i style="background:var(--pc);opacity:1"></i><span>הרבה</span></div>'
+    +'<div class="heat"><div class="heat-fig">'+bodySVG('front',[],[],heat)+'<div class="cap">מלפנים</div></div>'
+    +'<div class="heat-fig">'+bodySVG('back',[],[],heat)+'<div class="cap">מאחור</div></div></div>'
+    +'<div class="heat-legend"><span>מעט</span><i style="background:var(--pc);opacity:.32"></i><i style="background:var(--pc);opacity:.62"></i><i style="background:var(--pc);opacity:.85"></i><i style="background:var(--green)"></i><span>הרבה</span></div>'
     +(missing.length?'<div class="heat-miss">השבוע עוד לא נגעת ב־<b>'+missing.join(' · ')+'</b></div>':'<div class="heat-miss">כיסית את כל קבוצות השרירים העיקריות השבוע 👌</div>')
     +'</div></div>'
+    +exChart
     +(bodyRows.length>1?'<div class="sec"><div class="sec-title">משקל גוף<span class="hint">מהיומן</span></div><div class="card">'
       +lineChart(bodyRows,{color:'var(--blue)',fmt:v=>v.toFixed(1)})
       +'<div class="log-note">המשקל קופץ מיום ליום בגלל מים ואוכל — מסתכלים על הקו לאורך שבועות, לא על מדידה בודדת.</div></div></div>':'')
@@ -1228,7 +1757,10 @@ function screenLog(){
       +'<td><input type="number" min="0" step="100" inputmode="numeric" data-k="daily-'+ds+'-steps" value="'+(e.steps==null?'':e.steps)+'" placeholder="—"></td>'
       +'<td><input type="number" min="0" step="0.1" inputmode="decimal" data-k="daily-'+ds+'-weight" value="'+(e.weight==null?'':e.weight)+'" placeholder="—"></td></tr>');
   }
-  return '<div class="wrap">'+topbar('יומן','צעדים, משקל וגיבוי')
+  const custom = Object.keys(prefs().plan).length, hidden = Object.keys(prefs().hidden).length;
+  const added = Object.values(prefs().added).reduce((a,x)=>a+(x||[]).length,0);
+
+  return '<div class="wrap screen-in">'+topbar('יומן','צעדים, משקל וגיבוי')
     +'<div class="sec"><div class="card">'
     +'<div class="kpis"><div class="kpi"><div class="n">'+num(steps)+'</div><div class="l">צעדים החודש</div></div>'
     +'<div class="kpi"><div class="n">'+num(logged?Math.round(steps/logged):0)+'</div><div class="l">ממוצע ליום</div></div>'
@@ -1240,6 +1772,10 @@ function screenLog(){
     +'<div class="log-note">'+esc(CFG.logNote)+'</div></div></div>'
     +'<details class="panel"><summary>איך מתקדמים נכון</summary><div class="panel-body">'
     +CFG.tips.map(t=>'<p><b>'+esc(t[0])+':</b> '+esc(t[1])+'</p>').join('')+'</div></details>'
+    +'<details class="panel"><summary>ההתאמות שלי לתוכנית</summary><div class="panel-body">'
+    +'<p><b>'+added+'</b> תרגילים שהוספת · <b>'+hidden+'</b> תרגילים שהורדת · <b>'+custom+'</b> תרגילים עם סטים/חזרות מותאמים.</p>'
+    +'<p>ההתאמות נשמרות לפרופיל שלך ומסתנכרנות לענן, כך שהן נשארות גם אם תפתח את האפליקציה בטלפון אחר.</p>'
+    +'<div class="btn-row"><button class="btn danger" data-act="resetprefs">אפס את כל ההתאמות</button></div></div></details>'
     +'<details class="panel"><summary>גיבוי, שחזור ומשתמש</summary><div class="panel-body">'
     +'<p>הנתונים נשמרים במכשיר, ואם Supabase מחובר — גם בענן, כך שאותו פרופיל נפתח בכל מכשיר.</p>'
     +'<textarea class="backup-area" id="backup" spellcheck="false">'+esc(JSON.stringify(state.data))+'</textarea>'
@@ -1250,20 +1786,6 @@ function screenLog(){
 }
 
 /* ================= render ================= */
-function bodyModal(){
-  const exo=exOf(state.day)[state.modal.ex]; if(!exo) return '';
-  const hl=exo.hl||[];
-  const tags=['chest','lats','traps','shoulders','biceps','triceps','forearms','abs','obliques','lowerBack','glutes','quads','hamstrings','calves']
-    .map(k=>'<span class="mtag'+(hl.indexOf(k)>=0?' on':'')+'">'+esc(MUSCLE_HE[k]||k)+'</span>').join('');
-  return '<div class="modal" data-act="closebody"><div class="modal-box" onclick="event.stopPropagation()">'
-    +'<div class="modal-title">'+esc(exo.n)+'</div>'
-    +'<div class="modal-sub">בצבע — השרירים שעובדים בתרגיל הזה</div>'
-    +'<div class="modal-figs">'
-    +'<div class="modal-fig">'+bodySVG('front',hl,null,true)+'<div class="cap">מלפנים</div></div>'
-    +'<div class="modal-fig">'+bodySVG('back',hl,null,true)+'<div class="cap">מאחור</div></div>'
-    +'</div><div class="modal-tags">'+tags+'</div>'
-    +'<button class="modal-close" data-act="closebody">סגור</button></div></div>';
-}
 function render(){
   if(state.loading){ app.innerHTML='<div class="wrap"><div class="loading">טוען...</div></div>'; return; }
   const sy=window.scrollY;
@@ -1275,36 +1797,51 @@ function render(){
   else if(state.screen==='cardio') html=screenCardio();
   else if(state.screen==='progress') html=screenProgress();
   else html=screenLog();
-  if(state.modal && state.screen==='workout') html += bodyModal();
+  if(state.modal){
+    if(state.modal.type==='pool' && state.screen==='workout') html += poolModal();
+    else if(state.modal.type==='plan' && state.screen==='workout') html += planModal();
+    else if(state.modal.type==='body') html += bodyModal();
+  }
   app.innerHTML=html;
   if(fk){ const el=app.querySelector('[data-k="'+fk+'"]'); if(el){ el.focus(); try{ el.setSelectionRange(el.value.length,el.value.length); }catch(e){} } }
+  if(state.screen==='home') countUp();
   if(state.screen!=='home') window.scrollTo(0,sy);
 }
 
 /* ================= events ================= */
 app.addEventListener('click', e=>{
+  if(e.target.classList && e.target.classList.contains('modal')){ goBack(); return; }
   const t=e.target.closest('[data-act]'); if(!t) return;
-  const a=t.dataset.act, v=t.dataset.v;
+  const a=t.dataset.act, v=t.dataset.v, k=t.dataset.k;
   if(a==='pick'){ enter(v); }
+  else if(a==='theme'){ toggleTheme(); render(); }
   else if(a==='back'||a==='home'){ goBack(); }
-  else if(a==='body'){
-    state.modal={ex:+t.dataset.ex};
-    try{ history.pushState(navSnap(),''); }catch(err){}
+  else if(a==='quote'){
+    LS('icon4me_qoff', String(((+LS('icon4me_qoff')||0)+1) % QUOTES.length));
     render();
+    const q=app.querySelector('.quote'); if(q){ q.classList.add('swap'); }
   }
-  else if(a==='closebody'){ goBack(); }
+  else if(a==='body'){ openModal({type:'body', ex:k}); }
+  else if(a==='pool'){ openModal({type:'pool'}); }
+  else if(a==='plan'){ openModal({type:'plan', ex:k}); }
+  else if(a==='closemodal'){ goBack(); }
   else if(a==='open'){
-    if(v==='__progress'){ const n=new Date(); go('progress',{calY:n.getFullYear(),calM:n.getMonth(),calSel:null,chartDay:null,chartEx:0}); }
+    if(v==='__progress'){ const n=new Date(); go('progress',{calY:n.getFullYear(),calM:n.getMonth(),calSel:null,chartEx:0}); }
     else if(v==='__log'){ const n=new Date(); go('log',{calY:n.getFullYear(),calM:n.getMonth()}); }
     else{ const p=progOf(v); go(p.type==='cardio'?'cardio':'workout',{day:v}); }
   }
-  else if(a==='ck') toggleSet(+t.dataset.ex,+t.dataset.set);
-  else if(a==='ww') bumpWeight(+t.dataset.ex,+t.dataset.d);
-  else if(a==='coach') applyWeight(+t.dataset.ex,+t.dataset.w);
+  else if(a==='ck') toggleSet(k, +t.dataset.set);
+  else if(a==='ww') bumpWeight(k, +t.dataset.d);
+  else if(a==='coach') applyWeight(k, +t.dataset.w);
+  else if(a==='kill'){ if(state.modal) closeModal(); removeExercise(k); }
+  else if(a==='addex') addExercise(k);
+  else if(a==='plan+') changePlan(k, t.dataset.f, 1);
+  else if(a==='plan-') changePlan(k, t.dataset.f, -1);
+  else if(a==='planreset') resetPlan(k);
   else if(a==='kind'){ state.kind=v; render(); }
-  else if(a==='rpe'){ state.rpe=v; render(); }
+  else if(a==='sw') stopWatch(v);
   else if(a==='savecardio') saveCardio();
-  else if(a==='hold') startRest(+t.dataset.sec);
+  else if(a==='hold') startRest(+t.dataset.sec, 'זמן התרגיל', t.dataset.nm||'');
   else if(a==='calday'){ state.calSel = (state.calSel===v?null:v); render(); }
   else if(a==='mon'){
     let m=state.calM+(+v), y=state.calY;
@@ -1323,6 +1860,10 @@ app.addEventListener('click', e=>{
       state.data=normalize(d); saveLocal(); enqueue(pushAll); render(); toast('שוחזר ✓');
     }catch(err){ toast('הטקסט לא תקין — הדבק את הגיבוי המלא'); }
   }
+  else if(a==='resetprefs'){
+    if(!confirm('לאפס את כל ההתאמות? התרגילים יחזרו לתוכנית המקורית. ההיסטוריה לא תימחק.')) return;
+    state.data.prefs = emptyPrefs(); persistPrefs(); render(); toast('אופס ✓');
+  }
   else if(a==='reset'){
     if(!confirm('למחוק את כל ההיסטוריה של '+CFG.name+'? אי אפשר לשחזר בלי גיבוי.')) return;
     state.data=normalize(null); saveLocal(); render(); toast('נמחק');
@@ -1333,35 +1874,19 @@ app.addEventListener('click', e=>{
   }
 });
 app.addEventListener('change', e=>{
-  const a=e.target.dataset.act;
-  if(a==='chartex'){ state.chartEx=+e.target.value; render(); }
-  else if(a==='chartday'){ state.chartDay=e.target.value; state.chartEx=0; render(); }
+  if(e.target.dataset.act==='chartex'){ state.chartEx=+e.target.value; render(); }
 });
 app.addEventListener('input', e=>{
   const k=e.target.dataset.k; if(!k) return;
   const v=e.target.value;
   if(k==='note'){ getSession(state.day,true).note=v; persist(); enqueue(()=>pushSession(getSession(state.day,true))); return; }
   if(k.indexOf('daily-')===0){ const p=k.split('-'); updateDaily(p[1]+'-'+p[2]+'-'+p[3],p[4],v); return; }
-  let m=k.match(/^ww-(\d+)$/);
-  if(m){
-    const i=+m[1], val = v===''?null:Number(v);
-    setWorkingWeight(state.day,i,val);
+  if(k.indexOf('ww-')===0){
+    const key=k.slice(3), val = v===''?null:Number(v);
+    setWorkingWeight(key,val);
     const s=getSession(state.day,true);
-    s.sets[i].forEach((c,j)=>{
-      if(c.d) return;
-      c.w = val;
-      const el=app.querySelector('[data-k="w-'+i+'-'+j+'"]');
-      if(el) el.value = (val==null?'':val);
-    });
+    (s.sets[key]||[]).forEach(c=>{ if(!c.d) c.w = val; });
     enqueue(()=>pushSession(s));
-    return;
-  }
-  m=k.match(/^([wr])-(\d+)-(\d+)$/);
-  if(m){
-    const s=getSession(state.day,true), i=+m[2], j=+m[3];
-    s.sets[i][j][m[1]] = v===''?null:Number(v);
-    if(m[1]==='w' && v!=='') setWorkingWeight(state.day,i,Number(v));
-    persist(); enqueue(()=>pushSession(s));
   }
 });
 app.addEventListener('toggle', e=>{
@@ -1383,18 +1908,23 @@ function mergeRemote(remote){
   Object.keys(local.cardio).forEach(k=>{
     if(!out.cardio[k]||!(out.cardio[k].log||[]).length) out.cardio[k]=local.cardio[k];
   });
+  const remoteHasPrefs = remote && remote.prefs &&
+    (Object.keys(remote.prefs.hidden||{}).length || Object.keys(remote.prefs.plan||{}).length ||
+     Object.keys(remote.prefs.added||{}).length);
+  if(!remoteHasPrefs) out.prefs = local.prefs;
   state.data=out; saveLocal();
   localOnly.forEach(k=>enqueue(()=>pushSession(out.sessions[k])));
+  if(!remoteHasPrefs) enqueue(pushPrefs);
 }
 async function enter(id){
   PROFILE=id; CFG=CATALOG[id];
   document.documentElement.style.setProperty('--pc',CFG.accent);
-  document.querySelector('meta[name=theme-color]').setAttribute('content','#1F1D2B');
   LS('icon4me_profile',id);
   state.data=normalize(loadLocal(id));
-  const cardioProg=CFG.programs.find(p=>p.type==='cardio');
+  saveLocal();                       /* store the migrated shape once */
+  const cardioProg=CFG.programs.filter(p=>p.type==='cardio')[0];
   state.kind=cardioProg?cardioProg.kinds[0].id:null;
-  state.day=suggestDay(); state.chartDay=null; state.loading=false; state.modal=null;
+  state.day=suggestDay(); state.loading=false; state.modal=null;
   go('home',null,true);
   if(SB){
     try{ const r=await pullRemote(); mergeRemote(r); setSync('ok'); render(); }
@@ -1415,6 +1945,7 @@ function boot(){
 }
 boot();
 })();
+
 </script>
 </body>
 </html>
