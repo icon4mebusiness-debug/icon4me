@@ -1,7 +1,7 @@
 /* icon4me — offline support.
    Bump CACHE when you change files, or just push: index.html is network-first
    so a new deploy is picked up on the next launch that has signal. */
-const CACHE = 'icon4me-v4_2';
+const CACHE = 'icon4me-v4_3';
 /* The exercise animations get their own cache: ~5MB that never changes, and
    that must survive a code deploy — the gym is where the signal dies. */
 const DEMOS = 'icon4me-demos';

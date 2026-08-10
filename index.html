@@ -518,6 +518,17 @@
   .panel-body p{margin:8px 0;}
   .panel-body b{color:var(--text);}
   .backup-area{width:100%;height:90px;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;color:var(--text-dim);font-family:var(--font-mono);font-size:11px;padding:8px;margin-top:8px;direction:ltr;}
+  .bk-block{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);}
+  .bk-block:first-of-type{margin-top:6px;padding-top:0;border-top:none;}
+  .bk-head{font-weight:700;color:var(--text);font-size:13.5px;margin-bottom:2px;}
+  .backup-area.paste{color:var(--text);height:96px;}
+  .backup-area.paste:focus{outline:none;border-color:var(--pc);}
+  .bk-info{margin-top:8px;font-size:12.5px;line-height:1.6;color:var(--text-dim);
+    background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;}
+  .bk-info.ok{border-color:color-mix(in srgb, var(--green) 55%, var(--line));color:var(--text);}
+  .bk-info.ok b{color:var(--green);}
+  .bk-info.bad{border-color:color-mix(in srgb, var(--red) 55%, var(--line));color:var(--red);}
+  .bk-file{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;}
   .btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px;}
   .btn{background:var(--surface-2);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px 14px;font-size:13px;cursor:pointer;font-weight:600;transition:transform .12s;}
   .btn:active{transform:scale(.96);}
@@ -1850,7 +1861,33 @@ const DEMO_KEYS = ["core-01","core-02","core-03","core-04","core-05","core-p1","
 const DEMO_SET = DEMO_KEYS.reduce(function(o,k){ o[k]=1; return o; }, {});
 const DEMO_CREDIT = '\u00A9 Gym visual';
 
-function exDemo(k){
+/* An exercise key is a slot in a profile's program, not a global id: itamar's
+   "upper-04" is the seated cable row, yonatan's is the chest fly. Both the gif
+   and the drawn figure are filed under that key, and the media was cut against
+   yonatan's order — so every slot that itamar fills with a different movement
+   was showing the wrong exercise. The table re-points those slots at the asset
+   that actually shows the movement; it never touches the key itself, so
+   history, working weights and plan tweaks stay exactly where they were. */
+const DEMO_ALIAS = {
+  itamar: {
+    'upper-03':'upper-p1',   /* חתירה במכונה            */
+    'upper-04':'upper-03',   /* חתירה בפולי בישיבה      */
+    'upper-05':'upper-04',   /* פרפר לחזה במכונה        */
+    'upper-06':'upper-05',   /* לחיצת כתפיים בישיבה     */
+    'upper-07':'upper-p2',   /* כפיפת מרפקים בעמידה — אין הדגמה עם משקולות, זו הקרובה ביותר */
+    'lower-05':'lower-p1',   /* סקוואט עם משקולת        */
+    'core-01' :'core-p1',    /* בטן בכבל בכריעה         */
+    'core-02' :'core-p2',    /* הרמות ברכיים בתלייה     */
+    'core-03' :'core-01'     /* פלאנק                   */
+  }
+};
+function demoKey(k){
+  const m = DEMO_ALIAS[PROFILE];
+  return (m && m[k]) || k;
+}
+
+function exDemo(k0){
+  const k = demoKey(k0);
   const fig = exFigSVG(k);
   const drawn = fig ? '<div class="exfig-wrap">'+fig+'</div>' : '';
   if(!DEMO_SET[k]) return drawn;
@@ -2057,6 +2094,110 @@ function historyList(){
   }).join('')+'</div>';
 }
 
+/* ===== backup codes: read, check and apply ==============================
+   The code is the plain JSON of everything this profile owns. It is handed
+   around between phones, so it can arrive from an older build (sets used to be
+   an array) or wrapped by an export — read it loosely, but never apply it
+   before saying out loud what is inside, because "restore" overwrites a
+   training history that has no other copy. */
+let bkUndo = null;
+
+function bkDoneSets(sess){
+  const S = sess && sess.sets; if(!S) return 0;
+  const arrs = Array.isArray(S) ? S : Object.keys(S).map(k=>S[k]);
+  let n=0; arrs.forEach(a=>(a||[]).forEach(c=>{ if(c && c.d) n++; }));
+  return n;
+}
+function bkSummary(d){
+  const ss = Object.values(d.sessions||{}).filter(x=>x && bkDoneSets(x)>0);
+  const dates = ss.map(x=>x.date).filter(Boolean).sort();
+  const days = Object.keys(d.daily||{}).filter(k=>{
+    const e=d.daily[k]||{}; return e.steps!=null || e.weight!=null;
+  }).length;
+  const w = Object.keys(d.weights||{}).length;
+  const pf = d.prefs||{};
+  const tweaks = Object.keys(pf.plan||{}).length + Object.keys(pf.hidden||{}).length
+    + Object.values(pf.added||{}).reduce((a,x)=>a+((x||[]).length),0);
+  const short = t => t.slice(5).replace('-','/');
+  const rng = dates.length ? ' (' + short(dates[0]) + '–' + short(dates[dates.length-1]) + ')' : '';
+  const n = (v, one, many) => '<b>' + v + '</b> ' + (v===1 ? one : many);
+  return 'קוד תקין ✓ ' + n(ss.length,'אימון','אימונים') + rng
+    + ' · ' + n(days,'יום מעקב','ימי מעקב')
+    + ' · ' + n(w,'משקל עבודה','משקלי עבודה')
+    + ' · ' + n(tweaks,'התאמה לתוכנית','התאמות לתוכנית') + '.';
+}
+function bkParse(txt){
+  const raw = (txt||'').trim();
+  if(!raw) return {ok:false, msg:'אפשר להדביק כאן קוד גיבוי, או לטעון אותו מקובץ שנשמר.'};
+  let d;
+  try{ d = JSON.parse(raw); }
+  catch(e){ return {ok:false, msg:'זה לא נראה כמו קוד גיבוי. צריך להדביק את הקוד המלא, מהסוגריים הראשונים ועד האחרונים.'}; }
+  if(d && typeof d==='object' && d.data && typeof d.data==='object') d = d.data;   /* wrapped export */
+  if(!d || typeof d!=='object' || Array.isArray(d)) return {ok:false, msg:'הקוד לא תקין.'};
+  if(!d.sessions && !d.weights && !d.daily) return {ok:false, msg:'לא נמצאו נתוני אימונים בקוד הזה.'};
+  return {ok:true, data:d, msg:bkSummary(d)};
+}
+/* Redraw only the info line: a full render() would wipe what was just pasted. */
+function bkInfo(){
+  const ta=document.getElementById('restoreIn'), box=document.getElementById('restoreInfo');
+  if(!ta || !box) return null;
+  const r = bkParse(ta.value);
+  box.className = 'bk-info' + (ta.value.trim() ? (r.ok?' ok':' bad') : '');
+  box.innerHTML = r.msg;
+  return r;
+}
+/* Merge keeps whatever is already on this phone and fills in the gaps, so a
+   restore onto a profile that has trained since the backup was taken cannot
+   quietly delete those sessions. */
+function mergeBackup(cur, inc){
+  const out = normalize(JSON.parse(JSON.stringify(cur)));
+  const add = normalize(JSON.parse(JSON.stringify(inc)));
+  Object.keys(add.weights).forEach(k=>{ if(out.weights[k]==null) out.weights[k]=add.weights[k]; });
+  Object.keys(add.sessions).forEach(k=>{
+    const a=add.sessions[k], b=out.sessions[k];
+    if(!b){ out.sessions[k]=a; return; }
+    const sets = Object.assign({}, a.sets||{});
+    Object.keys(b.sets||{}).forEach(ek=>{
+      const mine=b.sets[ek]||[], theirs=(a.sets||{})[ek]||[], arr=theirs.slice();
+      mine.forEach((c,i)=>{ if(c && (!arr[i] || (c.d && !arr[i].d))) arr[i]=c; });
+      sets[ek]=arr;
+    });
+    out.sessions[k]={day:b.day||a.day, date:b.date||a.date, note:b.note||a.note||'', sets:sets};
+  });
+  Object.keys(add.daily).forEach(dt=>{
+    const a=add.daily[dt]||{}, b=out.daily[dt]||{};
+    out.daily[dt]={steps: b.steps!=null?b.steps:a.steps, weight: b.weight!=null?b.weight:a.weight};
+  });
+  Object.keys(add.cardio).forEach(kind=>{
+    const a=add.cardio[kind]||{log:[]}, b=out.cardio[kind]||{stage:0,log:[]}, seen={}, log=[];
+    (b.log||[]).concat(a.log||[]).forEach(e=>{
+      const id=e.date+'|'+e.min+'|'+(e.km==null?'':e.km);
+      if(!seen[id]){ seen[id]=1; log.push(e); }
+    });
+    log.sort((x,y)=>x.date<y.date?-1:1);
+    out.cardio[kind]={stage:Math.max(b.stage||0, a.stage||0), log:log};
+  });
+  out.prefs.hidden = Object.assign({}, add.prefs.hidden, out.prefs.hidden);
+  out.prefs.plan   = Object.assign({}, add.prefs.plan,   out.prefs.plan);
+  Object.keys(add.prefs.added).forEach(pid=>{
+    const mine=out.prefs.added[pid]||[], theirs=add.prefs.added[pid]||[];
+    out.prefs.added[pid] = mine.concat(theirs.filter(k=>mine.indexOf(k)<0));
+  });
+  return out;
+}
+function bkApply(mode){
+  const r = bkInfo();
+  if(!r || !r.ok){ toast('אין קוד גיבוי תקין בתיבה'); return; }
+  const q = mode==='merge'
+    ? 'למזג את הגיבוי עם מה שרשום כאן? שום אימון קיים לא יימחק.'
+    : 'לשחזר את הגיבוי לפרופיל של '+CFG.name+'? כל מה שרשום עכשיו במכשיר הזה יוחלף במה שבקוד.';
+  if(!confirm(q)) return;
+  bkUndo = JSON.stringify(state.data);
+  state.data = mode==='merge' ? mergeBackup(state.data, r.data) : normalize(r.data);
+  saveLocal(); enqueue(pushAll); render();
+  toast(mode==='merge' ? 'הגיבוי מוזג ✓' : 'שוחזר ✓');
+}
+
 /* ===== daily log: steps, weight, tips and backup (lives inside התקדמות) ===== */
 function logSections(){
   const now=new Date();
@@ -2088,14 +2229,37 @@ function logSections(){
     +'<p><b>'+added+'</b> תרגילים שהוספת · <b>'+hidden+'</b> תרגילים שהורדת · <b>'+custom+'</b> תרגילים עם סטים/חזרות מותאמים.</p>'
     +'<p>ההתאמות נשמרות לפרופיל שלך ומסתנכרנות לענן, כך שהן נשארות גם אם תפתח את האפליקציה בטלפון אחר.</p>'
     +'<div class="btn-row"><button class="btn danger" data-act="resetprefs">אפס את כל ההתאמות</button></div></div></details>'
-    +'<details class="panel"><summary>גיבוי, שחזור ומשתמש</summary><div class="panel-body">'
+    +'<details class="panel" data-okey="bk"'+(state.open.bk?' open':'')+'><summary>גיבוי, שחזור ומשתמש</summary><div class="panel-body">'
     +'<p>הנתונים נשמרים במכשיר, ואם Supabase מחובר — גם בענן, כך שאותו פרופיל נפתח בכל מכשיר.</p>'
+
+    +'<div class="bk-block"><div class="bk-head">קוד הגיבוי שלי</div>'
+    +'<p>הקוד מכיל הכול: היסטוריית אימונים, משקלי עבודה, צעדים ומשקל גוף, וההתאמות שלך לתוכנית. '
+      +'שווה להעתיק אותו לפני עדכון של האפליקציה או מעבר לטלפון חדש.</p>'
     +'<textarea class="backup-area" id="backup" spellcheck="false">'+esc(JSON.stringify(state.data))+'</textarea>'
     +'<div class="btn-row"><button class="btn primary" data-act="copy">העתק גיבוי</button>'
-    +'<button class="btn" data-act="restore">שחזר מהטקסט</button>'
-    +'<button class="btn" data-act="haptics">'+(hapticsOn()?'רטט: פועל':'רטט: כבוי')+'</button>'
+    +'<button class="btn" data-act="dlbackup">שמור כקובץ</button></div></div>'
+
+    +'<div class="bk-block"><div class="bk-head">שחזור מקוד גיבוי</div>'
+    +'<p>מדביקים כאן קוד שהועתק קודם — מהמכשיר הזה או מכל מכשיר אחר — ולוחצים שחזר. '
+      +'הכול חוזר: אימונים, היסטוריה, משקלים ותרגילים שהוספת או הורדת.</p>'
+    +'<textarea class="backup-area paste" id="restoreIn" spellcheck="false" dir="ltr" '
+      +'placeholder="הדבק כאן את קוד הגיבוי"></textarea>'
+    +'<input type="file" id="bkfile" class="bk-file" accept=".json,.txt,application/json,text/plain">'
+    +'<div class="bk-info" id="restoreInfo">אפשר להדביק כאן קוד גיבוי, או לטעון אותו מקובץ שנשמר.</div>'
+    +'<div class="btn-row"><button class="btn" data-act="pastebk">הדבק מהלוח</button>'
+    +'<label class="btn" for="bkfile">טען מקובץ</label>'
+    +'<button class="btn primary" data-act="restore">שחזר הכל</button>'
+    +'<button class="btn" data-act="mergebk">מזג עם הקיים</button>'
+    +(bkUndo?'<button class="btn" data-act="bkundo">בטל את השחזור</button>':'')
+    +'</div>'
+    +'<p>«שחזר הכל» מחליף את הנתונים בקוד שהדבקת. «מזג עם הקיים» מוסיף רק את מה שחסר, '
+      +'ולא מוחק שום אימון שכבר רשום כאן.</p></div>'
+
+    +'<div class="bk-block">'
+    +'<div class="btn-row"><button class="btn" data-act="haptics">'+(hapticsOn()?'רטט: פועל':'רטט: כבוי')+'</button>'
     +'<button class="btn" data-act="switch">החלף משתמש</button>'
-    +'<button class="btn danger" data-act="reset">מחק הכל</button></div></div></details>';
+    +'<button class="btn danger" data-act="reset">מחק הכל</button></div></div>'
+    +'</div></details>';
 }
 
 const BOOT_HTML = '<div class="boot"><svg class="lifter" viewBox="0 0 200 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="טוען"><defs><linearGradient id="lfRing" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#5EE7FF"/><stop offset="50%" stop-color="#3DA9FC"/><stop offset="100%" stop-color="#FF4D6D"/></linearGradient><linearGradient id="lfBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5EE7FF"/><stop offset="100%" stop-color="#2FE6A7"/></linearGradient></defs><circle class="lf-ring" cx="100" cy="105" r="86"/><g class="lf-body"><circle cx="100" cy="40" r="13"/><path d="M76 60 Q100 53 124 60 L117 120 Q100 126 83 120 Z"/><path class="lf-limb" d="M89 122 L84 190"/><path class="lf-limb" d="M111 122 L116 190"/></g><path class="lf-arm" d="M78 65 L58 110"/><path class="lf-arm" d="M122 65 L142 110"/><g class="lf-fore lf-foreL"><path class="lf-arm" d="M58 110 L58 148"/><g transform="translate(58 150)" class="lf-bell"><rect x="-15" y="-3.5" width="30" height="7" rx="3.5"/><rect x="-21" y="-9" width="8" height="18" rx="3"/><rect x="13" y="-9" width="8" height="18" rx="3"/></g></g><g class="lf-fore lf-foreR"><path class="lf-arm" d="M142 110 L142 148"/><g transform="translate(142 150)" class="lf-bell"><rect x="-15" y="-3.5" width="30" height="7" rx="3.5"/><rect x="-21" y="-9" width="8" height="18" rx="3"/><rect x="13" y="-9" width="8" height="18" rx="3"/></g></g></svg><div class="boot-txt">טוען<i></i><i></i><i></i></div></div>';
@@ -2131,7 +2295,8 @@ function render(){
 const HAPTIC_FOR = {
   pick:'nav', back:'nav', home:'nav', open:'nav', closemodal:'nav', switch:'nav',
   kill:'warn', reset:'warn', resetprefs:'warn',
-  coach:'tick', addex:'tick', hold:'tick', restore:'tick', savecardio:'done'
+  coach:'tick', addex:'tick', hold:'tick', restore:'done', mergebk:'done', bkundo:'warn',
+  pastebk:'tick', dlbackup:'tick', savecardio:'done'
 };
 app.addEventListener('click', e=>{
   if(e.target.classList && e.target.classList.contains('modal')){ goBack(); return; }
@@ -2176,15 +2341,41 @@ app.addEventListener('click', e=>{
     state.calM=m; state.calY=y; state.calSel=null; render();
   }
   else if(a==='copy'){
-    const ta=document.getElementById('backup'); ta.select();
-    try{ document.execCommand('copy'); toast('הגיבוי הועתק'); }catch(err){ toast('בחר והעתק ידנית'); }
+    const ta=document.getElementById('backup');
+    const txt=ta?ta.value:JSON.stringify(state.data);
+    const legacy=function(){
+      try{ ta.select(); ta.setSelectionRange(0,txt.length); document.execCommand('copy'); toast('הגיבוי הועתק'); }
+      catch(err){ toast('בחר והעתק ידנית'); }
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(()=>toast('הגיבוי הועתק — שמור אותו במקום בטוח')).catch(legacy);
+    } else legacy();
   }
-  else if(a==='restore'){
+  else if(a==='dlbackup'){
     try{
-      const d=JSON.parse(document.getElementById('backup').value);
-      if(!d||typeof d!=='object'||!d.sessions) throw 0;
-      state.data=normalize(d); saveLocal(); enqueue(pushAll); render(); toast('שוחזר ✓');
-    }catch(err){ toast('הטקסט לא תקין — הדבק את הגיבוי המלא'); }
+      const blob=new Blob([JSON.stringify(state.data)],{type:'application/json'});
+      const url=URL.createObjectURL(blob), link=document.createElement('a');
+      link.href=url; link.download='icon4me-'+PROFILE+'-'+todayISO()+'.json';
+      document.body.appendChild(link); link.click(); link.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),1000);
+      toast('קובץ הגיבוי נשמר');
+    }catch(err){ toast('לא הצלחתי לשמור קובץ — אפשר להעתיק את הקוד'); }
+  }
+  else if(a==='pastebk'){
+    const ta=document.getElementById('restoreIn'); if(!ta) return;
+    if(navigator.clipboard && navigator.clipboard.readText){
+      navigator.clipboard.readText().then(function(t){
+        if(!t || !t.trim()){ toast('אין טקסט בלוח'); return; }
+        ta.value=t.trim(); bkInfo();
+      }).catch(function(){ ta.focus(); toast('הדבק ידנית: לחיצה ארוכה בתיבה ← הדבקה'); });
+    } else { ta.focus(); toast('הדבק ידנית: לחיצה ארוכה בתיבה ← הדבקה'); }
+  }
+  else if(a==='restore'){ bkApply('replace'); }
+  else if(a==='mergebk'){ bkApply('merge'); }
+  else if(a==='bkundo'){
+    if(!bkUndo){ toast('אין למה לחזור'); return; }
+    state.data=normalize(JSON.parse(bkUndo)); bkUndo=null;
+    saveLocal(); enqueue(pushAll); render(); toast('הוחזר למצב שלפני השחזור');
   }
   else if(a==='resetprefs'){
     if(!confirm('לאפס את כל ההתאמות? התרגילים יחזרו לתוכנית המקורית. ההיסטוריה לא תימחק.')) return;
@@ -2201,8 +2392,21 @@ app.addEventListener('click', e=>{
 });
 app.addEventListener('change', e=>{
   if(e.target.dataset.act==='chartex'){ state.chartEx=+e.target.value; render(); }
+  else if(e.target.id==='bkfile'){
+    const f=e.target.files && e.target.files[0]; if(!f) return;
+    const rd=new FileReader();
+    rd.onload=function(){
+      const ta=document.getElementById('restoreIn');
+      if(ta){ ta.value=String(rd.result||'').trim(); bkInfo(); }
+      toast('הקובץ נטען — בדוק ולחץ שחזר');
+    };
+    rd.onerror=function(){ toast('לא הצלחתי לקרוא את הקובץ'); };
+    rd.readAsText(f);
+    e.target.value='';
+  }
 });
 app.addEventListener('input', e=>{
+  if(e.target.id==='restoreIn'){ bkInfo(); return; }
   const k=e.target.dataset.k; if(!k) return;
   const v=e.target.value;
   if(k==='note'){ getSession(state.day,true).note=v; persist(); enqueue(()=>pushSession(getSession(state.day,true))); return; }
